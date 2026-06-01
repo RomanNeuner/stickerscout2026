@@ -1,0 +1,179 @@
+{
+  "tabs": {
+    "scanner": "Scanner",
+    "album": "Album",
+    "trade": "Tauschen",
+    "schedule": "Spielplan",
+    "profile": "Profil"
+  },
+  "scanner": {
+    "title": "Sticker Scanner",
+    "subtitle": "Halte die Kamera auf die Sticker-Nummer",
+    "scan": "Scannen",
+    "scanning": "Wird erkannt…",
+    "manualEntry": "Nummer eingeben",
+    "manualPlaceholder": "Sticker-Nr. z.B. 187",
+    "manualConfirm": "Bestätigen",
+    "result": {
+      "found": "Sticker gefunden!",
+      "notFound": "Sticker nicht gefunden",
+      "addToHave": "Zu Haben hinzufügen",
+      "addToNeed": "Zu Suche hinzufügen",
+      "addDuplicate": "Als Doppelter markieren",
+      "alreadyOwned": "Bereits vorhanden"
+    },
+    "limits": {
+      "daily": "Tages-Limit erreicht",
+      "upgradeHint": "Premium für unbegrenztes Scannen"
+    }
+  },
+  "album": {
+    "title": "Mein Album",
+    "progress": "{{owned}} / {{total}} — {{percent}}% komplett",
+    "filter": {
+      "all": "Alle",
+      "owned": "Haben",
+      "missing": "Suche",
+      "duplicates": "Doppelte"
+    },
+    "search": "Team oder Spieler suchen",
+    "teamProgress": "{{team}}: {{owned}}/{{count}}",
+    "groups": {
+      "A": "Gruppe A", "B": "Gruppe B", "C": "Gruppe C",
+      "D": "Gruppe D", "E": "Gruppe E", "F": "Gruppe F",
+      "G": "Gruppe G", "H": "Gruppe H", "I": "Gruppe I",
+      "J": "Gruppe J", "K": "Gruppe K", "L": "Gruppe L"
+    },
+    "types": {
+      "NORMAL": "Normal",
+      "FOIL": "Glitzer",
+      "LOGO": "Logo",
+      "STADIUM": "Stadion"
+    },
+    "sticker": {
+      "owned": "Vorhanden",
+      "missing": "Fehlt",
+      "duplicate": "{{count}}× Doppelt"
+    }
+  },
+  "trade": {
+    "title": "Tauschbörse",
+    "noOffers": "Keine Angebote in der Nähe",
+    "createOffer": "Angebot erstellen",
+    "myOffers": "Meine Angebote",
+    "nearbyOffers": "In der Nähe",
+    "radius": {
+      "label": "Suchradius",
+      "1km": "1 km",
+      "5km": "5 km",
+      "10km": "10 km",
+      "anywhere": "Überall"
+    },
+    "offer": {
+      "iOffer": "Ich biete",
+      "iNeed": "Ich suche",
+      "distance": "{{km}} km entfernt",
+      "contact": "Kontaktieren",
+      "match": "Match gefunden! 🎉",
+      "complete": "Tausch abgeschlossen"
+    },
+    "limits": {
+      "maxOffers": "Limit: 5 aktive Angebote",
+      "upgradeHint": "Premium für unbegrenzte Angebote"
+    },
+    "chat": {
+      "title": "Tausch-Chat",
+      "placeholder": "Nachricht schreiben…",
+      "send": "Senden"
+    }
+  },
+  "schedule": {
+    "title": "WM Spielplan",
+    "groupStage": "Gruppenphase",
+    "knockout": "K.O.-Runde",
+    "roundOf16": "Achtelfinale",
+    "quarterfinal": "Viertelfinale",
+    "semifinal": "Halbfinale",
+    "final": "Finale",
+    "thirdPlace": "Spiel um Platz 3",
+    "predict": "Tipp abgeben",
+    "yourPrediction": "Dein Tipp",
+    "matchday": "Spieltag {{day}}",
+    "kickoff": "Anstoß {{time}} Uhr",
+    "relatedStickers": "Sticker dieser Teams"
+  },
+  "profile": {
+    "title": "Profil",
+    "albumStats": "Album-Statistiken",
+    "completion": "{{percent}}% fertig",
+    "teamsComplete": "{{count}} Teams vollständig",
+    "share": "Fortschritt teilen",
+    "shareText": "Ich bin {{percent}}% fertig mit dem WM 2026 Album! 🏆 Noch {{missing}} Sticker fehlen.",
+    "settings": {
+      "title": "Einstellungen",
+      "language": "Sprache",
+      "matchRadius": "Tausch-Radius",
+      "notifications": "Benachrichtigungen",
+      "premium": "Premium"
+    },
+    "estimatedCost": "Geschätzte Kosten bis Fertigstellung: ~€{{amount}}",
+    "packsNeeded": "Noch ca. {{packs}} Päckchen"
+  },
+  "onboarding": {
+    "skip": "Überspringen",
+    "next": "Weiter",
+    "start": "Loslegen",
+    "slide1": {
+      "title": "AI Sticker Scanner",
+      "text": "Fotografiere einfach die Sticker-Nummer — die KI erkennt den Sticker sofort."
+    },
+    "slide2": {
+      "title": "Dein Album",
+      "text": "Verwalte alle 728 Sticker. Sieh auf einen Blick, was du hast und was noch fehlt."
+    },
+    "slide3": {
+      "title": "Tauschbörse",
+      "text": "Finde Tauschpartner in deiner Nähe und tausche deine Doppelten."
+    }
+  },
+  "paywall": {
+    "title": "StickerSwap Premium",
+    "subtitle": "Der komplette WM 2026 Begleiter",
+    "monthly": "Monatlich",
+    "season": "Saison-Pass",
+    "monthlyPrice": "€1,99 / Monat",
+    "seasonPrice": "€4,99 einmalig",
+    "seasonBadge": "Bestes Angebot",
+    "features": {
+      "scanner": "Unbegrenzter Scanner",
+      "offers": "Unbegrenzte Tausch-Angebote",
+      "radius": "Erweiterter Suchradius (50km+)",
+      "backup": "Album-Backup & Export",
+      "early": "Früh-Zugang zu neuen Features"
+    },
+    "purchase": "Jetzt freischalten",
+    "restore": "Kauf wiederherstellen",
+    "terms": "AGB & Datenschutz"
+  },
+  "common": {
+    "cancel": "Abbrechen",
+    "confirm": "Bestätigen",
+    "save": "Speichern",
+    "delete": "Löschen",
+    "close": "Schließen",
+    "loading": "Lädt…",
+    "error": "Fehler",
+    "retry": "Erneut versuchen",
+    "ok": "OK",
+    "yes": "Ja",
+    "no": "Nein",
+    "free": "Gratis",
+    "premium": "Premium"
+  },
+  "sticker": {
+    "number": "Sticker #{{number}}",
+    "foil": "Glitzer-Sticker ✨",
+    "logo": "Logo",
+    "stadium": "Stadion"
+  }
+}

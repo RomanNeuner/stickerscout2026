@@ -1,0 +1,179 @@
+{
+  "tabs": {
+    "scanner": "Scanner",
+    "album": "Album",
+    "trade": "Trade",
+    "schedule": "Schedule",
+    "profile": "Profile"
+  },
+  "scanner": {
+    "title": "Sticker Scanner",
+    "subtitle": "Point camera at the sticker number",
+    "scan": "Scan",
+    "scanning": "Recognizing…",
+    "manualEntry": "Enter number",
+    "manualPlaceholder": "Sticker no. e.g. 187",
+    "manualConfirm": "Confirm",
+    "result": {
+      "found": "Sticker found!",
+      "notFound": "Sticker not found",
+      "addToHave": "Add to collection",
+      "addToNeed": "Add to wishlist",
+      "addDuplicate": "Mark as duplicate",
+      "alreadyOwned": "Already in collection"
+    },
+    "limits": {
+      "daily": "Daily limit reached",
+      "upgradeHint": "Go Premium for unlimited scanning"
+    }
+  },
+  "album": {
+    "title": "My Album",
+    "progress": "{{owned}} / {{total}} — {{percent}}% complete",
+    "filter": {
+      "all": "All",
+      "owned": "Have",
+      "missing": "Need",
+      "duplicates": "Doubles"
+    },
+    "search": "Search team or player",
+    "teamProgress": "{{team}}: {{owned}}/{{count}}",
+    "groups": {
+      "A": "Group A", "B": "Group B", "C": "Group C",
+      "D": "Group D", "E": "Group E", "F": "Group F",
+      "G": "Group G", "H": "Group H", "I": "Group I",
+      "J": "Group J", "K": "Group K", "L": "Group L"
+    },
+    "types": {
+      "NORMAL": "Normal",
+      "FOIL": "Foil",
+      "LOGO": "Logo",
+      "STADIUM": "Stadium"
+    },
+    "sticker": {
+      "owned": "Owned",
+      "missing": "Missing",
+      "duplicate": "{{count}}× Double"
+    }
+  },
+  "trade": {
+    "title": "Trading Board",
+    "noOffers": "No offers nearby",
+    "createOffer": "Create offer",
+    "myOffers": "My offers",
+    "nearbyOffers": "Nearby",
+    "radius": {
+      "label": "Search radius",
+      "1km": "1 km",
+      "5km": "5 km",
+      "10km": "10 km",
+      "anywhere": "Anywhere"
+    },
+    "offer": {
+      "iOffer": "I offer",
+      "iNeed": "I need",
+      "distance": "{{km}} km away",
+      "contact": "Contact",
+      "match": "Match found! 🎉",
+      "complete": "Trade complete"
+    },
+    "limits": {
+      "maxOffers": "Limit: 5 active offers",
+      "upgradeHint": "Go Premium for unlimited offers"
+    },
+    "chat": {
+      "title": "Trade Chat",
+      "placeholder": "Write a message…",
+      "send": "Send"
+    }
+  },
+  "schedule": {
+    "title": "WC Schedule",
+    "groupStage": "Group Stage",
+    "knockout": "Knockout",
+    "roundOf16": "Round of 16",
+    "quarterfinal": "Quarterfinal",
+    "semifinal": "Semifinal",
+    "final": "Final",
+    "thirdPlace": "Third Place",
+    "predict": "Place prediction",
+    "yourPrediction": "Your pick",
+    "matchday": "Matchday {{day}}",
+    "kickoff": "Kick-off {{time}}",
+    "relatedStickers": "Stickers for these teams"
+  },
+  "profile": {
+    "title": "Profile",
+    "albumStats": "Album Stats",
+    "completion": "{{percent}}% complete",
+    "teamsComplete": "{{count}} teams complete",
+    "share": "Share progress",
+    "shareText": "I'm {{percent}}% done with the World Cup 2026 sticker album! 🏆 Still need {{missing}} stickers.",
+    "settings": {
+      "title": "Settings",
+      "language": "Language",
+      "matchRadius": "Trade radius",
+      "notifications": "Notifications",
+      "premium": "Premium"
+    },
+    "estimatedCost": "Estimated cost to finish: ~${{amount}}",
+    "packsNeeded": "Approx. {{packs}} more packs"
+  },
+  "onboarding": {
+    "skip": "Skip",
+    "next": "Next",
+    "start": "Get started",
+    "slide1": {
+      "title": "AI Sticker Scanner",
+      "text": "Just photograph the sticker number — AI recognises it instantly."
+    },
+    "slide2": {
+      "title": "Your Album",
+      "text": "Track all 728 stickers. See at a glance what you have and what you still need."
+    },
+    "slide3": {
+      "title": "Trading Board",
+      "text": "Find trading partners nearby and swap your doubles."
+    }
+  },
+  "paywall": {
+    "title": "StickerSwap Premium",
+    "subtitle": "The complete World Cup 2026 companion",
+    "monthly": "Monthly",
+    "season": "Season Pass",
+    "monthlyPrice": "$2.49 / month",
+    "seasonPrice": "$5.99 one-time",
+    "seasonBadge": "Best value",
+    "features": {
+      "scanner": "Unlimited scanner",
+      "offers": "Unlimited trade offers",
+      "radius": "Extended radius (50km+)",
+      "backup": "Album backup & PDF export",
+      "early": "Early access to new catalogs"
+    },
+    "purchase": "Unlock now",
+    "restore": "Restore purchase",
+    "terms": "Terms & Privacy"
+  },
+  "common": {
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "save": "Save",
+    "delete": "Delete",
+    "close": "Close",
+    "loading": "Loading…",
+    "error": "Error",
+    "retry": "Retry",
+    "ok": "OK",
+    "yes": "Yes",
+    "no": "No",
+    "free": "Free",
+    "premium": "Premium"
+  },
+  "sticker": {
+    "number": "Sticker #{{number}}",
+    "foil": "Foil sticker ✨",
+    "logo": "Logo",
+    "stadium": "Stadium"
+  }
+}
