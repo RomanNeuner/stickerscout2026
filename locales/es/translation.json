@@ -123,7 +123,7 @@
     "completion": "{{percent}}% completo",
     "teamsComplete": "{{count}} equipos completos",
     "share": "Compartir progreso",
-    "shareText": "¡Tengo el {{percent}}% del álbum Panini Mundial 2026! 🏆 Me faltan {{missing}} stickers.\n\nSigue tu progreso con StickerScout 2026:\n📱 iOS: https://apps.apple.com/at/app/stickerscout-2026/id6775562727\n🤖 Android: https://play.google.com/store/apps/details?id=at.ncn.stickerscout2026",
+    "shareText": "¡Tengo el {{percent}}% del álbum del Mundial 2026! 🏆 Me faltan {{missing}} stickers.\n\nSigue tu progreso con StickerScout 2026:\n📱 iOS: https://apps.apple.com/at/app/stickerscout-2026/id6775562727\n🤖 Android: https://play.google.com/store/apps/details?id=at.ncn.stickerscout2026",
     "settings": {
       "title": "Configuración",
       "language": "Idioma",

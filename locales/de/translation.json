@@ -123,7 +123,7 @@
     "completion": "{{percent}}% fertig",
     "teamsComplete": "{{count}} Teams vollständig",
     "share": "Fortschritt teilen",
-    "shareText": "Ich bin {{percent}}% fertig mit dem Panini WM 2026 Album! 🏆 Noch {{missing}} Sticker fehlen.\n\nVerfolge deinen Fortschritt mit StickerScout 2026:\n📱 iOS: https://apps.apple.com/at/app/stickerscout-2026/id6775562727\n🤖 Android: https://play.google.com/store/apps/details?id=at.ncn.stickerscout2026",
+    "shareText": "Ich bin {{percent}}% fertig mit dem WM 2026 Album! 🏆 Noch {{missing}} Sticker fehlen.\n\nVerfolge deinen Fortschritt mit StickerScout 2026:\n📱 iOS: https://apps.apple.com/at/app/stickerscout-2026/id6775562727\n🤖 Android: https://play.google.com/store/apps/details?id=at.ncn.stickerscout2026",
     "settings": {
       "title": "Einstellungen",
       "language": "Sprache",

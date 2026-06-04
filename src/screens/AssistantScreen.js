@@ -51,7 +51,7 @@ async function askClaude(userMessage, collection, lang = 'de') {
     ? 'Antworte immer auf Deutsch, präzise und hilfreich (max. 150 Wörter).'
     : 'Always respond in English, concise and helpful (max. 150 words).';
 
-  const systemPrompt = `You are StickerScout, the personal collection assistant for the Panini FIFA World Cup 2026.
+  const systemPrompt = `You are StickerScout, the personal collection assistant for the WM 2026 sticker and trading card collection.
 ${langInstruction}
 
 SAMMLUNG DES NUTZERS:

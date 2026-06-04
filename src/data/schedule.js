@@ -1,5 +1,5 @@
 /**
- * FIFA World Cup 2026 schedule — static data for MVP.
+ * WM 2026 schedule — static data for MVP.
  * 48 teams, 12 groups, 104 matches total.
  * Dates: June 11 – July 19, 2026.
  *

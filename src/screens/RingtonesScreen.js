@@ -38,7 +38,6 @@ const SONGS = [
     duration: '0:45',
     preview: require('../../assets/ringtones/song1_preview.mp3'),
     full: require('../../assets/ringtones/song1_full.mp3'),
-    m4r: require('../../assets/ringtones/song1_full.m4r'),
     color: '#F5C033',
   },
   {
@@ -50,7 +49,6 @@ const SONGS = [
     duration: '0:38',
     preview: require('../../assets/ringtones/song2_preview.mp3'),
     full: require('../../assets/ringtones/song2_full.mp3'),
-    m4r: require('../../assets/ringtones/song2_full.m4r'),
     color: '#4FC3F7',
   },
   {
@@ -62,7 +60,6 @@ const SONGS = [
     duration: '0:40',
     preview: require('../../assets/ringtones/song3_preview.mp3'),
     full: require('../../assets/ringtones/song3_full.mp3'),
-    m4r: require('../../assets/ringtones/song3_full.m4r'),
     color: '#42D783',
   },
 ];
@@ -192,16 +189,13 @@ export default function RingtonesScreen({ onShowPaywall, isPro }) {
   // ──────────────────────────────────────────────────────────────────────────
   const handleSetRingtone = async (song) => {
     if (Platform.OS === 'ios') {
-      // iOS: .m4r Datei in lokalen Ordner kopieren, dann teilen
+      // iOS: .mp3 teilen (echte .m4r Dateien werden später eingebunden)
       try {
-        const destPath = `${FileSystem.documentDirectory}${t(song.titleKey)}.m4r`;
-        await FileSystem.copyAsync({ from: song.m4r, to: destPath });
         const canShare = await Sharing.isAvailableAsync();
         if (canShare) {
-          await Sharing.shareAsync(destPath, {
-            mimeType: 'audio/m4r',
+          await Sharing.shareAsync(song.full, {
+            mimeType: 'audio/mpeg',
             dialogTitle: 'Als Klingelton setzen',
-            UTI: 'com.apple.m4r-audio',
           });
         } else {
           Alert.alert('Info', t('ringtones.iosHint'));

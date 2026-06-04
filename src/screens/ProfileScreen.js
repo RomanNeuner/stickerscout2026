@@ -17,38 +17,7 @@ import {
   initNotifications,
 } from '../services/notifications';
 
-const PROMO_CODES = [
-  {
-    id: 'fifa',
-    emoji: '⚽',
-    title: 'FIFA Digital Packs',
-    code: 'FIFA-2026-PLAY',
-    reward: 'Deluxe Digital Packs',
-    how: 'In der FIFA Panini Collection App eingeben',
-    url: 'https://fifa.com/paninistickeralbum',
-    expires: '30.09.2026',
-  },
-  {
-    id: 'rewards',
-    emoji: '🏆',
-    title: 'FIFA Rewards',
-    code: 'QR-Code im Album scannen',
-    reward: 'Offizieller digitaler Stempel + FIFA Points',
-    how: 'QR-Code im Album mit Kamera scannen',
-    url: 'https://rewards.fifa.com',
-    expires: null,
-  },
-  {
-    id: 'nachbestellung',
-    emoji: 'ðŸ“¦',
-    title: 'Panini Nachbestellung',
-    code: '00540AD',
-    reward: '10% Rabatt auf fehlende Sticker',
-    how: 'Auf panini.de beim Checkout eingeben',
-    url: 'https://www.panini.de/shp_deu_de/sticker-sammeln/nachbestellservice',
-    expires: null,
-  },
-];
+// Promo-Codes entfernt (Lizenzgründe)
 import i18n from '../i18n';
 
 import { COLORS, GRADIENTS, FONTS, SPACING, RADIUS, SHADOWS } from '../theme';
@@ -318,36 +287,6 @@ export default function ProfileScreen({ isPro, onShowPaywall }) {
           <Text style={styles.feedbackText}>🐛 Bug melden</Text>
         </TouchableOpacity>
       </View>
-
-      {/* Promo Codes Card */}
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>🎁 Promo Codes & Links</Text>
-        {PROMO_CODES.map(promo => (
-          <View key={promo.id} style={styles.promoItem}>
-            <View style={styles.promoHeader}>
-              <Text style={styles.promoEmoji}>{promo.emoji}</Text>
-              <Text style={styles.promoTitle}>{promo.title}</Text>
-              {promo.expires && <Text style={styles.promoExpires}>bis {promo.expires}</Text>}
-            </View>
-            <TouchableOpacity
-              style={styles.promoCodeBox}
-              onPress={() => {
-                ExpoClipboard.setStringAsync(promo.code);
-                Alert.alert('Kopiert!', `"${promo.code}" wurde in die Zwischenablage kopiert.`);
-              }}
-            >
-              <Text style={styles.promoCode}>{promo.code}</Text>
-              <Text style={styles.promoCopy}>ðŸ“‹</Text>
-            </TouchableOpacity>
-            <Text style={styles.promoReward}>🎁 {promo.reward}</Text>
-            <Text style={styles.promoHow}>â„¹ï¸ {promo.how}</Text>
-            <TouchableOpacity onPress={() => Linking.openURL(promo.url)} style={styles.promoLink}>
-              <Text style={styles.promoLinkText}>🌐 Jetzt öffnen →</Text>
-            </TouchableOpacity>
-          </View>
-        ))}
-      </View>
-
       {/* Version â€” 5x tippen fÃ¼r Admin-Reset */}
       <TouchableOpacity onPress={handleVersionTap} style={styles.versionRow}>
         <Text style={styles.versionText}>StickerScout 2026 Â· v{APP_VERSION} Â· NCN-NetConsulting GmbH</Text>

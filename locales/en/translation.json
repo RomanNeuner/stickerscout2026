@@ -126,7 +126,7 @@
     "completion": "{{percent}}% complete",
     "teamsComplete": "{{count}} teams complete",
     "share": "Share progress",
-    "shareText": "I'm {{percent}}% done with the Panini World Cup 2026 sticker album! 🏆 Still missing {{missing}} stickers.\n\nTrack your collection with StickerScout 2026:\n📱 iOS: https://apps.apple.com/at/app/stickerscout-2026/id6775562727\n🤖 Android: https://play.google.com/store/apps/details?id=at.ncn.stickerscout2026",
+    "shareText": "I'm {{percent}}% done with the World Cup 2026 sticker album! 🏆 Still missing {{missing}} stickers.\n\nTrack your collection with StickerScout 2026:\n📱 iOS: https://apps.apple.com/at/app/stickerscout-2026/id6775562727\n🤖 Android: https://play.google.com/store/apps/details?id=at.ncn.stickerscout2026",
     "settings": {
       "title": "Settings",
       "language": "Language",

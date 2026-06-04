@@ -1,5 +1,5 @@
 /**
- * StickerScout 2026 — Official Panini WC 2026 Sticker Catalog v7.0
+ * StickerScout 2026 — WC 2026 Sticker Catalog v7.0
  * Base: 980 stickers | CC: 12 Coca-Cola | Extra: 20 rare | Total: 1,012
  * ID format: AUT4, CC2, EXTRA5, FWC3, 00
  */
