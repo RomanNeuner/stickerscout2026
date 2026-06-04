@@ -28,61 +28,15 @@ import * as Sharing from 'expo-sharing';
 import Purchases from 'react-native-purchases';
 
 import { COLORS, GRADIENTS, FONTS, SPACING, RADIUS, SHADOWS } from '../theme';
-import { PRODUCT_IDS, RINGTONE_IDS, FULLTRACK_IDS } from '../services/subscription';
+import { RINGTONE_IDS, FULLTRACK_IDS } from '../services/subscription';
+import { SONGS as SONGS_CONFIG } from '../config/iap';
 import GoldButton from '../components/GoldButton';
 
-// ──────────────────────────────────────────────────────────────────────────────
-// Song-Definitionen
-// ──────────────────────────────────────────────────────────────────────────────
+// SONGS aus zentraler Config + lokale UI-Extras
 const SONGS = [
-  {
-    id: 1,
-    key: 'song1',
-    ringtoneId: PRODUCT_IDS.ringtone1,
-    fulltrackId: PRODUCT_IDS.fulltrack1,
-    artist: 'United Voices',
-    title: 'One World, One Game',
-    market: '🌍',
-    marketLabel: 'International',
-    duration: '0:38',
-    accentColor: '#F5C033',
-    cover: require('../../assets/ringtones/covers/song1_cover.png'),
-    preview: require('../../assets/ringtones/song1_preview.mp3'),
-    ringtone: require('../../assets/ringtones/song1_ringtone.mp3'),
-    full: require('../../assets/ringtones/song1_full.mp3'),
-  },
-  {
-    id: 2,
-    key: 'song2',
-    ringtoneId: PRODUCT_IDS.ringtone2,
-    fulltrackId: PRODUCT_IDS.fulltrack2,
-    artist: 'Leo Falk',
-    title: 'Wir halten zusammen',
-    market: '🇩🇪',
-    marketLabel: 'Deutschland',
-    duration: '0:42',
-    accentColor: '#4FC3F7',
-    cover: require('../../assets/ringtones/covers/song2_cover.png'),
-    preview: require('../../assets/ringtones/song2_preview.mp3'),
-    ringtone: require('../../assets/ringtones/song2_ringtone.mp3'),
-    full: require('../../assets/ringtones/song2_full.mp3'),
-  },
-  {
-    id: 3,
-    key: 'song3',
-    ringtoneId: PRODUCT_IDS.ringtone3,
-    fulltrackId: PRODUCT_IDS.fulltrack3,
-    artist: 'Da Austro-Bua',
-    title: 'Unaufhoitboa',
-    market: '🇦🇹',
-    marketLabel: 'Österreich',
-    duration: '0:45',
-    accentColor: '#FF6B6B',
-    cover: require('../../assets/ringtones/covers/song3_cover.png'),
-    preview: require('../../assets/ringtones/song3_preview.mp3'),
-    ringtone: require('../../assets/ringtones/song3_ringtone.mp3'),
-    full: require('../../assets/ringtones/song3_full.mp3'),
-  },
+  { ...SONGS_CONFIG.song1, id: 1, market: '🌍', marketLabel: 'International', duration: '0:38', accentColor: '#F5C033', full: SONGS_CONFIG.song1.fulltrack },
+  { ...SONGS_CONFIG.song2, id: 2, market: '🇩🇪', marketLabel: 'Deutschland',  duration: '0:42', accentColor: '#4FC3F7', full: SONGS_CONFIG.song2.fulltrack },
+  { ...SONGS_CONFIG.song3, id: 3, market: '🇦🇹', marketLabel: 'Österreich',   duration: '0:45', accentColor: '#FF6B6B', full: SONGS_CONFIG.song3.fulltrack },
 ];
 
 // ──────────────────────────────────────────────────────────────────────────────
@@ -211,7 +165,13 @@ export default function RingtonesScreen({ onShowPaywall, isPro }) {
       try {
         const canShare = await Sharing.isAvailableAsync();
         if (canShare) {
-          await Sharing.shareAsync(song.ringtone, { mimeType: 'audio/mpeg', dialogTitle: 'Als Klingelton setzen' });
+          // .m4r für iOS (echter Klingelton), fallback auf .mp3
+          const source = song.ringtoneIOS ?? song.ringtone;
+          await Sharing.shareAsync(source, {
+            mimeType: 'audio/x-m4r',
+            UTI: 'com.apple.m4r-audio',
+            dialogTitle: 'Als Klingelton setzen',
+          });
         } else {
           Alert.alert('Info', t('ringtones.iosHint'));
         }
