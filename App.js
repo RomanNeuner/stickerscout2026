@@ -22,6 +22,7 @@ import TradeScreen from './src/screens/TradeScreen';
 import ScheduleScreen from './src/screens/ScheduleScreen';
 import ProfileScreen from './src/screens/ProfileScreen';
 import AssistantScreen from './src/screens/AssistantScreen';
+import RingtonesScreen from './src/screens/RingtonesScreen';
 import OnboardingScreen from './src/screens/OnboardingScreen';
 import PaywallScreen from './src/screens/PaywallScreen';
 import { useTabIconAnimation } from './src/hooks/useAnimations';
@@ -35,6 +36,7 @@ const TAB_ICONS = {
   Trade:     null,
   Schedule:  'calendar',
   Assistant: null,
+  Ringtones: null,
   Profile:   'profile-user',
 };
 
@@ -44,6 +46,7 @@ const TAB_LABEL_KEYS = {
   Trade:     'tabs.trade',
   Schedule:  'tabs.schedule',
   Assistant: 'tabs.assistant',
+  Ringtones: 'tabs.ringtones',
   Profile:   'tabs.profile',
 };
 
@@ -61,6 +64,8 @@ function TabBar({ state, descriptors, navigation }) {
           ? (focused ? 'swap-horizontal' : 'swap-horizontal-outline')
           : route.name === 'Assistant'
           ? (focused ? 'chatbubble-ellipses' : 'chatbubble-ellipses-outline')
+          : route.name === 'Ringtones'
+          ? (focused ? 'musical-notes' : 'musical-notes-outline')
           : 'ellipse';
         return (
           <TabItem
@@ -223,6 +228,13 @@ export default function App() {
               options={{ title: 'Assistent' }}
             >
               {() => <AssistantScreen />}
+            </Tab.Screen>
+
+            <Tab.Screen
+              name="Ringtones"
+              options={{ title: t('tabs.ringtones') }}
+            >
+              {() => <RingtonesScreen {...sharedProps} />}
             </Tab.Screen>
 
             <Tab.Screen

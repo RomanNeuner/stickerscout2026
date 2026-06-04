@@ -1,234 +1,122 @@
-import { STICKER_TYPE, RARITY, TEAMS } from './stickerTypes';
-
 /**
- * Full WM 2026 sticker catalog — 728 stickers total.
- *
- * Structure per team (14 stickers):
- *   - 1 × LOGO sticker      (e.g. "AUT-LOGO")
- *   - 1 × FOIL group shot   (e.g. "AUT-FOIL")
- *   - 12 × NORMAL players   (e.g. "AUT-1" … "AUT-12")
- *
- * Priority teams (AT, DE, CH, ENG, USA) have real player names.
- * All other teams use placeholder names — update via OTA after launch.
- *
- * Global sticker numbers (1–728) are assigned sequentially by team order.
+ * StickerScout 2026 — Official Panini WC 2026 Sticker Catalog v7.0
+ * Base: 980 stickers | CC: 12 Coca-Cola | Extra: 20 rare | Total: 1,012
+ * ID format: AUT4, CC2, EXTRA5, FWC3, 00
  */
 
-// ---------------------------------------------------------------------------
-// Priority teams: real squads
-// ---------------------------------------------------------------------------
+import DB from '../../sticker_db_wc2026.json';
 
-const AUT_PLAYERS = [
-  'Patrick Pentz', 'Heinz Lindner', 'Philipp Köhn',
-  'Aleksandar Dragović', 'Stefan Posch', 'Philipp Lienhart',
-  'Kevin Danso', 'Maximilian Wöber', 'Phillipp Mwene',
-  'David Alaba', 'Florian Grillitsch', 'Konrad Laimer',
-  'Marcel Sabitzer', 'Christoph Baumgartner', 'Marko Arnautovic',
-  'Michael Gregoritsch', 'Andreas Weimann', 'Patrick Wimmer',
-];
+export const STICKER_DB = DB;
 
-const GER_PLAYERS = [
-  'Manuel Neuer', 'Marc-André ter Stegen', 'Oliver Baumann',
-  'Antonio Rüdiger', 'Jonathan Tah', 'Niklas Süle',
-  'David Raum', 'Thilo Kehrer', 'Benjamin Henrichs',
-  'Joshua Kimmich', 'Leon Goretzka', 'Ilkay Gündogan',
-  'Jamal Musiala', 'Florian Wirtz', 'Kai Havertz',
-  'Serge Gnabry', 'Leroy Sané', 'Thomas Müller',
-];
-
-const CHE_PLAYERS = [
-  'Yann Sommer', 'Gregor Kobel', 'Yvon Mvogo',
-  'Fabian Schär', 'Manuel Akanji', 'Nico Elvedi',
-  'Ricardo Rodriguez', 'Silvan Widmer', 'Loris Benito',
-  'Granit Xhaka', 'Remo Freuler', 'Denis Zakaria',
-  'Xherdan Shaqiri', 'Ruben Vargas', 'Djibril Sow',
-  'Haris Seferovic', 'Breel Embolo', 'Noah Okafor',
-];
-
-const ENG_PLAYERS = [
-  'Jordan Pickford', 'Nick Pope', 'Aaron Ramsdale',
-  'Reece James', 'Kyle Walker', 'John Stones',
-  'Harry Maguire', 'Luke Shaw', 'Ben Chilwell',
-  'Declan Rice', 'Jude Bellingham', 'Trent Alexander-Arnold',
-  'Phil Foden', 'Bukayo Saka', 'Marcus Rashford',
-  'Harry Kane', 'Raheem Sterling', 'Jack Grealish',
-];
-
-const USA_PLAYERS = [
-  'Matt Turner', 'Zack Steffen', 'Ethan Horvath',
-  'Sergino Dest', 'DeAndre Yedlin', 'Miles Robinson',
-  'Walker Zimmerman', 'Chris Richards', 'Joe Scally',
-  'Tyler Adams', 'Weston McKennie', 'Yunus Musah',
-  'Christian Pulisic', 'Timothy Weah', 'Gio Reyna',
-  'Ricardo Pepi', 'Josh Sargent', 'Folarin Balogun',
-];
-
-// ---------------------------------------------------------------------------
-// Catalog builder
-// ---------------------------------------------------------------------------
-
-function buildTeamStickers(teamCode, players, startNumber) {
-  const team = TEAMS[teamCode];
-  const stickers = [];
-  let num = startNumber;
-
-  // Logo sticker
-  stickers.push({
-    id: `${teamCode}-LOGO`,
-    number: num++,
-    playerName: null,
-    team: teamCode,
-    teamNameDE: team.nameDE,
-    teamNameEN: team.name,
-    group: team.group,
-    type: STICKER_TYPE.LOGO,
-    rarity: RARITY.COMMON,
-    imageUrl: null,
-  });
-
-  // Foil sticker
-  stickers.push({
-    id: `${teamCode}-FOIL`,
-    number: num++,
-    playerName: `${team.name} — Team`,
-    team: teamCode,
-    teamNameDE: team.nameDE,
-    teamNameEN: team.name,
-    group: team.group,
-    type: STICKER_TYPE.FOIL,
-    rarity: RARITY.FOIL,
-    imageUrl: null,
-  });
-
-  // 12 player stickers
-  for (let i = 0; i < 12; i++) {
-    const playerName = players[i] ?? `${team.name} Player ${i + 1}`;
-    stickers.push({
-      id: `${teamCode}-${i + 1}`,
-      number: num++,
-      playerName,
-      team: teamCode,
-      teamNameDE: team.nameDE,
-      teamNameEN: team.name,
-      group: team.group,
-      type: STICKER_TYPE.NORMAL,
-      rarity: RARITY.COMMON,
-      imageUrl: null,
-    });
-  }
-
-  return stickers;
-}
-
-// Team order (matches group order from GROUPS)
-const TEAM_ORDER = [
-  // Group A
-  'USA', 'MEX', 'CAN', 'ARG',
-  // Group B
-  'BRA', 'URU', 'COL', 'ECU',
-  // Group C
-  'ENG', 'FRA', 'NED', 'AUS',
-  // Group D
-  'GER', 'AUT', 'CHE', 'SRB',
-  // Group E
-  'ESP', 'POR', 'MAR', 'TUN',
-  // Group F
-  'BEL', 'DEN', 'POL', 'SEN',
-  // Group G
-  'JPN', 'KOR', 'IRN', 'SAU',
-  // Group H
-  'NGA', 'GHA', 'CMR', 'EGY',
-  // Group I
-  'ITA', 'CRO', 'SVK', 'ALB',
-  // Group J
-  'QAT', 'IRQ', 'JOR', 'UAE',
-  // Group K
-  'CIV', 'MLI', 'SUD', 'TAN',
-  // Group L
-  'NZL', 'PAN', 'HON', 'VEN',
-];
-
-// Player rosters (priority teams have real names, others use [])
-const PLAYER_ROSTERS = {
-  USA: USA_PLAYERS,
-  ENG: ENG_PLAYERS,
-  GER: GER_PLAYERS,
-  AUT: AUT_PLAYERS,
-  CHE: CHE_PLAYERS,
-  // All other teams: placeholders
-  MEX: ['Guillermo Ochoa', 'Raúl Jiménez', 'Hirving Lozano', 'Edson Álvarez'],
-  CAN: ['Alphonso Davies', 'Jonathan David', 'Tajon Buchanan', 'Cyle Larin'],
-  ARG: ['Lionel Messi', 'Lautaro Martínez', 'Rodrigo De Paul', 'Julián Álvarez'],
-  BRA: ['Alisson', 'Vinicius Jr.', 'Neymar', 'Rodrygo'],
-  URU: ['Luis Suárez', 'Darwin Núñez', 'Federico Valverde', 'Rodrigo Bentancur'],
-  COL: ['James Rodríguez', 'Luis Díaz', 'Falcao', 'Cuadrado'],
-  ECU: ['Enner Valencia', 'Moisés Caicedo', 'Ángel Mena'],
-  FRA: ['Kylian Mbappé', 'Antoine Griezmann', 'Karim Benzema', 'N\'Golo Kanté'],
-  NED: ['Virgil van Dijk', 'Memphis Depay', 'Frenkie de Jong', 'Cody Gakpo'],
-  AUS: ['Mathew Ryan', 'Mathew Leckie', 'Aaron Mooy'],
-  SRB: ['Aleksandar Mitrović', 'Sergej Milinković-Savić', 'Dušan Vlahović'],
-  ESP: ['Gavi', 'Pedri', 'Álvaro Morata', 'Ferran Torres'],
-  POR: ['Cristiano Ronaldo', 'Bruno Fernandes', 'Bernardo Silva', 'João Félix'],
-  MAR: ['Achraf Hakimi', 'Hakim Ziyech', 'Youssef En-Nesyri'],
-  TUN: ['Youssef Msakni', 'Wahbi Khazri'],
-  BEL: ['Kevin De Bruyne', 'Romelu Lukaku', 'Thibaut Courtois', 'Eden Hazard'],
-  DEN: ['Christian Eriksen', 'Pierre-Emile Højbjerg', 'Kasper Schmeichel'],
-  POL: ['Robert Lewandowski', 'Piotr Zieliński', 'Wojciech Szczęsny'],
-  SEN: ['Sadio Mané', 'Kalidou Koulibaly', 'Édouard Mendy'],
-  JPN: ['Takumi Minamino', 'Kaoru Mitoma', 'Maya Yoshida'],
-  KOR: ['Son Heung-min', 'Hwang Hee-chan', 'Kim Min-jae'],
-  IRN: ['Mehdi Taremi', 'Alireza Jahanbakhsh', 'Sardar Azmoun'],
-  SAU: ['Salem Al-Dawsari', 'Mohammed Al-Deayea'],
-  NGA: ['Victor Osimhen', 'Wilfred Ndidi', 'Kelechi Iheanacho'],
-  GHA: ['Andre Ayew', 'Jordan Ayew', 'Thomas Partey'],
-  CMR: ['Vincent Aboubakar', 'André Onana', 'Eric Maxim Choupo-Moting'],
-  EGY: ['Mohamed Salah', 'Mohamed Elneny', 'Essam El-Hadary'],
-  ITA: ['Gianluigi Donnarumma', 'Federico Chiesa', 'Marco Verratti', 'Ciro Immobile'],
-  CRO: ['Luka Modrić', 'Ivan Perišić', 'Mateo Kovačić', 'Dejan Lovren'],
-  SVK: ['Marek Hamšík', 'Milan Škriniar', 'Ondrej Duda'],
-  ALB: ['Armando Broja', 'Kristjan Asllani'],
-  QAT: ['Akram Afif', 'Hassan Al-Haydos', 'Almoez Ali'],
-  IRQ: ['Mohanad Ali', 'Amjad Attwan'],
-  JOR: ['Yazan Al-Naimat', 'Baha' Faisal'],
-  UAE: ['Caio Canedo', 'Khalil Al-Hammadi'],
-  CIV: ['Sébastien Haller', 'Wilfried Zaha', 'Franck Kessié'],
-  MLI: ['Moussa Diaby', 'Adama Traoré', 'Hamari Traoré'],
-  SUD: ['Issam Merghani'],
-  TAN: ['Mbwana Samatta', 'Simon Msuva'],
-  NZL: ['Chris Wood', 'Liberato Cacace'],
-  PAN: ['Rolando Blackburn', 'Édgar Bárcenas'],
-  HON: ['Alberth Elis', 'Romell Quioto'],
-  VEN: ['Rómulo Otero', 'Salomón Rondón', 'Tomás Rincón'],
+// Map full team name → team code (for CC stickers in DB v7.0)
+const TEAM_NAME_TO_CODE = {
+  'Spain': 'ESP', 'Germany': 'GER', 'France': 'FRA', 'Croatia': 'CRO',
+  'Uruguay': 'URU', 'Netherlands': 'NED', 'Canada': 'CAN', 'Mexico': 'MEX',
+  'Argentina': 'ARG', 'England': 'ENG', 'USA': 'USA', 'Brazil': 'BRA',
+  'Portugal': 'POR', 'Belgium': 'BEL', 'Italy': 'ITA', 'Japan': 'JPN',
 };
 
-// Build the full catalog
-let globalNumber = 1;
-export const STICKER_CATALOG = [];
+// Coca-Cola special stickers (CC1–CC12) — normalized with team codes
+export const CC_STICKERS = (DB.coca_cola_stickers ?? []).map(s => ({
+  ...s,
+  teamName: s.team,
+  team: TEAM_NAME_TO_CODE[s.team] ?? s.team,
+  type: 'coca_cola',
+}));
 
-for (const teamCode of TEAM_ORDER) {
-  const players = PLAYER_ROSTERS[teamCode] ?? [];
-  const teamStickers = buildTeamStickers(teamCode, players, globalNumber);
-  STICKER_CATALOG.push(...teamStickers);
-  globalNumber += teamStickers.length;
-}
+// Extra stickers (EXTRA1–EXTRA20) — 1:100 packs, ultra rare
+export const EXTRA_STICKERS = (DB.extra_stickers ?? []).map(s => ({
+  ...s,
+  team: null,
+  teamName: null,
+  type: 'extra',
+  rarity: 'ultra_rare',
+}));
 
-// Quick lookup maps
+export const TOTAL_STICKERS = 980;
+export const TOTAL_CC = 12;
+export const TOTAL_EXTRA = 20;
+export const TOTAL_ALL = 1012; // 980 + 12 + 20
+
+// Flat lookup map for all stickers
 export const STICKER_BY_ID = {};
-export const STICKER_BY_NUMBER = {};
 
-for (const s of STICKER_CATALOG) {
+// Intro stickers
+for (const s of DB.intro_stickers) {
+  STICKER_BY_ID[s.id] = { ...s, team: null, teamName: null, group: null };
+}
+
+// Team stickers
+for (const team of DB.teams) {
+  for (const s of team.stickers) {
+    STICKER_BY_ID[s.id] = { ...s, team: team.code, teamName: team.name, group: team.group };
+  }
+}
+
+// CC stickers
+for (const s of CC_STICKERS) {
   STICKER_BY_ID[s.id] = s;
-  STICKER_BY_NUMBER[s.number] = s;
 }
 
-// Returns all stickers for a given team code
+// Extra stickers
+for (const s of EXTRA_STICKERS) {
+  STICKER_BY_ID[s.id] = s;
+}
+
+// Groups map: { A: ['MEX','RSA','KOR','CZE'], ... }
+export const GROUPS = DB.groups;
+
+// Teams map
+export const TEAMS_MAP = {};
+for (const team of DB.teams) {
+  TEAMS_MAP[team.code] = team;
+}
+
+/**
+ * Universal sticker lookup — handles all ID formats:
+ * "AUT4", "FWC3", "00", "CC2", "EXTRA5"
+ */
+export function lookupSticker(scannedCode) {
+  if (!scannedCode) return null;
+  const code = scannedCode.trim().toUpperCase();
+
+  // Direct lookup first (fastest)
+  if (STICKER_BY_ID[code]) return STICKER_BY_ID[code];
+
+  // Coca-Cola
+  if (code.startsWith('CC')) {
+    return CC_STICKERS.find(s => s.id === code) ?? null;
+  }
+
+  // Extra
+  if (code.startsWith('EXTRA')) {
+    return EXTRA_STICKERS.find(s => s.id === code) ?? null;
+  }
+
+  // Intro / Museum
+  if (code.startsWith('FWC') || code === '00') {
+    return DB.intro_stickers.find(s => s.id === code) ?? null;
+  }
+
+  // Team sticker: e.g. GER10 → teamCode=GER, num=10
+  const match = code.match(/^([A-Z]+)(\d+)$/);
+  if (!match) return null;
+  const [, teamCode] = match;
+  const team = DB.teams.find(t => t.code === teamCode);
+  if (!team) return null;
+  const sticker = team.stickers.find(s => s.id === code);
+  return sticker ? { ...sticker, team: team.code, teamName: team.name, group: team.group } : null;
+}
+
+// Get all stickers for a team
 export function getTeamStickers(teamCode) {
-  return STICKER_CATALOG.filter(s => s.team === teamCode);
+  const team = TEAMS_MAP[teamCode];
+  if (!team) return [];
+  return team.stickers.map(s => ({ ...s, team: team.code, teamName: team.name, group: team.group }));
 }
 
-// Returns stickers for an entire group
+// Get all stickers for a group
 export function getGroupStickers(groupLetter) {
-  return STICKER_CATALOG.filter(s => s.group === groupLetter);
+  const teamCodes = GROUPS[groupLetter] ?? [];
+  return teamCodes.flatMap(code => getTeamStickers(code));
 }
-
-export const TOTAL_STICKERS = STICKER_CATALOG.length;

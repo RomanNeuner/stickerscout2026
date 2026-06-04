@@ -2,17 +2,19 @@ import React, { useState } from 'react';
 import {
   View, Text, StyleSheet, SectionList, TouchableOpacity,
 } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { LinearGradient } from 'expo-linear-gradient';
 
 import { COLORS, GRADIENTS, FONTS, SPACING, RADIUS, SHADOWS } from '../theme';
 import { GROUP_MATCHES, KNOCKOUT_MATCHES, STAGE } from '../data/schedule';
-import { TEAMS } from '../data/stickerTypes';
+import { TEAM_FLAGS } from '../data/stickerTypes';
 
 const TABS = ['group', 'knockout'];
 
 export default function ScheduleScreen() {
   const { t, i18n } = useTranslation();
+  const insets = useSafeAreaInsets();
   const [activeTab, setActiveTab] = useState('group');
   const [predictions, setPredictions] = useState({});
 
@@ -25,7 +27,7 @@ export default function ScheduleScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingTop: insets.top }]}>
       {/* Stage tabs */}
       <LinearGradient colors={GRADIENTS.greenHeader} style={styles.tabBar}>
         {TABS.map(tab => (
@@ -65,8 +67,8 @@ export default function ScheduleScreen() {
 
 function MatchCard({ match, prediction, onPredict }) {
   const { t } = useTranslation();
-  const homeTeam = TEAMS[match.home];
-  const awayTeam = TEAMS[match.away];
+  const homeFlag = TEAM_FLAGS[match.home] ?? '🏳️';
+  const awayFlag = TEAM_FLAGS[match.away] ?? '🏳️';
   const isKnockout = match.stage !== STAGE.GROUP;
 
   const formatDate = (dateStr) => {
@@ -84,7 +86,7 @@ function MatchCard({ match, prediction, onPredict }) {
           style={[styles.teamBtn, prediction === match.home && styles.teamBtnPicked]}
           onPress={() => onPredict(match.home)}
         >
-          <Text style={styles.teamFlag}>{homeTeam?.flag ?? '🏳️'}</Text>
+          <Text style={styles.teamFlag}>{homeFlag}</Text>
           <Text style={styles.teamCode}>{match.home}</Text>
         </TouchableOpacity>
 
@@ -97,7 +99,7 @@ function MatchCard({ match, prediction, onPredict }) {
           style={[styles.teamBtn, prediction === match.away && styles.teamBtnPicked]}
           onPress={() => onPredict(match.away)}
         >
-          <Text style={styles.teamFlag}>{awayTeam?.flag ?? '🏳️'}</Text>
+          <Text style={styles.teamFlag}>{awayFlag}</Text>
           <Text style={styles.teamCode}>{match.away}</Text>
         </TouchableOpacity>
       </View>
@@ -107,7 +109,7 @@ function MatchCard({ match, prediction, onPredict }) {
       {prediction && (
         <View style={styles.predRow}>
           <Text style={styles.predText}>
-            {t('schedule.yourPrediction')}: {TEAMS[prediction]?.flag} {prediction}
+            {t('schedule.yourPrediction')}: {TEAM_FLAGS[prediction] ?? '🏳️'} {prediction}
           </Text>
         </View>
       )}
@@ -161,9 +163,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: COLORS.border,
   },
-  tabActive: { backgroundColor: COLORS.greenDim, borderColor: COLORS.greenLight },
+  tabActive: { backgroundColor: COLORS.blueTint, borderColor: COLORS.borderBlue },
   tabText: { color: COLORS.textSecondary, fontSize: FONTS.sizes.md },
-  tabTextActive: { color: COLORS.greenBright, fontWeight: FONTS.weights.semibold },
+  tabTextActive: { color: COLORS.blue, fontWeight: FONTS.weights.semibold },
   list: { paddingBottom: SPACING.xxxl },
   sectionHeader: {
     backgroundColor: COLORS.surface,
@@ -172,7 +174,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: COLORS.border,
   },
-  sectionTitle: { color: COLORS.gold, fontSize: FONTS.sizes.md, fontWeight: FONTS.weights.bold },
+  sectionTitle: { color: COLORS.gold, fontSize: FONTS.sizes.xl, fontWeight: FONTS.weights.black, letterSpacing: 0.5 },
   matchCard: {
     backgroundColor: COLORS.bg,
     borderBottomWidth: 1,
@@ -180,22 +182,22 @@ const styles = StyleSheet.create({
     padding: SPACING.md,
     paddingHorizontal: SPACING.lg,
   },
-  matchDate: { color: COLORS.textMuted, fontSize: FONTS.sizes.xs, marginBottom: SPACING.sm },
+  matchDate: { color: COLORS.textPrimary, fontSize: FONTS.sizes.md, marginBottom: SPACING.sm, fontWeight: FONTS.weights.semibold },
   matchRow: { flexDirection: 'row', alignItems: 'center', marginBottom: SPACING.sm },
   teamBtn: {
     flex: 1,
     alignItems: 'center',
-    padding: SPACING.sm,
+    padding: SPACING.md,
     borderRadius: RADIUS.md,
     borderWidth: 1,
     borderColor: 'transparent',
   },
-  teamBtnPicked: { backgroundColor: COLORS.greenDeep, borderColor: COLORS.greenLight },
-  teamFlag: { fontSize: 28, marginBottom: 2 },
-  teamCode: { color: COLORS.textSecondary, fontSize: FONTS.sizes.sm, fontWeight: FONTS.weights.semibold },
+  teamBtnPicked: { backgroundColor: COLORS.blueTint, borderColor: COLORS.borderBlue },
+  teamFlag: { fontSize: 32, marginBottom: 4 },
+  teamCode: { color: COLORS.textPrimary, fontSize: FONTS.sizes.lg, fontWeight: FONTS.weights.bold },
   vsBox: { paddingHorizontal: SPACING.lg },
-  vsText: { color: COLORS.textMuted, fontSize: FONTS.sizes.md, fontWeight: FONTS.weights.black },
-  venue: { color: COLORS.textMuted, fontSize: FONTS.sizes.xs, marginBottom: SPACING.xs },
-  predRow: { backgroundColor: COLORS.greenDeep, borderRadius: RADIUS.sm, padding: SPACING.xs, paddingHorizontal: SPACING.md },
-  predText: { color: COLORS.greenBright, fontSize: FONTS.sizes.xs, fontWeight: FONTS.weights.semibold },
+  vsText: { color: COLORS.gold, fontSize: FONTS.sizes.lg, fontWeight: FONTS.weights.black },
+  venue: { color: COLORS.textSecondary, fontSize: FONTS.sizes.sm, marginBottom: SPACING.xs },
+  predRow: { backgroundColor: COLORS.blueTint, borderRadius: RADIUS.sm, padding: SPACING.xs, paddingHorizontal: SPACING.md },
+  predText: { color: COLORS.blue, fontSize: FONTS.sizes.sm, fontWeight: FONTS.weights.semibold },
 });

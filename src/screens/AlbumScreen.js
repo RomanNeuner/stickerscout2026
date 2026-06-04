@@ -1,44 +1,70 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useRef, useEffect } from 'react';
 import {
   View, Text, StyleSheet, FlatList, TouchableOpacity,
   TextInput, SectionList,
 } from 'react-native';
-import { useFocusEffect } from '@react-navigation/native';
+import { useFocusEffect, useRoute } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
 
 import { COLORS, GRADIENTS, FONTS, SPACING, RADIUS, SHADOWS } from '../theme';
-import { STICKER_CATALOG, TOTAL_STICKERS, getTeamStickers } from '../data/stickerCatalog';
-import { TEAMS, GROUPS } from '../data/stickerTypes';
-import { loadCollection, addToHave, addToNeed, addDuplicate } from '../services/storage';
+import { TOTAL_STICKERS, TOTAL_ALL_STICKERS, GROUPS, TEAMS_MAP, getTeamStickers, STICKER_DB, CC_STICKERS, EXTRA_STICKERS } from '../data/stickerCatalog';
+import { ADRENALYN_DB, SPECIAL_CARDS_FLAT, TOTAL_ADRENALYN, CARD_TYPE_LABELS, CARD_TYPE_COLORS } from '../data/adrenalynCatalog';
+import { TEAM_FLAGS } from '../data/stickerTypes';
+import { loadCollection, addToHave, addToNeed, addDuplicate, setStickerCount, getStickerCount, loadAdrenalynCollection, addAdrenalynCard, setAdrenalynCount, getAdrenalynCount } from '../services/storage';
 import StickerBadge from '../components/StickerBadge';
+import AppIcon from '../components/AppIcon';
 
 const FILTER = { ALL: 'all', OWNED: 'owned', MISSING: 'missing', DUPLICATES: 'duplicates' };
+const ALBUM_TAB = { STICKER: 'sticker', ADRENALYN: 'adrenalyn' };
 
 export default function AlbumScreen() {
   const { t } = useTranslation();
+  const route = useRoute();
+  const insets = useSafeAreaInsets();
+  const sectionListRef = useRef(null);
+  const [albumTab, setAlbumTab] = useState(ALBUM_TAB.STICKER);
   const [collection, setCollection] = useState({ have: [], need: [], duplicates: {} });
+  const [adrenalynColl, setAdrenalynColl] = useState({ have: [], duplicates: {} });
   const [filter, setFilter] = useState(FILTER.ALL);
   const [search, setSearch] = useState('');
-  const [expandedGroup, setExpandedGroup] = useState('D'); // DACH group open by default
+  const [expandedGroup, setExpandedGroup] = useState('J'); // Austria Group J open by default
+  const [highlightId, setHighlightId] = useState(null);
 
-  useFocusEffect(useCallback(() => { loadCollection().then(setCollection); }, []));
+  useFocusEffect(useCallback(() => {
+    loadCollection().then(setCollection);
+    loadAdrenalynCollection().then(setAdrenalynColl);
+  }, []));
+
+  // Handle navigation from Scanner — open correct group and highlight sticker
+  useEffect(() => {
+    const params = route.params;
+    if (params?.highlightGroup) {
+      setExpandedGroup(params.highlightGroup);
+      setFilter(FILTER.ALL);
+      setSearch('');
+      if (params.highlightStickerId) {
+        setHighlightId(params.highlightStickerId);
+        setTimeout(() => setHighlightId(null), 3000);
+      }
+    }
+  }, [route.params]);
 
   const totalOwned = collection.have.length;
   const percent = Math.round((totalOwned / TOTAL_STICKERS) * 100);
 
   // Build sections by group
   const sections = useMemo(() => {
-    return Object.entries(GROUPS).map(([groupLetter, groupData]) => {
-      const teamCodes = groupData.teams;
+    return Object.entries(GROUPS).map(([groupLetter, teamCodes]) => {
       // Get all stickers for all teams in this group, apply filter
       const stickers = teamCodes.flatMap(code => getTeamStickers(code)).filter(s => {
         const matchesSearch = !search ||
-          s.playerName?.toLowerCase().includes(search.toLowerCase()) ||
-          s.teamNameDE?.toLowerCase().includes(search.toLowerCase()) ||
-          s.teamNameEN?.toLowerCase().includes(search.toLowerCase()) ||
-          String(s.number).includes(search);
+          s.name?.toLowerCase().includes(search.toLowerCase()) ||
+          s.teamName?.toLowerCase().includes(search.toLowerCase()) ||
+          s.team?.toLowerCase().includes(search.toLowerCase()) ||
+          s.id?.toLowerCase().includes(search.toLowerCase());
         const matchesFilter =
           filter === FILTER.ALL ? true :
           filter === FILTER.OWNED ? collection.have.includes(s.id) :
@@ -75,8 +101,35 @@ export default function AlbumScreen() {
     return 'unknown';
   };
 
+  const adrenalynOwned = adrenalynColl.have?.length ?? 0;
+  const adrenalynPct   = Math.round((adrenalynOwned / TOTAL_ADRENALYN) * 100);
+
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingTop: insets.top }]}>
+      {/* Album Tab Switcher */}
+      <View style={styles.albumTabRow}>
+        <TouchableOpacity
+          style={[styles.albumTab, albumTab === ALBUM_TAB.STICKER && styles.albumTabActive]}
+          onPress={() => setAlbumTab(ALBUM_TAB.STICKER)}
+        >
+          <Text style={[styles.albumTabText, albumTab === ALBUM_TAB.STICKER && styles.albumTabTextActive]}>
+            📋 Sticker ({totalOwned}/{TOTAL_STICKERS})
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.albumTab, albumTab === ALBUM_TAB.ADRENALYN && styles.albumTabActive]}
+          onPress={() => setAlbumTab(ALBUM_TAB.ADRENALYN)}
+        >
+          <Text style={[styles.albumTabText, albumTab === ALBUM_TAB.ADRENALYN && styles.albumTabTextActive]}>
+            ⚡ Adrenalyn ({adrenalynOwned}/{TOTAL_ADRENALYN})
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      {albumTab === ALBUM_TAB.ADRENALYN ? (
+        <AdrenalynTab collection={adrenalynColl} onUpdate={setAdrenalynColl} />
+      ) : (<>
+
       {/* Progress Header */}
       <LinearGradient colors={GRADIENTS.greenHeader} style={styles.header}>
         <Text style={styles.progressText}>
@@ -92,7 +145,7 @@ export default function AlbumScreen() {
         <TextInput
           style={styles.searchInput}
           placeholder={t('album.search')}
-          placeholderTextColor={COLORS.textMuted}
+          placeholderTextColor={COLORS.textSecondary}
           value={search}
           onChangeText={setSearch}
         />
@@ -130,14 +183,87 @@ export default function AlbumScreen() {
           <StickerRow
             sticker={item}
             status={getStickerStatus(item)}
-            duplicateCount={collection.duplicates[item.id]}
+            count={getStickerCount(collection, item.id)}
             onPress={() => toggleSticker(item)}
+            onCountChange={async (n) => {
+              const col = await setStickerCount(item.id, n);
+              setCollection(col);
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            }}
+            highlighted={highlightId === item.id}
           />
         )}
         contentContainerStyle={styles.list}
         stickySectionHeadersEnabled
       />
+    </>)}
     </View>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Adrenalyn XL Tab
+// ---------------------------------------------------------------------------
+function AdrenalynTab({ collection, onUpdate }) {
+  const allCards = [
+    ...(ADRENALYN_DB.golden_ballers ?? []).map(c => ({ ...c, section: 'Golden Baller' })),
+    ...(ADRENALYN_DB.team_cards     ?? []).map(c => ({ ...c, section: 'Team Cards' })),
+    ...SPECIAL_CARDS_FLAT,
+  ];
+
+  const handleToggle = async (cardNumber) => {
+    const col = await addAdrenalynCard(cardNumber);
+    onUpdate(col);
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+  };
+
+  const handleCount = async (cardNumber, n) => {
+    const col = await setAdrenalynCount(cardNumber, n);
+    onUpdate(col);
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+  };
+
+  return (
+    <FlatList
+      data={allCards}
+      keyExtractor={c => String(c.number)}
+      contentContainerStyle={styles.list}
+      renderItem={({ item }) => {
+        const owned = collection.have?.includes(item.number);
+        const count = getAdrenalynCount(collection, item.number);
+        const typeColor = CARD_TYPE_COLORS[item.type] ?? COLORS.textMuted;
+        return (
+          <View style={styles.stickerRow}>
+            <TouchableOpacity
+              onPress={() => handleToggle(item.number)}
+              activeOpacity={0.7}
+              style={styles.stickerRowLeft}
+            >
+              <View style={[styles.statusDot, { backgroundColor: owned ? COLORS.green : COLORS.unknown }]} />
+              <Text style={[styles.stickerNum, { color: typeColor }]}>#{item.number}</Text>
+              <View style={styles.stickerMeta}>
+                <Text style={styles.stickerPlayer} numberOfLines={1}>{item.name}</Text>
+                <Text style={styles.stickerTeam}>
+                  <Text style={{ color: typeColor }}>{CARD_TYPE_LABELS[item.type] ?? item.type}</Text>
+                  {item.position ? `  ·  ${item.position}` : ''}
+                </Text>
+              </View>
+            </TouchableOpacity>
+            {owned && (
+              <View style={styles.countRow}>
+                <TouchableOpacity onPress={() => handleCount(item.number, Math.max(0, count - 1))} style={styles.countBtn} hitSlop={{ top: 8, bottom: 8, left: 4, right: 4 }}>
+                  <Text style={styles.countMinus}>−</Text>
+                </TouchableOpacity>
+                <Text style={styles.countVal}>{count}×</Text>
+                <TouchableOpacity onPress={() => handleCount(item.number, count + 1)} style={[styles.countBtn, styles.countBtnPlus]} hitSlop={{ top: 8, bottom: 8, left: 4, right: 4 }}>
+                  <Text style={styles.countPlus}>+</Text>
+                </TouchableOpacity>
+              </View>
+            )}
+          </View>
+        );
+      }}
+    />
   );
 }
 
@@ -148,7 +274,7 @@ function GroupHeader({ section, expanded, onPress }) {
 
   return (
     <TouchableOpacity onPress={onPress} activeOpacity={0.8}>
-      <LinearGradient colors={['#111D14', '#192B1E']} style={styles.groupHeader}>
+      <LinearGradient colors={['#0D1F2D', '#122840']} style={styles.groupHeader}>
         <View style={styles.groupHeaderLeft}>
           <Text style={styles.groupTitle}>{section.title}</Text>
           <Text style={styles.groupSub}>{owned}/{total} · {pct}%</Text>
@@ -159,62 +285,92 @@ function GroupHeader({ section, expanded, onPress }) {
   );
 }
 
-function StickerRow({ sticker, status, duplicateCount, onPress }) {
+function StickerRow({ sticker, status, count, onPress, onCountChange, highlighted }) {
   const statusColor = status === 'owned' ? COLORS.owned : status === 'missing' ? COLORS.missing : COLORS.unknown;
-  const teamInfo = TEAMS[sticker.team];
+  const flag = sticker.team ? (TEAM_FLAGS[sticker.team] ?? '') : '🌍';
+  const owned = status === 'owned';
 
   return (
-    <TouchableOpacity onPress={onPress} activeOpacity={0.7}>
-      <View style={styles.stickerRow}>
+    <View style={[styles.stickerRow, highlighted && styles.stickerRowHighlighted]}>
+      {/* Linke Zone: Tap zum Hinzufügen/Status ändern */}
+      <TouchableOpacity
+        onPress={onPress}
+        activeOpacity={0.7}
+        style={styles.stickerRowLeft}
+      >
         <View style={[styles.statusDot, { backgroundColor: statusColor }]} />
-        <Text style={styles.stickerNum}>#{sticker.number}</Text>
+        <Text style={styles.stickerNum}>{sticker.id}</Text>
         <View style={styles.stickerMeta}>
           <View style={styles.stickerNameRow}>
-            <Text style={styles.stickerPlayer} numberOfLines={1}>
-              {sticker.playerName ?? `${teamInfo?.flag ?? ''} ${sticker.teamNameDE}`}
-            </Text>
-            <StickerBadge type={sticker.type} />
+            <Text style={styles.stickerPlayer} numberOfLines={1}>{sticker.name}</Text>
+            {sticker.foil && <Text style={styles.foilBadge}>✨</Text>}
           </View>
-          <Text style={styles.stickerTeam}>{teamInfo?.flag} {sticker.teamNameDE}</Text>
+          <Text style={styles.stickerTeam}>{flag} {sticker.teamName ?? ''}</Text>
         </View>
-        {duplicateCount && (
-          <View style={styles.dupBadge}>
-            <Text style={styles.dupText}>{duplicateCount}×</Text>
-          </View>
-        )}
-      </View>
-    </TouchableOpacity>
+      </TouchableOpacity>
+
+      {/* Rechte Zone: +/- unabhängig vom Row-Tap */}
+      {owned && (
+        <View style={styles.countRow}>
+          <TouchableOpacity
+            onPress={() => onCountChange(Math.max(0, count - 1))}
+            style={styles.countBtn}
+            hitSlop={{ top: 8, bottom: 8, left: 4, right: 4 }}
+          >
+            <Text style={styles.countMinus}>−</Text>
+          </TouchableOpacity>
+          <Text style={styles.countVal}>{count}×</Text>
+          <TouchableOpacity
+            onPress={() => onCountChange(count + 1)}
+            style={[styles.countBtn, styles.countBtnPlus]}
+            hitSlop={{ top: 8, bottom: 8, left: 4, right: 4 }}
+          >
+            <Text style={styles.countPlus}>+</Text>
+          </TouchableOpacity>
+        </View>
+      )}
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.bg },
+  // Album Tab Switcher
+  albumTabRow: { flexDirection: 'row', backgroundColor: COLORS.bg, borderBottomWidth: 0.5, borderBottomColor: COLORS.border },
+  albumTab: { flex: 1, paddingVertical: SPACING.md, alignItems: 'center' },
+  albumTabActive: { borderBottomWidth: 2, borderBottomColor: COLORS.gold },
+  albumTabText: { color: COLORS.textSecondary, fontSize: FONTS.sizes.lg, fontWeight: '600' },
+  albumTabTextActive: { color: COLORS.gold, fontSize: FONTS.sizes.lg, fontWeight: '800' },
+
   header: { padding: SPACING.lg, paddingTop: SPACING.xl },
   progressText: { color: COLORS.textPrimary, fontSize: FONTS.sizes.md, fontWeight: FONTS.weights.semibold, marginBottom: SPACING.sm },
   progressBar: { height: 6, backgroundColor: COLORS.border, borderRadius: RADIUS.full, overflow: 'hidden' },
   progressFill: { height: '100%', backgroundColor: COLORS.gold, borderRadius: RADIUS.full },
-  searchRow: { padding: SPACING.md, backgroundColor: COLORS.surface },
+  searchRow: { paddingHorizontal: SPACING.md, paddingVertical: SPACING.sm, backgroundColor: COLORS.surface },
   searchInput: {
-    backgroundColor: COLORS.surfaceRaised,
+    backgroundColor: 'rgba(255,255,255,0.10)',
     color: COLORS.textPrimary,
     padding: SPACING.md,
+    paddingHorizontal: SPACING.lg,
     borderRadius: RADIUS.md,
-    fontSize: FONTS.sizes.md,
+    fontSize: FONTS.sizes.lg,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: 'rgba(255,255,255,0.18)',
   },
-  filterRow: { flexDirection: 'row', backgroundColor: COLORS.surface, paddingHorizontal: SPACING.md, paddingBottom: SPACING.sm, gap: SPACING.sm },
+  filterRow: { flexDirection: 'row', backgroundColor: COLORS.surface, paddingHorizontal: SPACING.md, paddingBottom: SPACING.md, paddingTop: SPACING.xs, gap: SPACING.sm },
   filterTab: {
-    paddingVertical: SPACING.xs,
-    paddingHorizontal: SPACING.md,
+    flex: 1,
+    paddingVertical: SPACING.sm,
+    paddingHorizontal: SPACING.sm,
     borderRadius: RADIUS.full,
-    backgroundColor: COLORS.surfaceRaised,
+    backgroundColor: 'rgba(255,255,255,0.07)',
     borderWidth: 1,
-    borderColor: COLORS.border,
+    borderColor: 'rgba(255,255,255,0.12)',
+    alignItems: 'center',
   },
-  filterTabActive: { backgroundColor: COLORS.greenDim, borderColor: COLORS.greenLight },
-  filterLabel: { color: COLORS.textSecondary, fontSize: FONTS.sizes.sm },
-  filterLabelActive: { color: COLORS.greenBright, fontWeight: FONTS.weights.semibold },
+  filterTabActive: { backgroundColor: COLORS.blueTint, borderColor: COLORS.borderBlue },
+  filterLabel: { color: COLORS.textPrimary, fontSize: FONTS.sizes.md, fontWeight: '500' },
+  filterLabelActive: { color: COLORS.blue, fontWeight: '700' },
   list: { paddingBottom: SPACING.xxxl },
   groupHeader: {
     flexDirection: 'row',
@@ -225,24 +381,48 @@ const styles = StyleSheet.create({
     borderBottomColor: COLORS.border,
   },
   groupHeaderLeft: { flex: 1 },
-  groupTitle: { color: COLORS.textPrimary, fontSize: FONTS.sizes.lg, fontWeight: FONTS.weights.bold },
+  groupTitle: { color: COLORS.gold, fontSize: FONTS.sizes.lg, fontWeight: FONTS.weights.bold },
   groupSub: { color: COLORS.textSecondary, fontSize: FONTS.sizes.sm, marginTop: 2 },
   groupChevron: { color: COLORS.textMuted, fontSize: FONTS.sizes.md },
+  stickerRowHighlighted: {
+    backgroundColor: COLORS.blueTint,
+    borderLeftWidth: 3,
+    borderLeftColor: COLORS.gold,
+  },
   stickerRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: SPACING.md,
-    paddingHorizontal: SPACING.lg,
     borderBottomWidth: 1,
     borderBottomColor: COLORS.border,
     backgroundColor: COLORS.bg,
   },
+  stickerRowLeft: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: SPACING.md,
+    paddingHorizontal: SPACING.lg,
+  },
   statusDot: { width: 10, height: 10, borderRadius: RADIUS.full, marginRight: SPACING.md },
-  stickerNum: { color: COLORS.textMuted, fontSize: FONTS.sizes.sm, width: 40, fontWeight: FONTS.weights.semibold },
-  stickerMeta: { flex: 1 },
+  stickerNum: { color: COLORS.textMuted, fontSize: FONTS.sizes.xs, width: 48, fontWeight: '600' },
+  foilBadge: { fontSize: 12 },
+  stickerMeta: { flex: 1, marginRight: SPACING.sm },
   stickerNameRow: { flexDirection: 'row', alignItems: 'center', gap: SPACING.sm },
   stickerPlayer: { color: COLORS.textPrimary, fontSize: FONTS.sizes.md, flex: 1 },
   stickerTeam: { color: COLORS.textSecondary, fontSize: FONTS.sizes.sm, marginTop: 2 },
   dupBadge: { backgroundColor: COLORS.goldDeep, borderRadius: RADIUS.sm, paddingHorizontal: SPACING.sm, paddingVertical: 2 },
   dupText: { color: COLORS.gold, fontSize: FONTS.sizes.xs, fontWeight: FONTS.weights.bold },
+
+  // +/- Counter in Album-Zeile
+  countRow: { flexDirection: 'row', alignItems: 'center', gap: 2 },
+  countBtn: {
+    width: 28, height: 28, borderRadius: RADIUS.sm,
+    backgroundColor: COLORS.surfaceHigh,
+    alignItems: 'center', justifyContent: 'center',
+    borderWidth: 1, borderColor: COLORS.border,
+  },
+  countBtnPlus: { backgroundColor: COLORS.blueTint, borderColor: COLORS.borderBlue },
+  countMinus: { color: COLORS.red, fontSize: FONTS.sizes.lg, fontWeight: '700', lineHeight: 26 },
+  countPlus: { color: COLORS.greenBright, fontSize: FONTS.sizes.lg, fontWeight: '700', lineHeight: 26 },
+  countVal: { color: COLORS.gold, fontSize: FONTS.sizes.sm, fontWeight: '700', minWidth: 26, textAlign: 'center' },
 });

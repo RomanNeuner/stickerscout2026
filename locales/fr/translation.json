@@ -1,0 +1,220 @@
+{
+  "tabs": {
+    "scanner": "Scanner",
+    "album": "Album",
+    "trade": "Échange",
+    "schedule": "Matchs",
+    "assistant": "Assistant",
+    "ringtones": "Sonneries",
+    "profile": "Profil"
+  },
+  "ringtones": {
+    "title": "Sonneries CM 2026",
+    "subtitle": "Chansons officielles de la Coupe 2026 — exclusives à l'app",
+    "previewNote": "Aperçu de 30 sec. gratuit",
+    "buy": "Acheter — 0,99 €",
+    "owned": "✓ Acheté",
+    "setRingtone": "Définir comme sonnerie",
+    "preview": "Aperçu",
+    "stop": "Arrêter",
+    "restore": "Restaurer les achats",
+    "song1": "Hymne CM 2026",
+    "song2": "Marche de la Victoire",
+    "song3": "Fièvre du Stade",
+    "iosHint": "Fichier enregistré dans Fichiers → définir via GarageBand comme sonnerie",
+    "androidHint": "Sonnerie sauvegardée directement dans les sons système"
+  },
+  "scanner": {
+    "title": "Scanner de Stickers",
+    "subtitle": "Pointez la caméra sur le numéro du sticker",
+    "scan": "Scanner",
+    "scanning": "Reconnaissance…",
+    "manualEntry": "Saisir le numéro",
+    "manualPlaceholder": "ex. FRA4 ou FWC3",
+    "manualConfirm": "Confirmer",
+    "result": {
+      "found": "Sticker trouvé !",
+      "notFound": "Sticker non trouvé",
+      "addToHave": "Ajouter à mes stickers",
+      "addToNeed": "Ajouter à ma liste",
+      "addDuplicate": "Marquer comme doublon",
+      "alreadyOwned": "Déjà possédé"
+    },
+    "limits": {
+      "daily": "Limite quotidienne atteinte",
+      "upgradeHint": "Premium pour des scans illimités"
+    }
+  },
+  "album": {
+    "title": "Mon Album",
+    "progress": "{{owned}} / {{total}} — {{percent}}% complet",
+    "tabSticker": "📋 Stickers ({{owned}}/{{total}})",
+    "tabAdrenalyn": "⚡ Adrenalyn ({{owned}}/{{total}})",
+    "filter": {
+      "all": "Tous",
+      "owned": "J'ai",
+      "missing": "Cherche",
+      "duplicates": "Doublons"
+    },
+    "search": "Chercher équipe ou joueur",
+    "teamProgress": "{{team}} : {{owned}}/{{count}}",
+    "groups": {
+      "A": "Groupe A", "B": "Groupe B", "C": "Groupe C",
+      "D": "Groupe D", "E": "Groupe E", "F": "Groupe F",
+      "G": "Groupe G", "H": "Groupe H", "I": "Groupe I",
+      "J": "Groupe J", "K": "Groupe K", "L": "Groupe L"
+    },
+    "types": {
+      "NORMAL": "Normal", "FOIL": "Holographique", "LOGO": "Logo", "STADIUM": "Stade"
+    },
+    "sticker": {
+      "owned": "Possédé", "missing": "Manquant", "duplicate": "{{count}}× Doublon"
+    }
+  },
+  "trade": {
+    "title": "Bourse d'échange",
+    "noOffers": "Aucune offre à proximité",
+    "createOffer": "Créer une offre",
+    "myOffers": "Mes offres",
+    "nearbyOffers": "À proximité",
+    "radius": {
+      "label": "Rayon de recherche",
+      "1km": "1 km",
+      "5km": "5 km",
+      "10km": "10 km",
+      "anywhere": "Partout"
+    },
+    "offer": {
+      "iOffer": "J'offre",
+      "iNeed": "Je cherche",
+      "distance": "{{km}} km",
+      "contact": "Contacter",
+      "match": "Correspondance trouvée ! 🎉",
+      "complete": "Échange terminé"
+    },
+    "limits": {
+      "maxOffers": "Limite : 5 offres actives",
+      "upgradeHint": "Premium pour des offres illimitées"
+    },
+    "chat": {
+      "title": "Chat d'échange",
+      "placeholder": "Écrire un message…",
+      "send": "Envoyer"
+    }
+  },
+  "schedule": {
+    "title": "Calendrier CM 2026",
+    "groupStage": "Phase de groupes",
+    "knockout": "Phase finale",
+    "roundOf16": "Huitièmes de finale",
+    "quarterfinal": "Quarts de finale",
+    "semifinal": "Demi-finale",
+    "final": "Finale",
+    "thirdPlace": "Match pour la 3e place",
+    "predict": "Faire un pronostic",
+    "yourPrediction": "Votre pronostic",
+    "matchday": "Journée {{day}}",
+    "kickoff": "Coup d'envoi {{time}}",
+    "relatedStickers": "Stickers de ces équipes"
+  },
+  "profile": {
+    "title": "Profil",
+    "albumStats": "Statistiques de l'album",
+    "completion": "{{percent}}% terminé",
+    "teamsComplete": "{{count}} équipes complètes",
+    "share": "Partager la progression",
+    "shareText": "J'ai complété {{percent}}% de l'album Panini CM 2026 ! 🏆 Il me manque encore {{missing}} stickers.\n\nSuivez votre progression avec StickerScout 2026 :\n📱 iOS : https://apps.apple.com/at/app/stickerscout-2026/id6775562727\n🤖 Android : https://play.google.com/store/apps/details?id=at.ncn.stickerscout2026",
+    "settings": {
+      "title": "Paramètres",
+      "language": "Langue",
+      "matchRadius": "Rayon d'échange",
+      "notifications": "Notifications",
+      "premium": "Premium"
+    },
+    "estimatedCost": "Coût estimé pour compléter : ~€{{amount}}",
+    "packsNeeded": "Environ {{packs}} pochettes restantes"
+  },
+  "onboarding": {
+    "skip": "Passer",
+    "next": "Suivant",
+    "start": "Commencer",
+    "tagline": "Scanner. Échanger. Collectionner.",
+    "feature1": "Scanner",
+    "feature2": "Échanger",
+    "feature3": "Collectionner",
+    "slide1": {
+      "title": "Scanner IA",
+      "text": "Photographiez le numéro du sticker — l'IA le reconnaît instantanément."
+    },
+    "slide2": {
+      "title": "Votre Album",
+      "text": "Gérez tous vos stickers. Voyez d'un coup d'œil ce que vous avez et ce qui manque."
+    },
+    "slide3": {
+      "title": "Échange",
+      "text": "Trouvez des partenaires d'échange près de chez vous et échangez vos doublons."
+    }
+  },
+  "paywall": {
+    "title": "StickerScout Premium",
+    "subtitle": "Le compagnon complet de la CM 2026",
+    "monthly": "Mensuel",
+    "season": "Pass saison",
+    "monthlyPrice": "1,99 € / mois",
+    "seasonPrice": "4,99 € paiement unique",
+    "seasonBadge": "Meilleure offre",
+    "features": {
+      "scanner": "Scanner illimité",
+      "offers": "Offres illimitées",
+      "radius": "Rayon élargi (50km+)",
+      "backup": "Sauvegarde et export",
+      "early": "Accès anticipé"
+    },
+    "purchase": "Débloquer maintenant",
+    "restore": "Restaurer l'achat",
+    "terms": "CGU & confidentialité"
+  },
+  "common": {
+    "cancel": "Annuler",
+    "confirm": "Confirmer",
+    "save": "Enregistrer",
+    "delete": "Supprimer",
+    "close": "Fermer",
+    "loading": "Chargement…",
+    "error": "Erreur",
+    "retry": "Réessayer",
+    "ok": "OK",
+    "yes": "Oui",
+    "no": "Non",
+    "free": "Gratuit",
+    "premium": "Premium"
+  },
+  "sticker": {
+    "number": "Sticker #{{number}}",
+    "foil": "Sticker holographique ✨",
+    "logo": "Logo",
+    "stadium": "Stade"
+  },
+  "assistant": {
+    "title": "Assistant StickerScout",
+    "subtitle": "Propulsé par Claude AI",
+    "greeting": "Bonjour ! Je suis votre assistant StickerScout. Comment puis-je vous aider ?",
+    "placeholder": "Poser une question…",
+    "error": "Erreur de connexion. Veuillez réessayer.",
+    "suggestions": {
+      "1": "Quels stickers me manquent du Groupe A ?",
+      "2": "Combien de pochettes me faut-il encore ?",
+      "3": "Quels sont les stickers les plus rares ?",
+      "4": "Explique-moi les types de cartes Adrenalyn.",
+      "5": "Quand joue la France ?"
+    }
+  },
+  "adrenalyn": {
+    "title": "Adrenalyn XL",
+    "types": {
+      "GOLDEN_BALLER": "Golden Baller", "FF": "Fan Favourite",
+      "TEAM_CREST": "Team Crest", "IC": "Icon", "BASE": "Base",
+      "HERO": "Hero", "LIMITED_EDITION": "Édition Limitée", "CONTENDER": "Contender"
+    }
+  }
+}

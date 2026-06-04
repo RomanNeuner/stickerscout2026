@@ -1,0 +1,4134 @@
+{
+  "collection": "Panini Adrenalyn XL FIFA World Cup 2026",
+  "version": "2.2",
+  "source": "Offizielle Panini Checklist (Foto-Extraktion, verifiziert 03.06.2026)",
+  "last_updated": "2026-06-03",
+  "total_cards": 630,
+  "card_dimensions": {
+    "width_mm": 63,
+    "height_mm": 89
+  },
+  "card_types": {
+    "GOLDEN_BALLER": "Premium-Karte, die 9 besten Spieler (1-9)",
+    "FF": "Fan Favourite — erste Karte jedes Teams",
+    "TEAM_CREST": "Team-Wappen-Karte — zweite Karte jedes Teams",
+    "IC": "Icon — dritte Karte, Kapitän/Star des Teams",
+    "BASE": "Reguläre Spielerkarten",
+    "CONTENDER_MATCH": "Playoff-Bracket-Karte",
+    "CONTENDER": "Spielerkarte eines Playoff-Teams (5 pro Team)"
+  },
+  "structure_overview": {
+    "1-9": "Golden Ballers (9 Karten)",
+    "10-513": "42 Basis-Teams × 12 Karten (FF + Crest + IC + 9 Spieler)",
+    "514-549": "Contenders — 6 Playoff-Bracket-Karten + 6 Teams × 5 Spieler",
+    "550-558": "Top Keepers (9 Karten)",
+    "559-567": "Defensive Rocks (9 Karten)",
+    "568-585": "Midfield Maestros (18 Karten)",
+    "586-607": "Goal Machines (22 Karten)",
+    "608-623": "Master Rookies (16 Karten)",
+    "624-627": "Official Emblem + 3 Mascots",
+    "628-630": "Eternos 22 (Defenders / Midfielders / Forwards)"
+  },
+  "contender_teams_note": "SWE (Gruppe F: NED/JPN/SWE/TUN) und TUR (Gruppe D: USA/PAR/AUS/TUR) sind WM 2026 BESTÄTIGT — Sticker-Album verifiziert. Adrenalyn-Karten (540-549) sind Contender-Karten (5 Spieler, kein FF/Crest/IC) weil Produktion vor finaler Quali-Bestätigung.",
+  "update_set_note": "⚠️ NEU ENTDECKT: 'FIFA 2026 Card Update Set' (€15) — enthält 48 Hero Cards (1 pro Team) + 2 exklusive Limited Edition Cards (Gonçalo Ramos + Marc Cucurella 'VOLLGAS LIMITED'). Separates Produkt, eigene Nummerierung.",
+  "online_game": {
+    "url": "paniniadrenalyn.com",
+    "available_until": "2026-08-31",
+    "code_location": "Kartenrückseite"
+  },
+  "golden_ballers": [
+    {
+      "number": 1,
+      "name": "Lionel Messi",
+      "team": "ARG",
+      "type": "GOLDEN_BALLER",
+      "physical_card": true,
+      "design": "GOLD_FOIL",
+      "total_rating": 300,
+      "ratings": {
+        "ATT": 100,
+        "DEF": 100,
+        "SKL": 100
+      },
+      "label": "GOLDEN BALLER"
+    },
+    {
+      "number": 2,
+      "name": "Vinícius Júnior",
+      "team": "BRA",
+      "type": "GOLDEN_BALLER",
+      "physical_card": true,
+      "design": "GOLD_FOIL",
+      "total_rating": 300,
+      "ratings": {
+        "ATT": 100,
+        "DEF": 100,
+        "SKL": 100
+      },
+      "label": "GOLDEN BALLER"
+    },
+    {
+      "number": 3,
+      "name": "Mohamed Salah",
+      "team": "EGY",
+      "type": "GOLDEN_BALLER",
+      "physical_card": true,
+      "design": "GOLD_FOIL",
+      "total_rating": 300,
+      "ratings": {
+        "ATT": 100,
+        "DEF": 100,
+        "SKL": 100
+      },
+      "label": "GOLDEN BALLER"
+    },
+    {
+      "number": 4,
+      "name": "Harry Kane",
+      "team": "ENG",
+      "type": "GOLDEN_BALLER",
+      "physical_card": true,
+      "design": "GOLD_FOIL",
+      "total_rating": 300,
+      "ratings": {
+        "ATT": 100,
+        "DEF": 100,
+        "SKL": 100
+      },
+      "label": "GOLDEN BALLER"
+    },
+    {
+      "number": 5,
+      "name": "Kylian Mbappé",
+      "team": "FRA",
+      "type": "GOLDEN_BALLER",
+      "physical_card": true,
+      "design": "GOLD_FOIL",
+      "total_rating": 300,
+      "ratings": {
+        "ATT": 100,
+        "DEF": 100,
+        "SKL": 100
+      },
+      "label": "GOLDEN BALLER"
+    },
+    {
+      "number": 6,
+      "name": "Heung-min Son",
+      "team": "KOR",
+      "type": "GOLDEN_BALLER",
+      "physical_card": true,
+      "design": "GOLD_FOIL",
+      "total_rating": 300,
+      "ratings": {
+        "ATT": 100,
+        "DEF": 100,
+        "SKL": 100
+      },
+      "label": "GOLDEN BALLER"
+    },
+    {
+      "number": 7,
+      "name": "Erling Haaland",
+      "team": "NOR",
+      "type": "GOLDEN_BALLER",
+      "physical_card": true,
+      "design": "GOLD_FOIL",
+      "total_rating": 300,
+      "ratings": {
+        "ATT": 100,
+        "DEF": 100,
+        "SKL": 100
+      },
+      "label": "GOLDEN BALLER"
+    },
+    {
+      "number": 8,
+      "name": "Cristiano Ronaldo",
+      "team": "POR",
+      "type": "GOLDEN_BALLER",
+      "physical_card": true,
+      "design": "GOLD_FOIL",
+      "total_rating": 300,
+      "ratings": {
+        "ATT": 100,
+        "DEF": 100,
+        "SKL": 100
+      },
+      "label": "GOLDEN BALLER"
+    },
+    {
+      "number": 9,
+      "name": "Lamine Yamal",
+      "team": "ESP",
+      "type": "GOLDEN_BALLER",
+      "physical_card": true,
+      "design": "GOLD_FOIL",
+      "total_rating": 300,
+      "ratings": {
+        "ATT": 100,
+        "DEF": 100,
+        "SKL": 100
+      },
+      "label": "GOLDEN BALLER"
+    }
+  ],
+  "team_cards": [
+    {
+      "number": 10,
+      "name": "Rayan Aït-Nouri",
+      "type": "FF",
+      "position": "DEF"
+    },
+    {
+      "number": 11,
+      "name": "Team Crest Algeria",
+      "type": "TEAM_CREST"
+    },
+    {
+      "number": 12,
+      "name": "Riyad Mahrez",
+      "type": "IC",
+      "position": "MID"
+    },
+    {
+      "number": 13,
+      "name": "Alexis Guendouz",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 14,
+      "name": "Ramy Bensebaini",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 15,
+      "name": "Youcef Atal",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 16,
+      "name": "Aïssa Mandi",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 17,
+      "name": "Nabil Bentaleb",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 18,
+      "name": "Saïd Benrahma",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 19,
+      "name": "Amine Gouri",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 20,
+      "name": "Mohamed Amoura",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 21,
+      "name": "Baghdad Bounedjah",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 22,
+      "name": "Julián Álvarez",
+      "type": "FF",
+      "position": "FWD"
+    },
+    {
+      "number": 23,
+      "name": "Team Crest Argentina",
+      "type": "TEAM_CREST"
+    },
+    {
+      "number": 24,
+      "name": "Lionel Messi",
+      "type": "IC",
+      "position": "FWD"
+    },
+    {
+      "number": 25,
+      "name": "Emiliano Martínez",
+      "type": "BASE",
+      "position": "GK"
+    },
+    {
+      "number": 26,
+      "name": "Nahuel Molina",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 27,
+      "name": "Cristian Romero",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 28,
+      "name": "Nicolás Otamendi",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 29,
+      "name": "Enzo Fernández",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 30,
+      "name": "Alexis Mac Allister",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 31,
+      "name": "Rodrigo De Paul",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 32,
+      "name": "Giuliano Simeone",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 33,
+      "name": "Lautaro Martínez",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 34,
+      "name": "Harry Souttar",
+      "type": "FF",
+      "position": "DEF"
+    },
+    {
+      "number": 35,
+      "name": "Team Crest Australia",
+      "type": "TEAM_CREST"
+    },
+    {
+      "number": 36,
+      "name": "Mathew Ryan",
+      "type": "IC",
+      "position": "GK"
+    },
+    {
+      "number": 37,
+      "name": "Alessandro Circati",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 38,
+      "name": "Jordan Bos",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 39,
+      "name": "Lewis Miller",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 40,
+      "name": "Milos Degenek",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 41,
+      "name": "Jackson Irvine",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 42,
+      "name": "Riley McGree",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 43,
+      "name": "Aiden O'Neill",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 44,
+      "name": "Connor Metcalfe",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 45,
+      "name": "Craig Goodwin",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 46,
+      "name": "Marko Arnautović",
+      "type": "FF",
+      "position": "FWD"
+    },
+    {
+      "number": 47,
+      "name": "Team Crest Austria",
+      "type": "TEAM_CREST"
+    },
+    {
+      "number": 48,
+      "name": "David Alaba",
+      "type": "IC",
+      "position": "DEF"
+    },
+    {
+      "number": 49,
+      "name": "Alexander Schlager",
+      "type": "BASE",
+      "position": "GK"
+    },
+    {
+      "number": 50,
+      "name": "Kevin Danso",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 51,
+      "name": "Philipp Lienhart",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 52,
+      "name": "Konrad Laimer",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 53,
+      "name": "Nicolas Seiwald",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 54,
+      "name": "Marcel Sabitzer",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 55,
+      "name": "Florian Grillitsch",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 56,
+      "name": "Christoph Baumgartner",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 57,
+      "name": "Michael Gregoritch",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 58,
+      "name": "Youri Tielemans",
+      "type": "FF",
+      "position": "MID"
+    },
+    {
+      "number": 59,
+      "name": "Team Crest Belgium",
+      "type": "TEAM_CREST"
+    },
+    {
+      "number": 60,
+      "name": "Kevin De Bruyne",
+      "type": "IC",
+      "position": "MID"
+    },
+    {
+      "number": 61,
+      "name": "Thibaut Courtois",
+      "type": "BASE",
+      "position": "GK"
+    },
+    {
+      "number": 62,
+      "name": "Arthur Theate",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 63,
+      "name": "Timothy Castagne",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 64,
+      "name": "Maxim De Cuyper",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 65,
+      "name": "Amadou Onana",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 66,
+      "name": "Jérémy Doku",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 67,
+      "name": "Charles De Ketelaere",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 68,
+      "name": "Leandro Trossard",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 69,
+      "name": "Romelu Lukaku",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 70,
+      "name": "Marquinhos",
+      "type": "FF",
+      "position": "DEF"
+    },
+    {
+      "number": 71,
+      "name": "Team Crest Brazil",
+      "type": "TEAM_CREST"
+    },
+    {
+      "number": 72,
+      "name": "Vinícius Júnior",
+      "type": "IC",
+      "position": "FWD"
+    },
+    {
+      "number": 73,
+      "name": "Alisson",
+      "type": "BASE",
+      "position": "GK"
+    },
+    {
+      "number": 74,
+      "name": "Danilo",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 75,
+      "name": "Éder Militão",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 76,
+      "name": "Gabriel Magalhães",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 77,
+      "name": "Casemiro",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 78,
+      "name": "Bruno Guimarães",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 79,
+      "name": "Rodrygo",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 80,
+      "name": "Matheus Cunha",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 81,
+      "name": "Raphinha",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 82,
+      "name": "Jonathan David",
+      "type": "FF",
+      "position": "FWD"
+    },
+    {
+      "number": 83,
+      "name": "Team Crest Canada",
+      "type": "TEAM_CREST"
+    },
+    {
+      "number": 84,
+      "name": "Alphonso Davies",
+      "type": "IC",
+      "position": "DEF"
+    },
+    {
+      "number": 85,
+      "name": "Dayne St. Clair",
+      "type": "BASE",
+      "position": "GK"
+    },
+    {
+      "number": 86,
+      "name": "Richie Laryea",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 87,
+      "name": "Derek Cornelius",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 88,
+      "name": "Stephen Eustáquio",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 89,
+      "name": "Ismaël Koné",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 90,
+      "name": "Jonathan Osorio",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 91,
+      "name": "Jacob Shaffelburg",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 92,
+      "name": "Tajon Buchanan",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 93,
+      "name": "Cyle Larin",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 94,
+      "name": "Vozinha",
+      "type": "FF",
+      "position": "GK"
+    },
+    {
+      "number": 95,
+      "name": "Team Crest Cape Verde",
+      "type": "TEAM_CREST"
+    },
+    {
+      "number": 96,
+      "name": "Ryan Mendes",
+      "type": "IC",
+      "position": "FWD"
+    },
+    {
+      "number": 97,
+      "name": "Logan Costa",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 98,
+      "name": "Pico",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 99,
+      "name": "Steven Moreira",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 100,
+      "name": "João Paulo",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 101,
+      "name": "Kevin Pina",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 102,
+      "name": "Jamiro Monteiro",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 103,
+      "name": "Yannick Semedo",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 104,
+      "name": "Jovane Cabral",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 105,
+      "name": "Gailon Livramento",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 106,
+      "name": "Luis Díaz",
+      "type": "FF",
+      "position": "FWD"
+    },
+    {
+      "number": 107,
+      "name": "Team Crest Colombia",
+      "type": "TEAM_CREST"
+    },
+    {
+      "number": 108,
+      "name": "James Rodríguez",
+      "type": "IC",
+      "position": "MID"
+    },
+    {
+      "number": 109,
+      "name": "Camilo Vargas",
+      "type": "BASE",
+      "position": "GK"
+    },
+    {
+      "number": 110,
+      "name": "Dávinson Sánchez",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 111,
+      "name": "Yerry Mina",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 112,
+      "name": "Daniel Muñoz",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 113,
+      "name": "Jefferson Lerma",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 114,
+      "name": "Richard Ríos",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 115,
+      "name": "Juan Fernando Quintero",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 116,
+      "name": "Jhon Arias",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 117,
+      "name": "Luis Suárez",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 118,
+      "name": "Ivan Perišić",
+      "type": "FF",
+      "position": "FWD"
+    },
+    {
+      "number": 119,
+      "name": "Team Crest Croatia",
+      "type": "TEAM_CREST"
+    },
+    {
+      "number": 120,
+      "name": "Luka Modrić",
+      "type": "IC",
+      "position": "MID"
+    },
+    {
+      "number": 121,
+      "name": "Dominik Livaković",
+      "type": "BASE",
+      "position": "GK"
+    },
+    {
+      "number": 122,
+      "name": "Duje Caleta-Car",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 123,
+      "name": "Joško Gvardiol",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 124,
+      "name": "Josip Stanišić",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 125,
+      "name": "Mateo Kovačić",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 126,
+      "name": "Lovro Majer",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 127,
+      "name": "Mario Pašalić",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 128,
+      "name": "Ante Budimir",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 129,
+      "name": "Andrej Kramarić",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 130,
+      "name": "Jurién Gaari",
+      "type": "FF",
+      "position": "MID"
+    },
+    {
+      "number": 131,
+      "name": "Team Crest Curaçao",
+      "type": "TEAM_CREST"
+    },
+    {
+      "number": 132,
+      "name": "Leandro Bacuna",
+      "type": "IC",
+      "position": "MID"
+    },
+    {
+      "number": 133,
+      "name": "Eloy Room",
+      "type": "BASE",
+      "position": "GK"
+    },
+    {
+      "number": 134,
+      "name": "Sherel Floranus",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 135,
+      "name": "Roshon van Eijma",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 136,
+      "name": "Armando Obispo",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 137,
+      "name": "Livano Comencia",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 138,
+      "name": "Juninho Bacuna",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 139,
+      "name": "Kenji Gorré",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 140,
+      "name": "Sontje Hansen",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 141,
+      "name": "Jearl Margaritha",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 142,
+      "name": "Moisés Caicedo",
+      "type": "FF",
+      "position": "MID"
+    },
+    {
+      "number": 143,
+      "name": "Team Crest Ecuador",
+      "type": "TEAM_CREST"
+    },
+    {
+      "number": 144,
+      "name": "Enner Valencia",
+      "type": "IC",
+      "position": "FWD"
+    },
+    {
+      "number": 145,
+      "name": "Hernán Galíndez",
+      "type": "BASE",
+      "position": "GK"
+    },
+    {
+      "number": 146,
+      "name": "Piero Hincapié",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 147,
+      "name": "Pervis Estupiñán",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 148,
+      "name": "Willian Pacho",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 149,
+      "name": "Ángelo Preciado",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 150,
+      "name": "Joel Ordóñez",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 151,
+      "name": "Alan Franco",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 152,
+      "name": "Gonzalo Plata",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 153,
+      "name": "Kevin Rodríguez",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 154,
+      "name": "Omar Marmoush",
+      "type": "FF",
+      "position": "FWD"
+    },
+    {
+      "number": 155,
+      "name": "Team Crest Egypt",
+      "type": "TEAM_CREST"
+    },
+    {
+      "number": 156,
+      "name": "Mohamed Salah",
+      "type": "IC",
+      "position": "FWD"
+    },
+    {
+      "number": 157,
+      "name": "Mohamed El Shenawy",
+      "type": "BASE",
+      "position": "GK"
+    },
+    {
+      "number": 158,
+      "name": "Mohamed Hany",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 159,
+      "name": "Mohamed Abdelmonem",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 160,
+      "name": "Ramy Rabia",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 161,
+      "name": "Marwan Attia",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 162,
+      "name": "Zizo",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 163,
+      "name": "Hamdy Fathy",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 164,
+      "name": "Mostafa Mohamed",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 165,
+      "name": "Thézeguet",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 166,
+      "name": "Jude Bellingham",
+      "type": "FF",
+      "position": "MID"
+    },
+    {
+      "number": 167,
+      "name": "Team Crest England",
+      "type": "TEAM_CREST"
+    },
+    {
+      "number": 168,
+      "name": "Harry Kane",
+      "type": "IC",
+      "position": "FWD"
+    },
+    {
+      "number": 169,
+      "name": "Jordan Pickford",
+      "type": "BASE",
+      "position": "GK"
+    },
+    {
+      "number": 170,
+      "name": "Reece James",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 171,
+      "name": "John Stones",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 172,
+      "name": "Declan Rice",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 173,
+      "name": "Jordan Henderson",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 174,
+      "name": "Phil Foden",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 175,
+      "name": "Bukayo Saka",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 176,
+      "name": "Cole Palmer",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 177,
+      "name": "Marcus Rashford",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 178,
+      "name": "Ousmane Dembélé",
+      "type": "FF",
+      "position": "FWD"
+    },
+    {
+      "number": 179,
+      "name": "Team Crest France",
+      "type": "TEAM_CREST"
+    },
+    {
+      "number": 180,
+      "name": "Kylian Mbappé",
+      "type": "IC",
+      "position": "FWD"
+    },
+    {
+      "number": 181,
+      "name": "Mike Maignan",
+      "type": "BASE",
+      "position": "GK"
+    },
+    {
+      "number": 182,
+      "name": "William Saliba",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 183,
+      "name": "Jules Koundé",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 184,
+      "name": "Théo Hernández",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 185,
+      "name": "Aurélien Tchouaméni",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 186,
+      "name": "Eduardo Camavinga",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 187,
+      "name": "Bradley Barcola",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 188,
+      "name": "Marcus Thuram",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 189,
+      "name": "Randal Kolo Muani",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 190,
+      "name": "Jamal Musiala",
+      "type": "FF",
+      "position": "MID"
+    },
+    {
+      "number": 191,
+      "name": "Team Crest Germany",
+      "type": "TEAM_CREST"
+    },
+    {
+      "number": 192,
+      "name": "Joshua Kimmich",
+      "type": "IC",
+      "position": "MID"
+    },
+    {
+      "number": 193,
+      "name": "Marc-André ter Stegen",
+      "type": "BASE",
+      "position": "GK"
+    },
+    {
+      "number": 194,
+      "name": "Antonio Rüdiger",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 195,
+      "name": "Jonathan Tah",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 196,
+      "name": "Felix Nmecha",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 197,
+      "name": "Leon Goretzka",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 198,
+      "name": "Florian Wirtz",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 199,
+      "name": "Serge Gnabry",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 200,
+      "name": "Kai Havertz",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 201,
+      "name": "Leroy Sané",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 202,
+      "name": "Thomas Partey",
+      "type": "FF",
+      "position": "MID"
+    },
+    {
+      "number": 203,
+      "name": "Team Crest Ghana",
+      "type": "TEAM_CREST"
+    },
+    {
+      "number": 204,
+      "name": "Mohammed Kudus",
+      "type": "IC",
+      "position": "FWD"
+    },
+    {
+      "number": 205,
+      "name": "Lawrence Ati Zigi",
+      "type": "BASE",
+      "position": "GK"
+    },
+    {
+      "number": 206,
+      "name": "Alidu Seidu",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 207,
+      "name": "Alexander Djiku",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 208,
+      "name": "Gideon Mensah",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 209,
+      "name": "Caleb Vrenky",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 210,
+      "name": "Abdul Issahaku Fatawu",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 211,
+      "name": "Kamaledeen Sulemana",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 212,
+      "name": "Jordan Ayew",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 213,
+      "name": "Antoine Semenyo",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 214,
+      "name": "Frantzdy Pierrot",
+      "type": "FF",
+      "position": "FWD"
+    },
+    {
+      "number": 215,
+      "name": "Team Crest Haiti",
+      "type": "TEAM_CREST"
+    },
+    {
+      "number": 216,
+      "name": "Duckens Nazon",
+      "type": "IC",
+      "position": "FWD"
+    },
+    {
+      "number": 217,
+      "name": "Johny Placide",
+      "type": "BASE",
+      "position": "GK"
+    },
+    {
+      "number": 218,
+      "name": "Ricardo Adé",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 219,
+      "name": "Carlens Arcus",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 220,
+      "name": "Hannes Delcroix",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 221,
+      "name": "Leverton Pierre",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 222,
+      "name": "Danley Jean Jacques",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 223,
+      "name": "Jean-Ricner Bellegarde",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 224,
+      "name": "Ruben Providence",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 225,
+      "name": "Don Deedson Louicius",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 226,
+      "name": "Mehdi Taremi",
+      "type": "FF",
+      "position": "FWD"
+    },
+    {
+      "number": 227,
+      "name": "Team Crest Iran",
+      "type": "TEAM_CREST"
+    },
+    {
+      "number": 228,
+      "name": "Sardar Azmoun",
+      "type": "IC",
+      "position": "FWD"
+    },
+    {
+      "number": 229,
+      "name": "Alireza Beiranvand",
+      "type": "BASE",
+      "position": "GK"
+    },
+    {
+      "number": 230,
+      "name": "Shoja Khalilzadeh",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 231,
+      "name": "Milad Mohammadi",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 232,
+      "name": "Ramin Rezaeian",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 233,
+      "name": "Hossein Kanaani",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 234,
+      "name": "Saeid Ezatolahi",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 235,
+      "name": "Saman Ghodoos",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 236,
+      "name": "Mohammad Mohebi",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 237,
+      "name": "Alireza Jahanbakhsh",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 238,
+      "name": "Franck Kessié",
+      "type": "FF",
+      "position": "MID"
+    },
+    {
+      "number": 239,
+      "name": "Team Crest Ivory Coast",
+      "type": "TEAM_CREST"
+    },
+    {
+      "number": 240,
+      "name": "Sébastien Haller",
+      "type": "IC",
+      "position": "FWD"
+    },
+    {
+      "number": 241,
+      "name": "Vahia Fofana",
+      "type": "BASE",
+      "position": "GK"
+    },
+    {
+      "number": 242,
+      "name": "Ghislain Konan",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 243,
+      "name": "Odilon Kossounou",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 244,
+      "name": "Evan N'Dicka",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 245,
+      "name": "Wilfried Singo",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 246,
+      "name": "Ibrahim Sangaré",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 247,
+      "name": "Nicolas Pépé",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 248,
+      "name": "Simon Adingra",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 249,
+      "name": "Oumar Diakité",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 250,
+      "name": "Takumi Minamino",
+      "type": "FF",
+      "position": "FWD"
+    },
+    {
+      "number": 251,
+      "name": "Team Crest Japan",
+      "type": "TEAM_CREST"
+    },
+    {
+      "number": 252,
+      "name": "Takehiro Tomiyasu",
+      "type": "IC",
+      "position": "DEF"
+    },
+    {
+      "number": 253,
+      "name": "Zion Suzuki",
+      "type": "BASE",
+      "position": "GK"
+    },
+    {
+      "number": 254,
+      "name": "Tsuyoshi Watanabe",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 255,
+      "name": "Kaishu Sano",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 256,
+      "name": "Ao Tanaka",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 257,
+      "name": "Daichi Kamada",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 258,
+      "name": "Ritsu Doan",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 259,
+      "name": "Keito Nakamura",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 260,
+      "name": "Shuto Machino",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 261,
+      "name": "Ayase Ueda",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 262,
+      "name": "Yazan Al-Naimat",
+      "type": "FF",
+      "position": "MID"
+    },
+    {
+      "number": 263,
+      "name": "Team Crest Jordan",
+      "type": "TEAM_CREST"
+    },
+    {
+      "number": 264,
+      "name": "Musa Al-Taamari",
+      "type": "IC",
+      "position": "FWD"
+    },
+    {
+      "number": 265,
+      "name": "Yazeed Abulaila",
+      "type": "BASE",
+      "position": "GK"
+    },
+    {
+      "number": 266,
+      "name": "Mohammad Abu Hashish",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 267,
+      "name": "Yazan Al-Arab",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 268,
+      "name": "Abdallah Nasib",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 269,
+      "name": "Ibrahim Saadeh",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 270,
+      "name": "Nizar Al-Rashdan",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 271,
+      "name": "Noor Al-Rawabdeh",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 272,
+      "name": "Mahmoud Al-Mardi",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 273,
+      "name": "Ali Olwan",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 274,
+      "name": "Min-jae Kim",
+      "type": "FF",
+      "position": "DEF"
+    },
+    {
+      "number": 275,
+      "name": "Team Crest Korea Republic",
+      "type": "TEAM_CREST"
+    },
+    {
+      "number": 276,
+      "name": "Heung-min Son",
+      "type": "IC",
+      "position": "FWD"
+    },
+    {
+      "number": 277,
+      "name": "Hyeonwoo Jo",
+      "type": "BASE",
+      "position": "GK"
+    },
+    {
+      "number": 278,
+      "name": "Youngwoo Seol",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 279,
+      "name": "Yumin Cho",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 280,
+      "name": "Taeseok Lee",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 281,
+      "name": "Inbeom Hwang",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 282,
+      "name": "Jaesung Lee",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 283,
+      "name": "Kangin Lee",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 284,
+      "name": "Hyeongyu Oh",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 285,
+      "name": "Heechan Hwang",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 286,
+      "name": "Edson Álvarez",
+      "type": "FF",
+      "position": "MID"
+    },
+    {
+      "number": 287,
+      "name": "Team Crest Mexico",
+      "type": "TEAM_CREST"
+    },
+    {
+      "number": 288,
+      "name": "Raúl Jiménez",
+      "type": "IC",
+      "position": "FWD"
+    },
+    {
+      "number": 289,
+      "name": "Luis Malagón",
+      "type": "BASE",
+      "position": "GK"
+    },
+    {
+      "number": 290,
+      "name": "Israel Reyes",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 291,
+      "name": "Johan Vásquez",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 292,
+      "name": "César Montes",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 293,
+      "name": "Jesús Gallardo",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 294,
+      "name": "Carlos Rodríguez",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 295,
+      "name": "Orbelin Pineda",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 296,
+      "name": "Hirving Lozano",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 297,
+      "name": "Santiago Giménez",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 298,
+      "name": "Youssef En-Nesyri",
+      "type": "FF",
+      "position": "FWD"
+    },
+    {
+      "number": 299,
+      "name": "Team Crest Morocco",
+      "type": "TEAM_CREST"
+    },
+    {
+      "number": 300,
+      "name": "Achraf Hakimi",
+      "type": "IC",
+      "position": "DEF"
+    },
+    {
+      "number": 301,
+      "name": "Yassine Bounou",
+      "type": "BASE",
+      "position": "GK"
+    },
+    {
+      "number": 302,
+      "name": "Noussair Mazraoui",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 303,
+      "name": "Nayef Aguerd",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 304,
+      "name": "Sofyan Amrabat",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 305,
+      "name": "Eliesse Ben Seghir",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 306,
+      "name": "Ismael Saibari",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 307,
+      "name": "Brahim Díaz",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 308,
+      "name": "Abde Ezzalzouli",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 309,
+      "name": "Ayoub El Kaabi",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 310,
+      "name": "Memphis Depay",
+      "type": "FF",
+      "position": "FWD"
+    },
+    {
+      "number": 311,
+      "name": "Team Crest Netherlands",
+      "type": "TEAM_CREST"
+    },
+    {
+      "number": 312,
+      "name": "Virgil van Dijk",
+      "type": "IC",
+      "position": "DEF"
+    },
+    {
+      "number": 313,
+      "name": "Bart Verbruggen",
+      "type": "BASE",
+      "position": "GK"
+    },
+    {
+      "number": 314,
+      "name": "Nathan Aké",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 315,
+      "name": "Jeremie Frimpong",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 316,
+      "name": "Denzel Dumfries",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 317,
+      "name": "Tijjani Reijnders",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 318,
+      "name": "Ryan Gravenberch",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 319,
+      "name": "Cody Gakpo",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 320,
+      "name": "Donyell Malen",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 321,
+      "name": "Wout Weghorst",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 322,
+      "name": "Marko Stamenic",
+      "type": "FF",
+      "position": "MID"
+    },
+    {
+      "number": 323,
+      "name": "Team Crest New Zealand",
+      "type": "TEAM_CREST"
+    },
+    {
+      "number": 324,
+      "name": "Chris Wood",
+      "type": "IC",
+      "position": "FWD"
+    },
+    {
+      "number": 325,
+      "name": "Max Crocombe",
+      "type": "BASE",
+      "position": "GK"
+    },
+    {
+      "number": 326,
+      "name": "Michael Boxall",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 327,
+      "name": "Liberato Cacace",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 328,
+      "name": "Tim Payne",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 329,
+      "name": "Finn Surman",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 330,
+      "name": "Joe Bell",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 331,
+      "name": "Sarpreet Singh",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 332,
+      "name": "Matt Garbett",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 333,
+      "name": "Elijah Just",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 334,
+      "name": "Martin Ødegaard",
+      "type": "FF",
+      "position": "MID"
+    },
+    {
+      "number": 335,
+      "name": "Team Crest Norway",
+      "type": "TEAM_CREST"
+    },
+    {
+      "number": 336,
+      "name": "Erling Haaland",
+      "type": "IC",
+      "position": "FWD"
+    },
+    {
+      "number": 337,
+      "name": "Ørjan Nyland",
+      "type": "BASE",
+      "position": "GK"
+    },
+    {
+      "number": 338,
+      "name": "Julian Ryerson",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 339,
+      "name": "Kristoffer Vassbakk Ajer",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 340,
+      "name": "David Müller Wolfe",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 341,
+      "name": "Sander Berge",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 342,
+      "name": "Patrick Berg",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 343,
+      "name": "Antonio Nusa",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 344,
+      "name": "Oscar Bobb",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 345,
+      "name": "Alexander Sørloth",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 346,
+      "name": "Michael Amir Murillo",
+      "type": "FF",
+      "position": "DEF"
+    },
+    {
+      "number": 347,
+      "name": "Team Crest Panama",
+      "type": "TEAM_CREST"
+    },
+    {
+      "number": 348,
+      "name": "Aníbal Godoy",
+      "type": "IC",
+      "position": "MID"
+    },
+    {
+      "number": 349,
+      "name": "Rolando Mosquera",
+      "type": "BASE",
+      "position": "GK"
+    },
+    {
+      "number": 350,
+      "name": "Andrés Andrade",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 351,
+      "name": "Fidel Escobar",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 352,
+      "name": "Cristian Martínez",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 353,
+      "name": "Adalberto Carrasquilla",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 354,
+      "name": "Edgar Bárcenas",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 355,
+      "name": "Jose Fajardo",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 356,
+      "name": "Ismael Díaz",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 357,
+      "name": "Jose Luis Rodriguez",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 358,
+      "name": "Gustavo Gómez",
+      "type": "FF",
+      "position": "DEF"
+    },
+    {
+      "number": 359,
+      "name": "Team Crest Paraguay",
+      "type": "TEAM_CREST"
+    },
+    {
+      "number": 360,
+      "name": "Miguel Almirón",
+      "type": "IC",
+      "position": "MID"
+    },
+    {
+      "number": 361,
+      "name": "Roberto Fernández",
+      "type": "BASE",
+      "position": "GK"
+    },
+    {
+      "number": 362,
+      "name": "Juan José Cáceres",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 363,
+      "name": "Omar Alderete",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 364,
+      "name": "Júnior Alonso",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 365,
+      "name": "Andrés Cubas",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 366,
+      "name": "Mathías Villasanti",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 367,
+      "name": "Julio Enciso",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 368,
+      "name": "Ramón Sosa",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 369,
+      "name": "Antonio Sanabria",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 370,
+      "name": "Vitinha",
+      "type": "FF",
+      "position": "MID"
+    },
+    {
+      "number": 371,
+      "name": "Team Crest Portugal",
+      "type": "TEAM_CREST"
+    },
+    {
+      "number": 372,
+      "name": "Cristiano Ronaldo",
+      "type": "IC",
+      "position": "FWD"
+    },
+    {
+      "number": 373,
+      "name": "Diogo Costa",
+      "type": "BASE",
+      "position": "GK"
+    },
+    {
+      "number": 374,
+      "name": "Rúben Dias",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 375,
+      "name": "Nuno Mendes",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 376,
+      "name": "Bernardo Silva",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 377,
+      "name": "Bruno Fernandes",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 378,
+      "name": "Rúben Neves",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 379,
+      "name": "Francisco Conceição",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 380,
+      "name": "Pedro Neto",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 381,
+      "name": "Rafael Leão",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 382,
+      "name": "Almoez Ali",
+      "type": "FF",
+      "position": "FWD"
+    },
+    {
+      "number": 383,
+      "name": "Team Crest Qatar",
+      "type": "TEAM_CREST"
+    },
+    {
+      "number": 384,
+      "name": "Hasan Al-Haydos",
+      "type": "IC",
+      "position": "MID"
+    },
+    {
+      "number": 385,
+      "name": "Meshaal Barsham",
+      "type": "BASE",
+      "position": "GK"
+    },
+    {
+      "number": 386,
+      "name": "Boualem Khoukhi",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 387,
+      "name": "Lucas Mendes",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 388,
+      "name": "Pedro Miguel",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 389,
+      "name": "Homam Al-Amin",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 390,
+      "name": "Ahmed Fathi",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 391,
+      "name": "Edmilson Junior",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 392,
+      "name": "Ahmed Al-Ganehi",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 393,
+      "name": "Akram Hassan Afif",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 394,
+      "name": "Feras Albrikan",
+      "type": "FF",
+      "position": "FWD"
+    },
+    {
+      "number": 395,
+      "name": "Team Crest Saudi Arabia",
+      "type": "TEAM_CREST"
+    },
+    {
+      "number": 396,
+      "name": "Salem Aldawsari",
+      "type": "IC",
+      "position": "FWD"
+    },
+    {
+      "number": 397,
+      "name": "Nawaf Alaodi",
+      "type": "BASE",
+      "position": "GK"
+    },
+    {
+      "number": 398,
+      "name": "Hassan Altambakti",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 399,
+      "name": "Jihad Thikin",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 400,
+      "name": "Saud Abdulhamid",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 401,
+      "name": "Nasser Aldawsari",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 402,
+      "name": "Abdullah Alkhaibari",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 403,
+      "name": "Musab Aljuwayr",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 404,
+      "name": "Salem Abu Alshamat",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 405,
+      "name": "Salem Alshehri",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 406,
+      "name": "Scott McTominay",
+      "type": "FF",
+      "position": "MID"
+    },
+    {
+      "number": 407,
+      "name": "Team Crest Scotland",
+      "type": "TEAM_CREST"
+    },
+    {
+      "number": 408,
+      "name": "Andrew Robertson",
+      "type": "IC",
+      "position": "DEF"
+    },
+    {
+      "number": 409,
+      "name": "Angus Gunn",
+      "type": "BASE",
+      "position": "GK"
+    },
+    {
+      "number": 410,
+      "name": "Kieran Tierney",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 411,
+      "name": "Grant Hanley",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 412,
+      "name": "Billy Gilmour",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 413,
+      "name": "Lewis Ferguson",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 414,
+      "name": "Ryan Christie",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 415,
+      "name": "John McGinn",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 416,
+      "name": "Ben Gannon-Doak",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 417,
+      "name": "Ché Adams",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 418,
+      "name": "Kalidou Koulibaly",
+      "type": "FF",
+      "position": "DEF"
+    },
+    {
+      "number": 419,
+      "name": "Team Crest Senegal",
+      "type": "TEAM_CREST"
+    },
+    {
+      "number": 420,
+      "name": "Sadio Mané",
+      "type": "IC",
+      "position": "FWD"
+    },
+    {
+      "number": 421,
+      "name": "Édouard Mendy",
+      "type": "BASE",
+      "position": "GK"
+    },
+    {
+      "number": 422,
+      "name": "Moussa Niakhaté",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 423,
+      "name": "El Hadji Malick Diouf",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 424,
+      "name": "Idrissa Gana Gueye",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 425,
+      "name": "Pape Matar Sarr",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 426,
+      "name": "Iliman Ndiaye",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 427,
+      "name": "Krépin Diatta",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 428,
+      "name": "Ismaïla Sarr",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 429,
+      "name": "Nicolas Jackson",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 430,
+      "name": "Lyle Foster",
+      "type": "FF",
+      "position": "FWD"
+    },
+    {
+      "number": 431,
+      "name": "Team Crest South Africa",
+      "type": "TEAM_CREST"
+    },
+    {
+      "number": 432,
+      "name": "Ronwen Williams",
+      "type": "IC",
+      "position": "GK"
+    },
+    {
+      "number": 433,
+      "name": "Siyabonga Ngezana",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 434,
+      "name": "Aubrey Modiba",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 435,
+      "name": "Mbekezeli Mbokazi",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 436,
+      "name": "Khuliso Mudau",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 437,
+      "name": "Teboho Mokoena",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 438,
+      "name": "Yaya Sithole",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 439,
+      "name": "Themba Zwane",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 440,
+      "name": "Oswin Appollis",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 441,
+      "name": "Ioraam Rayners",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 442,
+      "name": "Lamine Yamal",
+      "type": "FF",
+      "position": "FWD"
+    },
+    {
+      "number": 443,
+      "name": "Team Crest Spain",
+      "type": "TEAM_CREST"
+    },
+    {
+      "number": 444,
+      "name": "Rodri",
+      "type": "IC",
+      "position": "MID"
+    },
+    {
+      "number": 445,
+      "name": "Unai Simón",
+      "type": "BASE",
+      "position": "GK"
+    },
+    {
+      "number": 446,
+      "name": "Robin Le Normand",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 447,
+      "name": "Dean Huijsen",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 448,
+      "name": "Marc Cucurella",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 449,
+      "name": "Martín Zubimendi",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 450,
+      "name": "Pedri",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 451,
+      "name": "Fabián Ruiz",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 452,
+      "name": "Nico Williams",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 453,
+      "name": "Mikel Oyarzabal",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 454,
+      "name": "Manuel Akanji",
+      "type": "FF",
+      "position": "DEF"
+    },
+    {
+      "number": 455,
+      "name": "Team Crest Switzerland",
+      "type": "TEAM_CREST"
+    },
+    {
+      "number": 456,
+      "name": "Granit Xhaka",
+      "type": "IC",
+      "position": "MID"
+    },
+    {
+      "number": 457,
+      "name": "Gregor Kobel",
+      "type": "BASE",
+      "position": "GK"
+    },
+    {
+      "number": 458,
+      "name": "Nico Elvedi",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 459,
+      "name": "Ricardo Rodríguez",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 460,
+      "name": "Silvan Widmer",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 461,
+      "name": "Denis Zakaria",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 462,
+      "name": "Remo Freuler",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 463,
+      "name": "Breel Embolo",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 464,
+      "name": "Rubén Vargas",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 465,
+      "name": "Dan Ndoye",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 466,
+      "name": "Ferjani Sassi",
+      "type": "FF",
+      "position": "MID"
+    },
+    {
+      "number": 467,
+      "name": "Team Crest Tunisia",
+      "type": "TEAM_CREST"
+    },
+    {
+      "number": 468,
+      "name": "Ellyes Skhiri",
+      "type": "IC",
+      "position": "MID"
+    },
+    {
+      "number": 469,
+      "name": "Aymen Dahmen",
+      "type": "BASE",
+      "position": "GK"
+    },
+    {
+      "number": 470,
+      "name": "Montassar Talbi",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 471,
+      "name": "Yassine Meriah",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 472,
+      "name": "Ali Abdi",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 473,
+      "name": "Aïssa Laïdouni",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 474,
+      "name": "Hannibal Mejbri",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 475,
+      "name": "Naïm Sliti",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 476,
+      "name": "Elias Achouri",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 477,
+      "name": "Hazem Mastouri",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 478,
+      "name": "Weston McKennie",
+      "type": "FF",
+      "position": "MID"
+    },
+    {
+      "number": 479,
+      "name": "Team Crest United States",
+      "type": "TEAM_CREST"
+    },
+    {
+      "number": 480,
+      "name": "Christian Pulisic",
+      "type": "IC",
+      "position": "FWD"
+    },
+    {
+      "number": 481,
+      "name": "Matt Freese",
+      "type": "BASE",
+      "position": "GK"
+    },
+    {
+      "number": 482,
+      "name": "Chris Richards",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 483,
+      "name": "Tim Ream",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 484,
+      "name": "Antonee Robinson",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 485,
+      "name": "Tanner Tessmann",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 486,
+      "name": "Tyler Adams",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 487,
+      "name": "Timothy Weah",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 488,
+      "name": "Malik Tillman",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 489,
+      "name": "Folarin Balogun",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 490,
+      "name": "José María Giménez",
+      "type": "FF",
+      "position": "DEF"
+    },
+    {
+      "number": 491,
+      "name": "Team Crest Uruguay",
+      "type": "TEAM_CREST"
+    },
+    {
+      "number": 492,
+      "name": "Federico Valverde",
+      "type": "IC",
+      "position": "MID"
+    },
+    {
+      "number": 493,
+      "name": "Sergio Rochet",
+      "type": "BASE",
+      "position": "GK"
+    },
+    {
+      "number": 494,
+      "name": "Ronald Araújo",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 495,
+      "name": "Sebastián Cáceres",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 496,
+      "name": "Mathías Olivera",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 497,
+      "name": "Nahitan Nández",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 498,
+      "name": "Rodrigo Bentancur",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 499,
+      "name": "Manuel Ugarte",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 500,
+      "name": "Facundo Pellistri",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 501,
+      "name": "Darwin Núñez",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 502,
+      "name": "Abdukodir Khusanov",
+      "type": "FF",
+      "position": "DEF"
+    },
+    {
+      "number": 503,
+      "name": "Team Crest Uzbekistan",
+      "type": "TEAM_CREST"
+    },
+    {
+      "number": 504,
+      "name": "Eldor Shomurodov",
+      "type": "IC",
+      "position": "FWD"
+    },
+    {
+      "number": 505,
+      "name": "Utkir Yusupov",
+      "type": "BASE",
+      "position": "GK"
+    },
+    {
+      "number": 506,
+      "name": "Farrukh Sayfiev",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 507,
+      "name": "Sherzod Nasrullaev",
+      "type": "BASE",
+      "position": "DEF"
+    },
+    {
+      "number": 508,
+      "name": "Husnidin Alioulov",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 509,
+      "name": "Rustam Ashurmatov",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 510,
+      "name": "Khojakbar Alijonov",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 511,
+      "name": "Odiljon Hamrobekov",
+      "type": "BASE",
+      "position": "MID"
+    },
+    {
+      "number": 512,
+      "name": "Otabek Shukurov",
+      "type": "BASE",
+      "position": "FWD"
+    },
+    {
+      "number": 513,
+      "name": "Abbosbek Fayzullaev",
+      "type": "BASE",
+      "position": "FWD"
+    }
+  ],
+  "contenders": {
+    "match_cards": [
+      {
+        "number": 514,
+        "type": "CONTENDER_MATCH",
+        "match": "ITA - NOR/WAL - BIH"
+      },
+      {
+        "number": 515,
+        "type": "CONTENDER_MATCH",
+        "match": "UKR - SWE/POL - ALB"
+      },
+      {
+        "number": 516,
+        "type": "CONTENDER_MATCH",
+        "match": "TUR - ROV/SV - KOS"
+      },
+      {
+        "number": 517,
+        "type": "CONTENDER_MATCH",
+        "match": "DEN - MKD/CZE - IRL"
+      },
+      {
+        "number": 518,
+        "type": "CONTENDER_MATCH",
+        "match": "NCL - JAM/COD"
+      },
+      {
+        "number": 519,
+        "type": "CONTENDER_MATCH",
+        "match": "SUR - BOL/IRQ"
+      }
+    ],
+    "player_cards": [
+      {
+        "number": 520,
+        "name": "Hjulmand",
+        "team": "DEN"
+      },
+      {
+        "number": 521,
+        "name": "Højbjerg",
+        "team": "DEN"
+      },
+      {
+        "number": 522,
+        "name": "Eriksen",
+        "team": "DEN"
+      },
+      {
+        "number": 523,
+        "name": "Damsgaard",
+        "team": "DEN"
+      },
+      {
+        "number": 524,
+        "name": "Højlund",
+        "team": "DEN"
+      },
+      {
+        "number": 525,
+        "name": "Donnarumma",
+        "team": "ITA"
+      },
+      {
+        "number": 526,
+        "name": "Bastoni",
+        "team": "ITA"
+      },
+      {
+        "number": 527,
+        "name": "Tonali",
+        "team": "ITA"
+      },
+      {
+        "number": 528,
+        "name": "Barella",
+        "team": "ITA"
+      },
+      {
+        "number": 529,
+        "name": "Kean",
+        "team": "ITA"
+      },
+      {
+        "number": 530,
+        "name": "Blake",
+        "team": "JAM"
+      },
+      {
+        "number": 531,
+        "name": "Pinnock",
+        "team": "JAM"
+      },
+      {
+        "number": 532,
+        "name": "Gray",
+        "team": "JAM"
+      },
+      {
+        "number": 533,
+        "name": "Bailey",
+        "team": "JAM"
+      },
+      {
+        "number": 534,
+        "name": "Nicholson",
+        "team": "JAM"
+      },
+      {
+        "number": 535,
+        "name": "Cash",
+        "team": "POL"
+      },
+      {
+        "number": 536,
+        "name": "Kiwior",
+        "team": "POL"
+      },
+      {
+        "number": 537,
+        "name": "Zieliński",
+        "team": "POL"
+      },
+      {
+        "number": 538,
+        "name": "Szymański",
+        "team": "POL"
+      },
+      {
+        "number": 539,
+        "name": "Lewandowski",
+        "team": "POL"
+      },
+      {
+        "number": 540,
+        "name": "Hien",
+        "team": "SWE"
+      },
+      {
+        "number": 541,
+        "name": "Kulusevski",
+        "team": "SWE"
+      },
+      {
+        "number": 542,
+        "name": "Elanga",
+        "team": "SWE"
+      },
+      {
+        "number": 543,
+        "name": "Gyökeres",
+        "team": "SWE"
+      },
+      {
+        "number": 544,
+        "name": "Isak",
+        "team": "SWE"
+      },
+      {
+        "number": 545,
+        "name": "Söyüncü",
+        "team": "TUR"
+      },
+      {
+        "number": 546,
+        "name": "Çalhanoğlu",
+        "team": "TUR"
+      },
+      {
+        "number": 547,
+        "name": "Güler",
+        "team": "TUR"
+      },
+      {
+        "number": 548,
+        "name": "Yildiz",
+        "team": "TUR"
+      },
+      {
+        "number": 549,
+        "name": "Aktürkoğlu",
+        "team": "TUR"
+      }
+    ]
+  },
+  "special_cards": {
+    "top_keepers": [
+      {
+        "number": 550,
+        "name": "Martínez",
+        "team": "ARG"
+      },
+      {
+        "number": 551,
+        "name": "Courtois",
+        "team": "BEL"
+      },
+      {
+        "number": 552,
+        "name": "Alisson",
+        "team": "BRA"
+      },
+      {
+        "number": 553,
+        "name": "Maignan",
+        "team": "FRA"
+      },
+      {
+        "number": 554,
+        "name": "Suzuki",
+        "team": "JPN"
+      },
+      {
+        "number": 555,
+        "name": "Bounou",
+        "team": "MAR"
+      },
+      {
+        "number": 556,
+        "name": "Diogo Costa",
+        "team": "POR"
+      },
+      {
+        "number": 557,
+        "name": "Simón",
+        "team": "ESP"
+      },
+      {
+        "number": 558,
+        "name": "Kobel",
+        "team": "SUI"
+      }
+    ],
+    "defensive_rocks": [
+      {
+        "number": 559,
+        "name": "Éder Militão",
+        "team": "BRA"
+      },
+      {
+        "number": 560,
+        "name": "Davies",
+        "team": "CAN"
+      },
+      {
+        "number": 561,
+        "name": "Saliba",
+        "team": "FRA"
+      },
+      {
+        "number": 562,
+        "name": "Rüdiger",
+        "team": "GER"
+      },
+      {
+        "number": 563,
+        "name": "Kim",
+        "team": "KOR"
+      },
+      {
+        "number": 564,
+        "name": "Hakimi",
+        "team": "MAR"
+      },
+      {
+        "number": 565,
+        "name": "Van Dijk",
+        "team": "NED"
+      },
+      {
+        "number": 566,
+        "name": "Nuno Mendes",
+        "team": "POR"
+      },
+      {
+        "number": 567,
+        "name": "Huijsen",
+        "team": "ESP"
+      }
+    ],
+    "midfield_maestros": [
+      {
+        "number": 568,
+        "name": "Fernández",
+        "team": "ARG"
+      },
+      {
+        "number": 569,
+        "name": "De Bruyne",
+        "team": "BEL"
+      },
+      {
+        "number": 570,
+        "name": "Casemiro",
+        "team": "BRA"
+      },
+      {
+        "number": 571,
+        "name": "Modrić",
+        "team": "CRO"
+      },
+      {
+        "number": 572,
+        "name": "Caicedo",
+        "team": "ECU"
+      },
+      {
+        "number": 573,
+        "name": "Bellingham",
+        "team": "ENG"
+      },
+      {
+        "number": 574,
+        "name": "Tchouaméni",
+        "team": "FRA"
+      },
+      {
+        "number": 575,
+        "name": "Wirtz",
+        "team": "GER"
+      },
+      {
+        "number": 576,
+        "name": "Amrabat",
+        "team": "MAR"
+      },
+      {
+        "number": 577,
+        "name": "Reijnders",
+        "team": "NED"
+      },
+      {
+        "number": 578,
+        "name": "Ødegaard",
+        "team": "NOR"
+      },
+      {
+        "number": 579,
+        "name": "Vitinha",
+        "team": "POR"
+      },
+      {
+        "number": 580,
+        "name": "McTominay",
+        "team": "SCO"
+      },
+      {
+        "number": 581,
+        "name": "Rodri",
+        "team": "ESP"
+      },
+      {
+        "number": 582,
+        "name": "Pedri",
+        "team": "ESP"
+      },
+      {
+        "number": 583,
+        "name": "Xhaka",
+        "team": "SUI"
+      },
+      {
+        "number": 584,
+        "name": "Adams",
+        "team": "USA"
+      },
+      {
+        "number": 585,
+        "name": "Valverde",
+        "team": "URU"
+      }
+    ],
+    "goal_machines": [
+      {
+        "number": 586,
+        "name": "Álvarez",
+        "team": "ARG"
+      },
+      {
+        "number": 587,
+        "name": "Lukaku",
+        "team": "BEL"
+      },
+      {
+        "number": 588,
+        "name": "Raphinha",
+        "team": "BRA"
+      },
+      {
+        "number": 589,
+        "name": "David",
+        "team": "CAN"
+      },
+      {
+        "number": 590,
+        "name": "Díaz",
+        "team": "COL"
+      },
+      {
+        "number": 591,
+        "name": "Kramarić",
+        "team": "CRO"
+      },
+      {
+        "number": 592,
+        "name": "Valencia",
+        "team": "ECU"
+      },
+      {
+        "number": 593,
+        "name": "Marmoush",
+        "team": "EGY"
+      },
+      {
+        "number": 594,
+        "name": "Rashford",
+        "team": "ENG"
+      },
+      {
+        "number": 595,
+        "name": "Kolo Muani",
+        "team": "FRA"
+      },
+      {
+        "number": 596,
+        "name": "Havertz",
+        "team": "GER"
+      },
+      {
+        "number": 597,
+        "name": "Haller",
+        "team": "CIV"
+      },
+      {
+        "number": 598,
+        "name": "Jiménez",
+        "team": "MEX"
+      },
+      {
+        "number": 599,
+        "name": "En-Nesyri",
+        "team": "MAR"
+      },
+      {
+        "number": 600,
+        "name": "Gakpo",
+        "team": "NED"
+      },
+      {
+        "number": 601,
+        "name": "Wood",
+        "team": "NZL"
+      },
+      {
+        "number": 602,
+        "name": "Sørloth",
+        "team": "NOR"
+      },
+      {
+        "number": 603,
+        "name": "Jackson",
+        "team": "SEN"
+      },
+      {
+        "number": 604,
+        "name": "Oyarzabal",
+        "team": "ESP"
+      },
+      {
+        "number": 605,
+        "name": "Embolo",
+        "team": "SUI"
+      },
+      {
+        "number": 606,
+        "name": "Pulisic",
+        "team": "USA"
+      },
+      {
+        "number": 607,
+        "name": "Núñez",
+        "team": "URU"
+      }
+    ],
+    "master_rookies": [
+      {
+        "number": 608,
+        "name": "Paz",
+        "team": "ARG"
+      },
+      {
+        "number": 609,
+        "name": "Masantuono",
+        "team": "ARG"
+      },
+      {
+        "number": 610,
+        "name": "Debast",
+        "team": "BEL"
+      },
+      {
+        "number": 611,
+        "name": "Wesley",
+        "team": "BRA"
+      },
+      {
+        "number": 612,
+        "name": "Estévão",
+        "team": "BRA"
+      },
+      {
+        "number": 613,
+        "name": "Sučić",
+        "team": "CRO"
+      },
+      {
+        "number": 614,
+        "name": "Páez",
+        "team": "ECU"
+      },
+      {
+        "number": 615,
+        "name": "Rogers",
+        "team": "ENG"
+      },
+      {
+        "number": 616,
+        "name": "Doué",
+        "team": "FRA"
+      },
+      {
+        "number": 617,
+        "name": "Barcola",
+        "team": "FRA"
+      },
+      {
+        "number": 618,
+        "name": "Woltemade",
+        "team": "GER"
+      },
+      {
+        "number": 619,
+        "name": "Simons",
+        "team": "NED"
+      },
+      {
+        "number": 620,
+        "name": "Schjelderup",
+        "team": "NOR"
+      },
+      {
+        "number": 621,
+        "name": "Gómez",
+        "team": "PAR"
+      },
+      {
+        "number": 622,
+        "name": "João Neves",
+        "team": "POR"
+      },
+      {
+        "number": 623,
+        "name": "Cubarsí",
+        "team": "ESP"
+      }
+    ],
+    "mascots_emblem": [
+      {
+        "number": 624,
+        "name": "Official Emblem",
+        "type": "OFFICIAL_EMBLEM"
+      },
+      {
+        "number": 625,
+        "name": "Official Mascot - Maple",
+        "type": "OFFICIAL_MASCOT"
+      },
+      {
+        "number": 626,
+        "name": "Official Mascot - Clutch",
+        "type": "OFFICIAL_MASCOT"
+      },
+      {
+        "number": 627,
+        "name": "Official Mascot - Zayu",
+        "type": "OFFICIAL_MASCOT"
+      }
+    ],
+    "eternos_22": [
+      {
+        "number": 628,
+        "name": "Eternos 22 - Defenders",
+        "type": "ETERNOS_22"
+      },
+      {
+        "number": 629,
+        "name": "Eternos 22 - Midfielders",
+        "type": "ETERNOS_22"
+      },
+      {
+        "number": 630,
+        "name": "Eternos 22 - Forwards",
+        "type": "ETERNOS_22"
+      }
+    ]
+  },
+  "verification_flags": {
+    "all_clear": "Alle offenen Flags aus v2.0 gelöst",
+    "update_set_integration": "Noch zu spezifizieren: wie werden 48 Hero Cards + 2 Limited in der App dargestellt?"
+  },
+  "monetarisierung": {
+    "scan_limit_free": 10,
+    "launch_languages": [
+      "DE",
+      "EN"
+    ],
+    "markets": "DACH + International (weltweit)",
+    "iap_products": [
+      {
+        "id": "at.ncn.stickerscout2026.wmpass",
+        "name": "WM Pass 2026",
+        "type": "non_consumable",
+        "price_eur": 3.99
+      },
+      {
+        "id": "at.ncn.stickerscout2026.scan50",
+        "name": "+50 Scan-Boost",
+        "type": "consumable",
+        "price_eur": 0.99
+      },
+      {
+        "id": "at.ncn.stickerscout2026.trade7d",
+        "name": "+10 Trade-Slots (7 Tage)",
+        "type": "consumable",
+        "price_eur": 0.99
+      },
+      {
+        "id": "at.ncn.stickerscout2026.report",
+        "name": "Completion Report PDF",
+        "type": "non_consumable",
+        "price_eur": 0.99
+      }
+    ],
+    "early_bird": {
+      "active_until": "2026-06-15",
+      "wm_pass_price_eur": 2.99,
+      "austria_price_eur": 1.99,
+      "note": "AT-Sonderpreis €1,99 bis 15.06, danach regulär €3,99 für alle"
+    },
+    "family_pack": false,
+    "b2b_schule": false,
+    "panini_affiliate": "offen — Roman klärt direkt"
+  },
+  "update_set": {
+    "name": "FIFA World Cup 2026 Adrenalyn XL Checklist Upgrade",
+    "product_name_box": "FIFA 2026 Card Update Set",
+    "price_eur": 15.0,
+    "support_in_app": true,
+    "total_cards": 50,
+    "expiry_date": "2026-08-31",
+    "card_types": {
+      "U": "Upgrade-Karte (U01–U48)",
+      "LE": "Limited Edition (Vollgas Limited)"
+    },
+    "limited_editions": [
+      {
+        "id": "LE1",
+        "name": "Marc Cucurella",
+        "team": "ESP",
+        "type": "LIMITED_EDITION",
+        "label": "VOLLGAS LIMITED"
+      },
+      {
+        "id": "LE2",
+        "name": "Giuliano Simeone",
+        "team": "ARG",
+        "type": "LIMITED_EDITION",
+        "label": "VOLLGAS LIMITED"
+      }
+    ],
+    "note_correction": "Gonçalo Ramos ist U33 (Upgrade), NICHT Limited Edition. Frühere DB-Angabe war falsch.",
+    "upgrade_cards": [
+      {
+        "id": "U01",
+        "name": "Nicolás Tagliafico",
+        "team": "ARG",
+        "position": "DEF"
+      },
+      {
+        "id": "U02",
+        "name": "Nico González",
+        "team": "ARG",
+        "position": "FWD"
+      },
+      {
+        "id": "U03",
+        "name": "Thomas Meunier",
+        "team": "BEL",
+        "position": "DEF"
+      },
+      {
+        "id": "U04",
+        "name": "Alexis Saelemaekers",
+        "team": "BEL",
+        "position": "MID"
+      },
+      {
+        "id": "U05",
+        "name": "Lucas Paquetá",
+        "team": "BRA",
+        "position": "MID"
+      },
+      {
+        "id": "U06",
+        "name": "João Pedro",
+        "team": "BRA",
+        "position": "FWD"
+      },
+      {
+        "id": "U07",
+        "name": "Gabriel Martinelli",
+        "team": "BRA",
+        "position": "FWD"
+      },
+      {
+        "id": "U08",
+        "name": "Jhon Lucumí",
+        "team": "COL",
+        "position": "DEF"
+      },
+      {
+        "id": "U09",
+        "name": "Franjo Ivanović",
+        "team": "CRO",
+        "position": "DEF"
+      },
+      {
+        "id": "U10",
+        "name": "Pedro Vite",
+        "team": "ECU",
+        "position": "MID"
+      },
+      {
+        "id": "U11",
+        "name": "John Yeboah",
+        "team": "ECU",
+        "position": "FWD"
+      },
+      {
+        "id": "U12",
+        "name": "Marc Guéhi",
+        "team": "ENG",
+        "position": "DEF"
+      },
+      {
+        "id": "U13",
+        "name": "Trent Alexander-Arnold",
+        "team": "ENG",
+        "position": "DEF"
+      },
+      {
+        "id": "U14",
+        "name": "Anthony Gordon",
+        "team": "ENG",
+        "position": "FWD"
+      },
+      {
+        "id": "U15",
+        "name": "Eberechi Eze",
+        "team": "ENG",
+        "position": "MID"
+      },
+      {
+        "id": "U16",
+        "name": "Ollie Watkins",
+        "team": "ENG",
+        "position": "FWD"
+      },
+      {
+        "id": "U17",
+        "name": "Michael Olise",
+        "team": "FRA",
+        "position": "FWD"
+      },
+      {
+        "id": "U18",
+        "name": "Nico Schlotterbeck",
+        "team": "GER",
+        "position": "DEF"
+      },
+      {
+        "id": "U19",
+        "name": "David Raum",
+        "team": "GER",
+        "position": "DEF"
+      },
+      {
+        "id": "U20",
+        "name": "Aleksandar Pavlović",
+        "team": "GER",
+        "position": "MID"
+      },
+      {
+        "id": "U21",
+        "name": "Mohammed Salisu",
+        "team": "GHA",
+        "position": "DEF"
+      },
+      {
+        "id": "U22",
+        "name": "Iñaki Williams",
+        "team": "GHA",
+        "position": "FWD"
+      },
+      {
+        "id": "U23",
+        "name": "Jens Castrop",
+        "team": "KOR",
+        "position": "MID"
+      },
+      {
+        "id": "U24",
+        "name": "Alexis Vega",
+        "team": "MEX",
+        "position": "FWD"
+      },
+      {
+        "id": "U25",
+        "name": "Romain Saïss",
+        "team": "MAR",
+        "position": "DEF"
+      },
+      {
+        "id": "U26",
+        "name": "Bilal El Khannouss",
+        "team": "MAR",
+        "position": "MID"
+      },
+      {
+        "id": "U27",
+        "name": "Micky van de Ven",
+        "team": "NED",
+        "position": "DEF"
+      },
+      {
+        "id": "U28",
+        "name": "Jurrien Timber",
+        "team": "NED",
+        "position": "DEF"
+      },
+      {
+        "id": "U29",
+        "name": "Frenkie de Jong",
+        "team": "NED",
+        "position": "MID"
+      },
+      {
+        "id": "U30",
+        "name": "Justin Kluivert",
+        "team": "NED",
+        "position": "FWD"
+      },
+      {
+        "id": "U31",
+        "name": "Jørgen Strand Larsen",
+        "team": "NOR",
+        "position": "FWD"
+      },
+      {
+        "id": "U32",
+        "name": "António Silva",
+        "team": "POR",
+        "position": "DEF"
+      },
+      {
+        "id": "U33",
+        "name": "Gonçalo Ramos",
+        "team": "POR",
+        "position": "FWD"
+      },
+      {
+        "id": "U34",
+        "name": "João Félix",
+        "team": "POR",
+        "position": "FWD"
+      },
+      {
+        "id": "U35",
+        "name": "Lamine Camara",
+        "team": "SEN",
+        "position": "MID"
+      },
+      {
+        "id": "U36",
+        "name": "Dani Carvajal",
+        "team": "ESP",
+        "position": "DEF"
+      },
+      {
+        "id": "U37",
+        "name": "Mikel Merino",
+        "team": "ESP",
+        "position": "MID"
+      },
+      {
+        "id": "U38",
+        "name": "Dani Olmo",
+        "team": "ESP",
+        "position": "MID"
+      },
+      {
+        "id": "U39",
+        "name": "Ferran Torres",
+        "team": "ESP",
+        "position": "FWD"
+      },
+      {
+        "id": "U40",
+        "name": "Álvaro Morata",
+        "team": "ESP",
+        "position": "FWD"
+      },
+      {
+        "id": "U41",
+        "name": "Fabian Rieder",
+        "team": "SUI",
+        "position": "MID"
+      },
+      {
+        "id": "U42",
+        "name": "Ardon Jashari",
+        "team": "SUI",
+        "position": "MID"
+      },
+      {
+        "id": "U43",
+        "name": "Zeki Amdouni",
+        "team": "SUI",
+        "position": "FWD"
+      },
+      {
+        "id": "U44",
+        "name": "Mohamed Ali Ben Romdhane",
+        "team": "TUN",
+        "position": "MID"
+      },
+      {
+        "id": "U45",
+        "name": "Brenden Aaronson",
+        "team": "USA",
+        "position": "MID"
+      },
+      {
+        "id": "U46",
+        "name": "Ricardo Pepi",
+        "team": "USA",
+        "position": "FWD"
+      },
+      {
+        "id": "U47",
+        "name": "Giorgian De Arrascaeta",
+        "team": "URU",
+        "position": "MID"
+      },
+      {
+        "id": "U48",
+        "name": "Nicolás de la Cruz",
+        "team": "URU",
+        "position": "MID"
+      }
+    ]
+  },
+  "card_191_confirmed": "GER Team Crest #191 ✅ (holografisch, +5 Bonus)"
+}

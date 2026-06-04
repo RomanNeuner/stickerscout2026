@@ -1,0 +1,171 @@
+[
+  {
+    "icon": "arrow-left",
+    "variants": [
+      "gold",
+      "white",
+      "grey",
+      "dark"
+    ],
+    "formats": [
+      "SVG vector",
+      "PNG 1024x1024 transparent"
+    ]
+  },
+  {
+    "icon": "question-mark-circle",
+    "variants": [
+      "gold",
+      "white",
+      "grey",
+      "dark"
+    ],
+    "formats": [
+      "SVG vector",
+      "PNG 1024x1024 transparent"
+    ]
+  },
+  {
+    "icon": "camera",
+    "variants": [
+      "gold",
+      "white",
+      "grey",
+      "dark"
+    ],
+    "formats": [
+      "SVG vector",
+      "PNG 1024x1024 transparent"
+    ]
+  },
+  {
+    "icon": "flash-zap",
+    "variants": [
+      "gold",
+      "white",
+      "grey",
+      "dark"
+    ],
+    "formats": [
+      "SVG vector",
+      "PNG 1024x1024 transparent"
+    ]
+  },
+  {
+    "icon": "gallery-image",
+    "variants": [
+      "gold",
+      "white",
+      "grey",
+      "dark"
+    ],
+    "formats": [
+      "SVG vector",
+      "PNG 1024x1024 transparent"
+    ]
+  },
+  {
+    "icon": "home",
+    "variants": [
+      "gold",
+      "white",
+      "grey",
+      "dark"
+    ],
+    "formats": [
+      "SVG vector",
+      "PNG 1024x1024 transparent"
+    ]
+  },
+  {
+    "icon": "scan",
+    "variants": [
+      "gold",
+      "white",
+      "grey",
+      "dark"
+    ],
+    "formats": [
+      "SVG vector",
+      "PNG 1024x1024 transparent"
+    ]
+  },
+  {
+    "icon": "album-book",
+    "variants": [
+      "gold",
+      "white",
+      "grey",
+      "dark"
+    ],
+    "formats": [
+      "SVG vector",
+      "PNG 1024x1024 transparent"
+    ]
+  },
+  {
+    "icon": "calendar",
+    "variants": [
+      "gold",
+      "white",
+      "grey",
+      "dark"
+    ],
+    "formats": [
+      "SVG vector",
+      "PNG 1024x1024 transparent"
+    ]
+  },
+  {
+    "icon": "profile-user",
+    "variants": [
+      "gold",
+      "white",
+      "grey",
+      "dark"
+    ],
+    "formats": [
+      "SVG vector",
+      "PNG 1024x1024 transparent"
+    ]
+  },
+  {
+    "icon": "crown-pro",
+    "variants": [
+      "gold",
+      "white",
+      "grey",
+      "dark"
+    ],
+    "formats": [
+      "SVG vector",
+      "PNG 1024x1024 transparent"
+    ]
+  },
+  {
+    "icon": "shutter-circle",
+    "variants": [
+      "gold",
+      "white",
+      "grey",
+      "dark"
+    ],
+    "formats": [
+      "SVG vector",
+      "PNG 1024x1024 transparent"
+    ]
+  },
+  {
+    "icon": "barcode-number",
+    "variants": [
+      "gold",
+      "white",
+      "grey",
+      "dark"
+    ],
+    "formats": [
+      "SVG vector",
+      "PNG 1024x1024 transparent"
+    ]
+  }
+]

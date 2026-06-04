@@ -1,0 +1,220 @@
+{
+  "tabs": {
+    "scanner": "Scanner",
+    "album": "Álbum",
+    "trade": "Trocar",
+    "schedule": "Jogos",
+    "assistant": "Assistente",
+    "ringtones": "Tons",
+    "profile": "Perfil"
+  },
+  "ringtones": {
+    "title": "Toques da Copa",
+    "subtitle": "Músicas oficiais da Copa 2026 — exclusivas do app",
+    "previewNote": "Prévia de 30 seg. gratuita",
+    "buy": "Comprar — €0,99",
+    "owned": "✓ Comprado",
+    "setRingtone": "Definir como toque",
+    "preview": "Prévia",
+    "stop": "Parar",
+    "restore": "Restaurar compras",
+    "song1": "Hino da Copa 2026",
+    "song2": "Marcha da Vitória",
+    "song3": "Febre do Estádio",
+    "iosHint": "Arquivo salvo em Arquivos → definir via GarageBand como toque",
+    "androidHint": "Toque salvo diretamente nos sons do sistema"
+  },
+  "scanner": {
+    "title": "Scanner de Figurinhas",
+    "subtitle": "Aponte a câmera para o número da figurinha",
+    "scan": "Escanear",
+    "scanning": "Reconhecendo…",
+    "manualEntry": "Inserir número",
+    "manualPlaceholder": "ex. BRA4 ou FWC3",
+    "manualConfirm": "Confirmar",
+    "result": {
+      "found": "Figurinha encontrada!",
+      "notFound": "Figurinha não encontrada",
+      "addToHave": "Adicionar ao tenho",
+      "addToNeed": "Adicionar ao preciso",
+      "addDuplicate": "Marcar como repetida",
+      "alreadyOwned": "Já tenho"
+    },
+    "limits": {
+      "daily": "Limite diário atingido",
+      "upgradeHint": "Premium para scans ilimitados"
+    }
+  },
+  "album": {
+    "title": "Meu Álbum",
+    "progress": "{{owned}} / {{total}} — {{percent}}% completo",
+    "tabSticker": "📋 Figurinhas ({{owned}}/{{total}})",
+    "tabAdrenalyn": "⚡ Adrenalyn ({{owned}}/{{total}})",
+    "filter": {
+      "all": "Todos",
+      "owned": "Tenho",
+      "missing": "Preciso",
+      "duplicates": "Repetidas"
+    },
+    "search": "Buscar time ou jogador",
+    "teamProgress": "{{team}}: {{owned}}/{{count}}",
+    "groups": {
+      "A": "Grupo A", "B": "Grupo B", "C": "Grupo C",
+      "D": "Grupo D", "E": "Grupo E", "F": "Grupo F",
+      "G": "Grupo G", "H": "Grupo H", "I": "Grupo I",
+      "J": "Grupo J", "K": "Grupo K", "L": "Grupo L"
+    },
+    "types": {
+      "NORMAL": "Normal", "FOIL": "Brilhante", "LOGO": "Escudo", "STADIUM": "Estádio"
+    },
+    "sticker": {
+      "owned": "Tenho", "missing": "Falta", "duplicate": "{{count}}× Repetida"
+    }
+  },
+  "trade": {
+    "title": "Troca de Figurinhas",
+    "noOffers": "Nenhuma oferta por perto",
+    "createOffer": "Criar oferta",
+    "myOffers": "Minhas ofertas",
+    "nearbyOffers": "Perto de você",
+    "radius": {
+      "label": "Raio de busca",
+      "1km": "1 km",
+      "5km": "5 km",
+      "10km": "10 km",
+      "anywhere": "Em qualquer lugar"
+    },
+    "offer": {
+      "iOffer": "Ofereço",
+      "iNeed": "Preciso",
+      "distance": "{{km}} km de distância",
+      "contact": "Contatar",
+      "match": "Combinação encontrada! 🎉",
+      "complete": "Troca concluída"
+    },
+    "limits": {
+      "maxOffers": "Limite: 5 ofertas ativas",
+      "upgradeHint": "Premium para ofertas ilimitadas"
+    },
+    "chat": {
+      "title": "Chat de troca",
+      "placeholder": "Escrever mensagem…",
+      "send": "Enviar"
+    }
+  },
+  "schedule": {
+    "title": "Calendário da Copa",
+    "groupStage": "Fase de grupos",
+    "knockout": "Mata-mata",
+    "roundOf16": "Oitavas de final",
+    "quarterfinal": "Quartas de final",
+    "semifinal": "Semifinal",
+    "final": "Final",
+    "thirdPlace": "Terceiro lugar",
+    "predict": "Fazer palpite",
+    "yourPrediction": "Seu palpite",
+    "matchday": "Rodada {{day}}",
+    "kickoff": "Início {{time}}",
+    "relatedStickers": "Figurinhas desses times"
+  },
+  "profile": {
+    "title": "Perfil",
+    "albumStats": "Estatísticas do álbum",
+    "completion": "{{percent}}% completo",
+    "teamsComplete": "{{count}} times completos",
+    "share": "Compartilhar progresso",
+    "shareText": "Completei {{percent}}% do álbum Panini Copa 2026! 🏆 Ainda faltam {{missing}} figurinhas.\n\nAcompanhe seu progresso com StickerScout 2026:\n📱 iOS: https://apps.apple.com/at/app/stickerscout-2026/id6775562727\n🤖 Android: https://play.google.com/store/apps/details?id=at.ncn.stickerscout2026",
+    "settings": {
+      "title": "Configurações",
+      "language": "Idioma",
+      "matchRadius": "Raio de troca",
+      "notifications": "Notificações",
+      "premium": "Premium"
+    },
+    "estimatedCost": "Custo estimado para completar: ~€{{amount}}",
+    "packsNeeded": "Aprox. {{packs}} pacotes restantes"
+  },
+  "onboarding": {
+    "skip": "Pular",
+    "next": "Próximo",
+    "start": "Começar",
+    "tagline": "Escanear. Trocar. Colecionar.",
+    "feature1": "Escanear",
+    "feature2": "Trocar",
+    "feature3": "Colecionar",
+    "slide1": {
+      "title": "Scanner com IA",
+      "text": "Fotografe o número da figurinha — a IA reconhece na hora."
+    },
+    "slide2": {
+      "title": "Seu Álbum",
+      "text": "Gerencie todas as figurinhas. Veja de relance o que tem e o que falta."
+    },
+    "slide3": {
+      "title": "Troca",
+      "text": "Encontre parceiros de troca perto de você e troque suas repetidas."
+    }
+  },
+  "paywall": {
+    "title": "StickerScout Premium",
+    "subtitle": "O companheiro completo da Copa 2026",
+    "monthly": "Mensal",
+    "season": "Passe da temporada",
+    "monthlyPrice": "€1,99 / mês",
+    "seasonPrice": "€4,99 pagamento único",
+    "seasonBadge": "Melhor oferta",
+    "features": {
+      "scanner": "Scanner ilimitado",
+      "offers": "Ofertas ilimitadas",
+      "radius": "Raio ampliado (50km+)",
+      "backup": "Backup e exportação",
+      "early": "Acesso antecipado"
+    },
+    "purchase": "Desbloquear agora",
+    "restore": "Restaurar compra",
+    "terms": "Termos e privacidade"
+  },
+  "common": {
+    "cancel": "Cancelar",
+    "confirm": "Confirmar",
+    "save": "Salvar",
+    "delete": "Excluir",
+    "close": "Fechar",
+    "loading": "Carregando…",
+    "error": "Erro",
+    "retry": "Tentar novamente",
+    "ok": "OK",
+    "yes": "Sim",
+    "no": "Não",
+    "free": "Grátis",
+    "premium": "Premium"
+  },
+  "sticker": {
+    "number": "Figurinha #{{number}}",
+    "foil": "Figurinha brilhante ✨",
+    "logo": "Escudo",
+    "stadium": "Estádio"
+  },
+  "assistant": {
+    "title": "Assistente StickerScout",
+    "subtitle": "Com tecnologia Claude AI",
+    "greeting": "Olá! Sou seu assistente StickerScout. Como posso ajudar?",
+    "placeholder": "Fazer uma pergunta…",
+    "error": "Erro de conexão. Por favor, tente novamente.",
+    "suggestions": {
+      "1": "Quais figurinhas me faltam do Grupo A?",
+      "2": "Quantos pacotes ainda preciso?",
+      "3": "Quais são as figurinhas mais raras?",
+      "4": "Explica os tipos de cartas Adrenalyn.",
+      "5": "Quando o Brasil joga?"
+    }
+  },
+  "adrenalyn": {
+    "title": "Adrenalyn XL",
+    "types": {
+      "GOLDEN_BALLER": "Golden Baller", "FF": "Fan Favourite",
+      "TEAM_CREST": "Team Crest", "IC": "Icon", "BASE": "Base",
+      "HERO": "Hero", "LIMITED_EDITION": "Limited Edition", "CONTENDER": "Contender"
+    }
+  }
+}

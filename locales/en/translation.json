@@ -4,7 +4,25 @@
     "album": "Album",
     "trade": "Trade",
     "schedule": "Schedule",
+    "assistant": "Assistant",
+    "ringtones": "Tones",
     "profile": "Profile"
+  },
+  "ringtones": {
+    "title": "WC Ringtones",
+    "subtitle": "Official World Cup 2026 Songs — app exclusive",
+    "previewNote": "30 sec preview for free",
+    "buy": "Buy — €0.99",
+    "owned": "✓ Purchased",
+    "setRingtone": "Set as Ringtone",
+    "preview": "Preview",
+    "stop": "Stop",
+    "restore": "Restore Purchases",
+    "song1": "WC Anthem 2026",
+    "song2": "Victory March",
+    "song3": "Stadium Fever",
+    "iosHint": "File saved to Files app → set via GarageBand as ringtone",
+    "androidHint": "Ringtone saved directly to system sounds"
   },
   "scanner": {
     "title": "Sticker Scanner",
@@ -12,7 +30,7 @@
     "scan": "Scan",
     "scanning": "Recognizing…",
     "manualEntry": "Enter number",
-    "manualPlaceholder": "Sticker no. e.g. 187",
+    "manualPlaceholder": "e.g. AUT4 or FWC3",
     "manualConfirm": "Confirm",
     "result": {
       "found": "Sticker found!",
@@ -108,7 +126,7 @@
     "completion": "{{percent}}% complete",
     "teamsComplete": "{{count}} teams complete",
     "share": "Share progress",
-    "shareText": "I'm {{percent}}% done with the World Cup 2026 sticker album! 🏆 Still need {{missing}} stickers.",
+    "shareText": "I'm {{percent}}% done with the Panini World Cup 2026 sticker album! 🏆 Still missing {{missing}} stickers.\n\nTrack your collection with StickerScout 2026:\n📱 iOS: https://apps.apple.com/at/app/stickerscout-2026/id6775562727\n🤖 Android: https://play.google.com/store/apps/details?id=at.ncn.stickerscout2026",
     "settings": {
       "title": "Settings",
       "language": "Language",
@@ -120,9 +138,13 @@
     "packsNeeded": "Approx. {{packs}} more packs"
   },
   "onboarding": {
-    "skip": "Skip",
+    "skip": "Later",
     "next": "Next",
     "start": "Get started",
+    "tagline": "Scan. Trade. Collect.",
+    "feature1": "Scan",
+    "feature2": "Trade",
+    "feature3": "Collect",
     "slide1": {
       "title": "AI Sticker Scanner",
       "text": "Just photograph the sticker number — AI recognises it instantly."
@@ -137,7 +159,7 @@
     }
   },
   "paywall": {
-    "title": "StickerSwap Premium",
+    "title": "StickerScout Premium",
     "subtitle": "The complete World Cup 2026 companion",
     "monthly": "Monthly",
     "season": "Season Pass",
@@ -175,5 +197,31 @@
     "foil": "Foil sticker ✨",
     "logo": "Logo",
     "stadium": "Stadium"
+  },
+  "assistant": {
+    "title": "StickerScout Assistant",
+    "subtitle": "Powered by Claude AI",
+    "greeting": "Hi! I'm your StickerScout assistant. How can I help?",
+    "placeholder": "Ask a question…",
+    "error": "Connection error. Please try again.",
+    "suggestions": {
+      "1": "Which stickers am I missing from Group J?",
+      "2": "How many packs do I still need?",
+      "3": "What are the rarest stickers?",
+      "4": "Explain the Adrenalyn card types.",
+      "5": "When does Austria play?"
+    }
+  },
+  "adrenalyn": {
+    "title": "Adrenalyn XL",
+    "types": {
+      "GOLDEN_BALLER": "Golden Baller", "FF": "Fan Favourite",
+      "TEAM_CREST": "Team Crest", "IC": "Icon", "BASE": "Base",
+      "HERO": "Hero", "LIMITED_EDITION": "Limited Edition", "CONTENDER": "Contender"
+    }
+  },
+  "album": {
+    "tabSticker": "📋 Stickers ({{owned}}/{{total}})",
+    "tabAdrenalyn": "⚡ Adrenalyn ({{owned}}/{{total}})"
   }
 }

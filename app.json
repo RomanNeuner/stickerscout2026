@@ -55,7 +55,8 @@
           "androidMode": "default",
           "androidCollapsedTitle": "StickerScout 2026"
         }
-      ]
+      ],
+      "expo-sharing"
     ],
     "extra": {
       "eas": {

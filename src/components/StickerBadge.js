@@ -5,7 +5,7 @@ import { STICKER_TYPE, RARITY } from '../data/stickerTypes';
 
 const TYPE_STYLES = {
   [STICKER_TYPE.FOIL]: { bg: COLORS.goldDeep, text: COLORS.gold, label: '✨ Foil' },
-  [STICKER_TYPE.LOGO]: { bg: COLORS.greenDeep, text: COLORS.greenBright, label: 'Logo' },
+  [STICKER_TYPE.LOGO]: { bg: COLORS.blueTint, text: COLORS.greenBright, label: 'Logo' },
   [STICKER_TYPE.STADIUM]: { bg: '#1A1A2E', text: '#A78BFA', label: 'Stadium' },
   [STICKER_TYPE.NORMAL]: null,
 };
