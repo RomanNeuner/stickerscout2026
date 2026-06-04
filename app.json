@@ -20,7 +20,7 @@
       "icon": "./assets/icon.png",
       "adaptiveIcon": {
         "foregroundImage": "./assets/icon-foreground.png",
-        "backgroundColor": "#0D1F14"
+        "backgroundColor": "#0D1F2D"
       },
       "permissions": [
         "android.permission.CAMERA",
@@ -56,7 +56,8 @@
           "androidCollapsedTitle": "StickerScout 2026"
         }
       ],
-      "expo-sharing"
+      "expo-sharing",
+      "expo-audio"
     ],
     "extra": {
       "eas": {

@@ -22,7 +22,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
-import { Audio } from 'expo-av';
+import { useAudioPlayer, useAudioPlayerStatus } from 'expo-audio';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 import Purchases from 'react-native-purchases';
@@ -95,17 +95,26 @@ export default function RingtonesScreen({ onShowPaywall, isPro }) {
   const [playingId, setPlayingId] = useState(null);
   const [loadingId, setLoadingId] = useState(null);
   const [buyingId, setBuyingId] = useState(null);
-  const [upsellSong, setUpsellSong] = useState(null); // Song für Upsell-Modal
-  const soundRef = useRef(null);
+  const [upsellSong, setUpsellSong] = useState(null);
+  const [currentSource, setCurrentSource] = useState(null);
+  const player = useAudioPlayer(currentSource);
+  const playerStatus = useAudioPlayerStatus(player);
 
+  // Playback Ende erkennen
   useEffect(() => {
-    Audio.setAudioModeAsync({ allowsRecordingIOS: false, playsInSilentModeIOS: true }).catch(() => {});
-    return () => { stopSound(); };
-  }, []);
+    if (playerStatus?.didJustFinish) {
+      setPlayingId(null);
+      setCurrentSource(null);
+    }
+  }, [playerStatus?.didJustFinish]);
 
   useFocusEffect(useCallback(() => {
     loadOwned();
-    return () => { stopSound(); };
+    return () => {
+      player?.pause();
+      setPlayingId(null);
+      setCurrentSource(null);
+    };
   }, []));
 
   const loadOwned = async () => {
@@ -120,27 +129,28 @@ export default function RingtonesScreen({ onShowPaywall, isPro }) {
   };
 
   // ──────────────────────────────────────────────────────────────────────────
-  // Audio
+  // Audio (expo-audio)
   // ──────────────────────────────────────────────────────────────────────────
-  const stopSound = async () => {
-    if (soundRef.current) {
-      try { await soundRef.current.stopAsync(); await soundRef.current.unloadAsync(); } catch {}
-      soundRef.current = null;
-    }
-    setPlayingId(null);
-  };
-
   const handlePlayPreview = async (song) => {
-    if (playingId === song.id) { await stopSound(); return; }
-    await stopSound();
+    if (playingId === song.id) {
+      player?.pause();
+      setPlayingId(null);
+      setCurrentSource(null);
+      return;
+    }
+    // Stop current
+    player?.pause();
+    setPlayingId(null);
     setLoadingId(song.id);
     try {
-      const { sound } = await Audio.Sound.createAsync(song.preview, { shouldPlay: true, volume: 1.0 });
-      soundRef.current = sound;
+      setCurrentSource(song.preview);
       setPlayingId(song.id);
-      sound.setOnPlaybackStatusUpdate(s => { if (s.didJustFinish) { setPlayingId(null); soundRef.current = null; } });
-    } catch { Alert.alert('Fehler', 'Vorschau konnte nicht geladen werden.'); }
-    finally { setLoadingId(null); }
+      setTimeout(() => player?.play(), 150); // kurz warten bis Source geladen
+    } catch {
+      Alert.alert('Fehler', 'Vorschau konnte nicht geladen werden.');
+    } finally {
+      setLoadingId(null);
+    }
   };
 
   // ──────────────────────────────────────────────────────────────────────────
