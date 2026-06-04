@@ -1,13 +1,21 @@
 /**
- * RingtonesScreen — WM 2026 Klingeltöne
- * 3 Songs à €0,99 (Non-consumable IAP)
- * Vorschau: kostenlos (30 Sek.), Vollversion: per Kauf
- * iOS: .m4r via Share Sheet | Android: MediaStore
+ * RingtonesScreen — WM 2026 Klingeltöne & Full Tracks
+ *
+ * Songs:
+ *   song1 — United Voices   "One World, One Game"    🌍 INT
+ *   song2 — Leo Falk        "Wir halten zusammen"    🇩🇪 DE
+ *   song3 — Da Austro-Bua   "Unaufhoitboa"           🇦🇹 AT
+ *
+ * IAPs:
+ *   ringtone.song[1-3]  — €0,99  Klingelton-Version
+ *   fulltrack.song[1-3] — €1,99  Vollständiger Song
+ *
+ * Upsell: nach Klingelton-Kauf → Modal "Ganzen Song für €1,00 mehr"
  */
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
-  Alert, Platform, ActivityIndicator,
+  Alert, Platform, ActivityIndicator, Image, Modal,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -20,47 +28,60 @@ import * as Sharing from 'expo-sharing';
 import Purchases from 'react-native-purchases';
 
 import { COLORS, GRADIENTS, FONTS, SPACING, RADIUS, SHADOWS } from '../theme';
-import { PRODUCT_IDS, RINGTONE_IDS } from '../services/subscription';
+import { PRODUCT_IDS, RINGTONE_IDS, FULLTRACK_IDS } from '../services/subscription';
 import GoldButton from '../components/GoldButton';
 
 // ──────────────────────────────────────────────────────────────────────────────
-// Song Definitionen
-// Preview: assets/ringtones/songX_preview.mp3 (30 Sek.)
-// Full:    assets/ringtones/songX_full.mp3 + songX_full.m4r (iOS)
+// Song-Definitionen
 // ──────────────────────────────────────────────────────────────────────────────
 const SONGS = [
   {
     id: 1,
-    productId: PRODUCT_IDS.ringtone1,
-    emoji: '🏆',
-    titleKey: 'ringtones.song1',
-    genre: 'Orchestral Anthem',
-    duration: '0:45',
+    key: 'song1',
+    ringtoneId: PRODUCT_IDS.ringtone1,
+    fulltrackId: PRODUCT_IDS.fulltrack1,
+    artist: 'United Voices',
+    title: 'One World, One Game',
+    market: '🌍',
+    marketLabel: 'International',
+    duration: '0:38',
+    accentColor: '#F5C033',
+    cover: require('../../assets/ringtones/covers/song1_cover.png'),
     preview: require('../../assets/ringtones/song1_preview.mp3'),
+    ringtone: require('../../assets/ringtones/song1_ringtone.mp3'),
     full: require('../../assets/ringtones/song1_full.mp3'),
-    color: '#F5C033',
   },
   {
     id: 2,
-    productId: PRODUCT_IDS.ringtone2,
-    emoji: '⚽',
-    titleKey: 'ringtones.song2',
-    genre: 'Epic Stadium',
-    duration: '0:38',
+    key: 'song2',
+    ringtoneId: PRODUCT_IDS.ringtone2,
+    fulltrackId: PRODUCT_IDS.fulltrack2,
+    artist: 'Leo Falk',
+    title: 'Wir halten zusammen',
+    market: '🇩🇪',
+    marketLabel: 'Deutschland',
+    duration: '0:42',
+    accentColor: '#4FC3F7',
+    cover: require('../../assets/ringtones/covers/song2_cover.png'),
     preview: require('../../assets/ringtones/song2_preview.mp3'),
+    ringtone: require('../../assets/ringtones/song2_ringtone.mp3'),
     full: require('../../assets/ringtones/song2_full.mp3'),
-    color: '#4FC3F7',
   },
   {
     id: 3,
-    productId: PRODUCT_IDS.ringtone3,
-    emoji: '🎶',
-    titleKey: 'ringtones.song3',
-    genre: 'Electronic Beat',
-    duration: '0:40',
+    key: 'song3',
+    ringtoneId: PRODUCT_IDS.ringtone3,
+    fulltrackId: PRODUCT_IDS.fulltrack3,
+    artist: 'Da Austro-Bua',
+    title: 'Unaufhoitboa',
+    market: '🇦🇹',
+    marketLabel: 'Österreich',
+    duration: '0:45',
+    accentColor: '#FF6B6B',
+    cover: require('../../assets/ringtones/covers/song3_cover.png'),
     preview: require('../../assets/ringtones/song3_preview.mp3'),
+    ringtone: require('../../assets/ringtones/song3_ringtone.mp3'),
     full: require('../../assets/ringtones/song3_full.mp3'),
-    color: '#42D783',
   },
 ];
 
@@ -69,40 +90,33 @@ export default function RingtonesScreen({ onShowPaywall, isPro }) {
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
 
-  const [ownedIds, setOwnedIds] = useState(new Set());
+  const [ownedRingtones, setOwnedRingtones] = useState(new Set());
+  const [ownedFulltracks, setOwnedFulltracks] = useState(new Set());
   const [playingId, setPlayingId] = useState(null);
   const [loadingId, setLoadingId] = useState(null);
   const [buyingId, setBuyingId] = useState(null);
+  const [upsellSong, setUpsellSong] = useState(null); // Song für Upsell-Modal
   const soundRef = useRef(null);
 
-  // Audio-Modus setzen beim Mounten
   useEffect(() => {
-    Audio.setAudioModeAsync({
-      allowsRecordingIOS: false,
-      playsInSilentModeIOS: true,
-      staysActiveInBackground: false,
-    }).catch(() => {});
+    Audio.setAudioModeAsync({ allowsRecordingIOS: false, playsInSilentModeIOS: true }).catch(() => {});
     return () => { stopSound(); };
   }, []);
 
   useFocusEffect(useCallback(() => {
-    loadOwnedRingtones();
+    loadOwned();
     return () => { stopSound(); };
   }, []));
 
-  const loadOwnedRingtones = async () => {
+  const loadOwned = async () => {
     try {
       const info = await Purchases.getCustomerInfo();
-      const owned = new Set();
-      for (const id of RINGTONE_IDS) {
-        if (info.entitlements.active[id] || info.nonSubscriptionTransactions?.some(t => t.productIdentifier === id)) {
-          owned.add(id);
-        }
-      }
-      setOwnedIds(owned);
-    } catch {
-      // RevenueCat nicht verfügbar
-    }
+      const txIds = (info.nonSubscriptionTransactions ?? []).map(t => t.productIdentifier);
+      const active = Object.keys(info.entitlements.active ?? {});
+      const allOwned = new Set([...txIds, ...active]);
+      setOwnedRingtones(new Set(RINGTONE_IDS.filter(id => allOwned.has(id))));
+      setOwnedFulltracks(new Set(FULLTRACK_IDS.filter(id => allOwned.has(id))));
+    } catch { /* RevenueCat nicht verfügbar */ }
   };
 
   // ──────────────────────────────────────────────────────────────────────────
@@ -110,78 +124,73 @@ export default function RingtonesScreen({ onShowPaywall, isPro }) {
   // ──────────────────────────────────────────────────────────────────────────
   const stopSound = async () => {
     if (soundRef.current) {
-      try {
-        await soundRef.current.stopAsync();
-        await soundRef.current.unloadAsync();
-      } catch { /* ignore */ }
+      try { await soundRef.current.stopAsync(); await soundRef.current.unloadAsync(); } catch {}
       soundRef.current = null;
     }
     setPlayingId(null);
   };
 
   const handlePlayPreview = async (song) => {
-    if (playingId === song.id) {
-      await stopSound();
-      return;
-    }
+    if (playingId === song.id) { await stopSound(); return; }
     await stopSound();
     setLoadingId(song.id);
     try {
-      const { sound } = await Audio.Sound.createAsync(
-        song.preview,
-        { shouldPlay: true, volume: 1.0 }
-      );
+      const { sound } = await Audio.Sound.createAsync(song.preview, { shouldPlay: true, volume: 1.0 });
       soundRef.current = sound;
       setPlayingId(song.id);
-      sound.setOnPlaybackStatusUpdate(status => {
-        if (status.didJustFinish) {
-          setPlayingId(null);
-          soundRef.current = null;
-        }
-      });
-    } catch {
-      Alert.alert('Fehler', 'Vorschau konnte nicht geladen werden.');
-    } finally {
-      setLoadingId(null);
-    }
+      sound.setOnPlaybackStatusUpdate(s => { if (s.didJustFinish) { setPlayingId(null); soundRef.current = null; } });
+    } catch { Alert.alert('Fehler', 'Vorschau konnte nicht geladen werden.'); }
+    finally { setLoadingId(null); }
   };
 
   // ──────────────────────────────────────────────────────────────────────────
-  // Kauf
+  // Kauf — Klingelton
   // ──────────────────────────────────────────────────────────────────────────
-  const handleBuy = async (song) => {
-    setBuyingId(song.id);
+  const handleBuyRingtone = async (song) => {
+    setBuyingId(`rt_${song.id}`);
     try {
-      const { customerInfo } = await Purchases.purchaseStoreProduct(
-        await getProduct(song.productId)
-      );
-      const owned = new Set(ownedIds);
-      owned.add(song.productId);
-      setOwnedIds(owned);
-      Alert.alert('✅ Gekauft!', `${t(song.titleKey)} wurde freigeschaltet.`);
-    } catch (e) {
-      if (!e.userCancelled) {
-        Alert.alert('Fehler', 'Kauf fehlgeschlagen. Bitte versuche es erneut.');
+      const products = await Purchases.getProducts([song.ringtoneId]);
+      if (!products.length) throw new Error('Produkt nicht gefunden');
+      await Purchases.purchaseStoreProduct(products[0]);
+      const updated = new Set(ownedRingtones);
+      updated.add(song.ringtoneId);
+      setOwnedRingtones(updated);
+      // Upsell anzeigen (nur wenn Full Track noch nicht gekauft)
+      if (!ownedFulltracks.has(song.fulltrackId)) {
+        setTimeout(() => setUpsellSong(song), 400);
+      } else {
+        Alert.alert('✅ Klingelton freigeschaltet!', `"${song.title}" wurde gespeichert.`);
       }
-    } finally {
-      setBuyingId(null);
-    }
+    } catch (e) {
+      if (!e.userCancelled) Alert.alert('Fehler', 'Kauf fehlgeschlagen. Bitte erneut versuchen.');
+    } finally { setBuyingId(null); }
   };
 
-  const getProduct = async (productId) => {
-    const offerings = await Purchases.getOfferings();
-    const products = await Purchases.getProducts([productId]);
-    return products[0];
+  // ──────────────────────────────────────────────────────────────────────────
+  // Kauf — Full Track
+  // ──────────────────────────────────────────────────────────────────────────
+  const handleBuyFulltrack = async (song) => {
+    setBuyingId(`ft_${song.id}`);
+    setUpsellSong(null);
+    try {
+      const products = await Purchases.getProducts([song.fulltrackId]);
+      if (!products.length) throw new Error('Produkt nicht gefunden');
+      await Purchases.purchaseStoreProduct(products[0]);
+      const updated = new Set(ownedFulltracks);
+      updated.add(song.fulltrackId);
+      setOwnedFulltracks(updated);
+      Alert.alert('✅ Song gekauft!', `"${song.title}" — für immer deins!`);
+    } catch (e) {
+      if (!e.userCancelled) Alert.alert('Fehler', 'Kauf fehlgeschlagen. Bitte erneut versuchen.');
+    } finally { setBuyingId(null); }
   };
 
   const handleRestore = async () => {
     try {
       await Purchases.restorePurchases();
-      await loadOwnedRingtones();
+      await loadOwned();
       Alert.alert('✅ Wiederhergestellt', 'Deine Käufe wurden wiederhergestellt.');
-    } catch {
-      Alert.alert('Fehler', 'Wiederherstellung fehlgeschlagen.');
-    }
+    } catch { Alert.alert('Fehler', 'Wiederherstellung fehlgeschlagen.'); }
   };
 
   // ──────────────────────────────────────────────────────────────────────────
@@ -189,27 +198,16 @@ export default function RingtonesScreen({ onShowPaywall, isPro }) {
   // ──────────────────────────────────────────────────────────────────────────
   const handleSetRingtone = async (song) => {
     if (Platform.OS === 'ios') {
-      // iOS: .mp3 teilen (echte .m4r Dateien werden später eingebunden)
       try {
         const canShare = await Sharing.isAvailableAsync();
         if (canShare) {
-          await Sharing.shareAsync(song.full, {
-            mimeType: 'audio/mpeg',
-            dialogTitle: 'Als Klingelton setzen',
-          });
+          await Sharing.shareAsync(song.ringtone, { mimeType: 'audio/mpeg', dialogTitle: 'Als Klingelton setzen' });
         } else {
           Alert.alert('Info', t('ringtones.iosHint'));
         }
-      } catch {
-        Alert.alert('Info', t('ringtones.iosHint'));
-      }
+      } catch { Alert.alert('Info', t('ringtones.iosHint')); }
     } else {
-      // Android: MediaStore (vereinfacht — Nutzer-Hinweis)
-      Alert.alert(
-        '📱 Klingelton setzen',
-        t('ringtones.androidHint'),
-        [{ text: 'OK' }]
-      );
+      Alert.alert('📱 Klingelton setzen', t('ringtones.androidHint'), [{ text: 'OK' }]);
     }
   };
 
@@ -220,247 +218,225 @@ export default function RingtonesScreen({ onShowPaywall, isPro }) {
     <View style={[styles.container, { paddingTop: insets.top }]}>
       {/* Header */}
       <LinearGradient colors={['#1A3A52', COLORS.bg]} style={styles.header}>
-        <Text style={styles.title}>{t('ringtones.title')}</Text>
+        <Text style={styles.title}>🔔 {t('ringtones.title')}</Text>
         <Text style={styles.subtitle}>{t('ringtones.subtitle')}</Text>
         <Text style={styles.previewNote}>🎵 {t('ringtones.previewNote')}</Text>
       </LinearGradient>
 
       <ScrollView
-        contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + SPACING.xl }]}
+        contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + 32 }]}
         showsVerticalScrollIndicator={false}
       >
         {SONGS.map(song => {
-          const owned = ownedIds.has(song.productId);
+          const hasRingtone = ownedRingtones.has(song.ringtoneId);
+          const hasFulltrack = ownedFulltracks.has(song.fulltrackId);
           const isPlaying = playingId === song.id;
-          const isLoading = loadingId === song.id;
-          const isBuying = buyingId === song.id;
+          const isLoadingPreview = loadingId === song.id;
+          const isBuyingRt = buyingId === `rt_${song.id}`;
+          const isBuyingFt = buyingId === `ft_${song.id}`;
 
           return (
-            <View key={song.id} style={styles.songCard}>
-              {/* Song Info */}
-              <View style={[styles.songIconBox, { borderColor: song.color + '50', backgroundColor: song.color + '15' }]}>
-                <Text style={styles.songEmoji}>{song.emoji}</Text>
-              </View>
-              <View style={styles.songInfo}>
-                <Text style={styles.songTitle}>{t(song.titleKey)}</Text>
-                <Text style={styles.songMeta}>{song.genre} · {song.duration}</Text>
+            <View key={song.id} style={[styles.songCard, { borderColor: song.accentColor + '30' }]}>
+              {/* Cover + Info */}
+              <View style={styles.songTop}>
+                <View style={[styles.coverWrap, { borderColor: song.accentColor + '60' }]}>
+                  <Image source={song.cover} style={styles.cover} resizeMode="cover" />
+                  {/* Market Badge */}
+                  <View style={styles.marketBadge}>
+                    <Text style={styles.marketEmoji}>{song.market}</Text>
+                  </View>
+                </View>
+                <View style={styles.songMeta}>
+                  <Text style={[styles.artist, { color: song.accentColor }]}>{song.artist}</Text>
+                  <Text style={styles.songTitle}>{song.title}</Text>
+                  <Text style={styles.songDuration}>{song.marketLabel} · {song.duration}</Text>
+                </View>
               </View>
 
-              {/* Owned Badge */}
-              {owned && (
-                <View style={styles.ownedBadge}>
-                  <Text style={styles.ownedText}>{t('ringtones.owned')}</Text>
-                </View>
+              {/* Preview Button */}
+              <TouchableOpacity
+                style={[styles.previewBtn, isPlaying && { borderColor: song.accentColor + '80', backgroundColor: song.accentColor + '15' }]}
+                onPress={() => handlePlayPreview(song)}
+                disabled={isLoadingPreview}
+              >
+                {isLoadingPreview ? (
+                  <ActivityIndicator size="small" color={song.accentColor} />
+                ) : (
+                  <Ionicons name={isPlaying ? 'stop-circle' : 'play-circle'} size={20} color={song.accentColor} />
+                )}
+                <Text style={[styles.previewBtnText, { color: song.accentColor }]}>
+                  {isPlaying ? t('ringtones.stop') : t('ringtones.preview')}
+                </Text>
+              </TouchableOpacity>
+
+              {/* Klingelton Button */}
+              {hasRingtone ? (
+                <TouchableOpacity style={[styles.setBtn, { borderColor: song.accentColor + '50' }]} onPress={() => handleSetRingtone(song)}>
+                  <Ionicons name="phone-portrait-outline" size={16} color={song.accentColor} />
+                  <Text style={[styles.setBtnText, { color: song.accentColor }]}>🔔 {t('ringtones.setRingtone')}</Text>
+                </TouchableOpacity>
+              ) : (
+                <TouchableOpacity
+                  style={[styles.buyBtn, { backgroundColor: song.accentColor }]}
+                  onPress={() => handleBuyRingtone(song)}
+                  disabled={isBuyingRt}
+                >
+                  {isBuyingRt ? <ActivityIndicator size="small" color={COLORS.bg} /> : (
+                    <>
+                      <Ionicons name="musical-note-outline" size={16} color={COLORS.bg} />
+                      <Text style={styles.buyBtnText}>🔔 Klingelton — €0,99</Text>
+                    </>
+                  )}
+                </TouchableOpacity>
               )}
 
-              {/* Action Buttons */}
-              <View style={styles.actions}>
-                {/* Preview Button */}
+              {/* Full Track Button */}
+              {hasFulltrack ? (
+                <View style={styles.ownedFulltrack}>
+                  <Ionicons name="checkmark-circle" size={16} color={COLORS.green} />
+                  <Text style={styles.ownedFulltrackText}>✓ Ganzer Song — besessen</Text>
+                </View>
+              ) : (
                 <TouchableOpacity
-                  style={[styles.previewBtn, isPlaying && styles.previewBtnActive]}
-                  onPress={() => handlePlayPreview(song)}
-                  disabled={isLoading}
+                  style={styles.fulltrackBtn}
+                  onPress={() => handleBuyFulltrack(song)}
+                  disabled={isBuyingFt}
                 >
-                  {isLoading ? (
-                    <ActivityIndicator size="small" color={COLORS.gold} />
-                  ) : (
-                    <Ionicons
-                      name={isPlaying ? 'stop-circle' : 'play-circle'}
-                      size={22}
-                      color={isPlaying ? COLORS.blue : COLORS.gold}
-                    />
+                  {isBuyingFt ? <ActivityIndicator size="small" color={COLORS.textSecondary} /> : (
+                    <>
+                      <Ionicons name="download-outline" size={16} color={COLORS.textSecondary} />
+                      <Text style={styles.fulltrackBtnText}>⬇ Ganzer Song — €1,99</Text>
+                    </>
                   )}
-                  <Text style={[styles.previewBtnText, isPlaying && { color: COLORS.blue }]}>
-                    {isPlaying ? t('ringtones.stop') : t('ringtones.preview')}
-                  </Text>
                 </TouchableOpacity>
-
-                {/* Buy or Set Ringtone */}
-                {owned ? (
-                  <TouchableOpacity
-                    style={styles.setBtn}
-                    onPress={() => handleSetRingtone(song)}
-                  >
-                    <Ionicons name="phone-portrait-outline" size={18} color={COLORS.green} />
-                    <Text style={styles.setBtnText}>{t('ringtones.setRingtone')}</Text>
-                  </TouchableOpacity>
-                ) : (
-                  <TouchableOpacity
-                    style={styles.buyBtn}
-                    onPress={() => handleBuy(song)}
-                    disabled={isBuying}
-                  >
-                    {isBuying ? (
-                      <ActivityIndicator size="small" color={COLORS.bg} />
-                    ) : (
-                      <>
-                        <Ionicons name="cart-outline" size={16} color={COLORS.bg} />
-                        <Text style={styles.buyBtnText}>{t('ringtones.buy')}</Text>
-                      </>
-                    )}
-                  </TouchableOpacity>
-                )}
-              </View>
+              )}
             </View>
           );
         })}
 
-        {/* Restore */}
         <TouchableOpacity style={styles.restoreBtn} onPress={handleRestore}>
           <Text style={styles.restoreText}>{t('ringtones.restore')}</Text>
         </TouchableOpacity>
       </ScrollView>
+
+      {/* Upsell Modal */}
+      <Modal visible={!!upsellSong} transparent animationType="fade">
+        <View style={styles.upsellOverlay}>
+          <View style={styles.upsellCard}>
+            <Text style={styles.upsellEmoji}>🎵</Text>
+            <Text style={styles.upsellTitle}>Du hast den Klingelton!</Text>
+            <Text style={styles.upsellBody}>
+              Hol dir jetzt{'\n'}
+              <Text style={styles.upsellSongName}>"{upsellSong?.title}"</Text>
+              {'\n'}als vollständigen Song für nur{'\n'}
+              <Text style={styles.upsellPrice}>€1,00 mehr!</Text>
+            </Text>
+            <GoldButton
+              title="⬇ Ganzen Song laden — €1,99"
+              onPress={() => upsellSong && handleBuyFulltrack(upsellSong)}
+              style={{ marginTop: SPACING.lg }}
+            />
+            <TouchableOpacity style={styles.upsellDismiss} onPress={() => setUpsellSong(null)}>
+              <Text style={styles.upsellDismissText}>Nein danke</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: COLORS.bg,
-  },
-  header: {
-    paddingHorizontal: SPACING.xl,
-    paddingTop: SPACING.lg,
-    paddingBottom: SPACING.xxl,
-  },
-  title: {
-    color: COLORS.textPrimary,
-    fontSize: FONTS.sizes.xxl,
-    fontWeight: FONTS.weights.black,
-    marginBottom: SPACING.xs,
-  },
-  subtitle: {
-    color: COLORS.textSecondary,
-    fontSize: FONTS.sizes.md,
-    marginBottom: SPACING.sm,
-  },
-  previewNote: {
-    color: COLORS.gold,
-    fontSize: FONTS.sizes.sm,
-    fontWeight: FONTS.weights.semibold,
-  },
-  content: {
-    padding: SPACING.xl,
-    gap: SPACING.lg,
-  },
+  container: { flex: 1, backgroundColor: COLORS.bg },
+  header: { paddingHorizontal: SPACING.xl, paddingTop: SPACING.lg, paddingBottom: SPACING.xxl },
+  title: { color: COLORS.textPrimary, fontSize: FONTS.sizes.xxl, fontWeight: FONTS.weights.black, marginBottom: SPACING.xs },
+  subtitle: { color: COLORS.textSecondary, fontSize: FONTS.sizes.md, marginBottom: SPACING.sm },
+  previewNote: { color: COLORS.gold, fontSize: FONTS.sizes.sm, fontWeight: FONTS.weights.semibold },
+  content: { padding: SPACING.lg, gap: SPACING.lg },
+
   songCard: {
     backgroundColor: COLORS.surface,
-    borderRadius: RADIUS.lg,
+    borderRadius: RADIUS.xl,
     padding: SPACING.lg,
-    borderWidth: 0.5,
-    borderColor: COLORS.border,
-    ...SHADOWS.card,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    alignItems: 'center',
-    gap: SPACING.md,
-  },
-  songIconBox: {
-    width: 52,
-    height: 52,
-    borderRadius: RADIUS.md,
     borderWidth: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  songEmoji: {
-    fontSize: 26,
-  },
-  songInfo: {
-    flex: 1,
-    minWidth: 100,
-  },
-  songTitle: {
-    color: COLORS.textPrimary,
-    fontSize: FONTS.sizes.lg,
-    fontWeight: FONTS.weights.bold,
-    marginBottom: 2,
-  },
-  songMeta: {
-    color: COLORS.textMuted,
-    fontSize: FONTS.sizes.sm,
-  },
-  ownedBadge: {
-    backgroundColor: 'rgba(66,215,131,0.15)',
-    borderWidth: 0.5,
-    borderColor: 'rgba(66,215,131,0.4)',
-    borderRadius: RADIUS.full,
-    paddingHorizontal: SPACING.md,
-    paddingVertical: 4,
-  },
-  ownedText: {
-    color: COLORS.green,
-    fontSize: FONTS.sizes.sm,
-    fontWeight: FONTS.weights.semibold,
-  },
-  actions: {
-    flexDirection: 'row',
-    width: '100%',
     gap: SPACING.sm,
-    marginTop: SPACING.xs,
+    ...SHADOWS.card,
   },
+  songTop: { flexDirection: 'row', gap: SPACING.lg, alignItems: 'center', marginBottom: SPACING.xs },
+  coverWrap: {
+    width: 80, height: 80,
+    borderRadius: RADIUS.lg,
+    borderWidth: 1.5,
+    overflow: 'hidden',
+    position: 'relative',
+  },
+  cover: { width: '100%', height: '100%' },
+  marketBadge: {
+    position: 'absolute', bottom: 4, right: 4,
+    backgroundColor: 'rgba(0,0,0,0.6)',
+    borderRadius: RADIUS.sm,
+    padding: 2,
+  },
+  marketEmoji: { fontSize: 14 },
+  songMeta: { flex: 1 },
+  artist: { fontSize: FONTS.sizes.sm, fontWeight: FONTS.weights.bold, marginBottom: 2 },
+  songTitle: { color: COLORS.textPrimary, fontSize: FONTS.sizes.lg, fontWeight: FONTS.weights.black, marginBottom: 4 },
+  songDuration: { color: COLORS.textMuted, fontSize: FONTS.sizes.sm },
+
   previewBtn: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: SPACING.xs,
-    paddingVertical: SPACING.sm,
-    borderRadius: RADIUS.md,
-    borderWidth: 1,
-    borderColor: 'rgba(245,192,51,0.35)',
-    backgroundColor: 'rgba(245,192,51,0.08)',
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: SPACING.sm,
+    paddingVertical: SPACING.sm, borderRadius: RADIUS.md,
+    borderWidth: 1, borderColor: 'rgba(255,255,255,0.15)',
   },
-  previewBtnActive: {
-    borderColor: 'rgba(79,195,247,0.4)',
-    backgroundColor: 'rgba(79,195,247,0.10)',
-  },
-  previewBtnText: {
-    color: COLORS.gold,
-    fontSize: FONTS.sizes.sm,
-    fontWeight: FONTS.weights.semibold,
-  },
+  previewBtnText: { fontSize: FONTS.sizes.sm, fontWeight: FONTS.weights.semibold },
+
   setBtn: {
-    flex: 1.2,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: SPACING.xs,
-    paddingVertical: SPACING.sm,
-    borderRadius: RADIUS.md,
-    borderWidth: 1,
-    borderColor: 'rgba(66,215,131,0.4)',
-    backgroundColor: 'rgba(66,215,131,0.10)',
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: SPACING.sm,
+    paddingVertical: SPACING.sm, borderRadius: RADIUS.md,
+    borderWidth: 1, backgroundColor: 'rgba(255,255,255,0.04)',
   },
-  setBtnText: {
-    color: COLORS.green,
-    fontSize: FONTS.sizes.sm,
-    fontWeight: FONTS.weights.semibold,
-  },
+  setBtnText: { fontSize: FONTS.sizes.sm, fontWeight: FONTS.weights.semibold },
+
   buyBtn: {
-    flex: 1.2,
-    flexDirection: 'row',
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: SPACING.sm,
+    paddingVertical: SPACING.md, borderRadius: RADIUS.md,
+  },
+  buyBtnText: { color: COLORS.bg, fontSize: FONTS.sizes.md, fontWeight: FONTS.weights.bold },
+
+  fulltrackBtn: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: SPACING.sm,
+    paddingVertical: SPACING.sm, borderRadius: RADIUS.md,
+    borderWidth: 1, borderColor: 'rgba(255,255,255,0.12)',
+  },
+  fulltrackBtnText: { color: COLORS.textSecondary, fontSize: FONTS.sizes.sm, fontWeight: FONTS.weights.medium },
+
+  ownedFulltrack: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: SPACING.sm,
+    paddingVertical: SPACING.xs,
+  },
+  ownedFulltrackText: { color: COLORS.green, fontSize: FONTS.sizes.sm },
+
+  restoreBtn: { alignItems: 'center', paddingVertical: SPACING.lg },
+  restoreText: { color: COLORS.textMuted, fontSize: FONTS.sizes.sm },
+
+  // Upsell Modal
+  upsellOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.75)', justifyContent: 'center', alignItems: 'center', padding: SPACING.xl },
+  upsellCard: {
+    backgroundColor: COLORS.surfaceRaised ?? '#1A2E3D',
+    borderRadius: RADIUS.xl,
+    padding: SPACING.xxl,
     alignItems: 'center',
-    justifyContent: 'center',
-    gap: SPACING.xs,
-    paddingVertical: SPACING.sm,
-    borderRadius: RADIUS.md,
-    backgroundColor: COLORS.gold,
+    width: '100%',
+    borderWidth: 1,
+    borderColor: 'rgba(245,192,51,0.3)',
+    ...SHADOWS.modal,
   },
-  buyBtnText: {
-    color: COLORS.bg,
-    fontSize: FONTS.sizes.sm,
-    fontWeight: FONTS.weights.bold,
-  },
-  restoreBtn: {
-    alignItems: 'center',
-    paddingVertical: SPACING.md,
-    marginTop: SPACING.md,
-  },
-  restoreText: {
-    color: COLORS.textMuted,
-    fontSize: FONTS.sizes.sm,
-  },
+  upsellEmoji: { fontSize: 48, marginBottom: SPACING.md },
+  upsellTitle: { color: COLORS.gold, fontSize: FONTS.sizes.xl, fontWeight: FONTS.weights.black, marginBottom: SPACING.md },
+  upsellBody: { color: COLORS.textSecondary, fontSize: FONTS.sizes.md, textAlign: 'center', lineHeight: 24 },
+  upsellSongName: { color: COLORS.textPrimary, fontWeight: FONTS.weights.bold },
+  upsellPrice: { color: COLORS.gold, fontWeight: FONTS.weights.black, fontSize: FONTS.sizes.lg },
+  upsellDismiss: { marginTop: SPACING.lg, padding: SPACING.md },
+  upsellDismissText: { color: COLORS.textMuted, fontSize: FONTS.sizes.sm },
 });

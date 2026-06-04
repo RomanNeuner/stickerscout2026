@@ -14,20 +14,30 @@ const PRO_CACHE_TTL = 24 * 60 * 60 * 1000; // 24h
 
 // v3.1 Produkt-IDs (WM Pass Modell, kein Abo)
 export const PRODUCT_IDS = {
-  wmPass:    'at.ncn.stickerscout2026.wmpass',
-  scan50:    'at.ncn.stickerscout2026.scan50',
-  trade7d:   'at.ncn.stickerscout2026.trade7d',
-  report:    'at.ncn.stickerscout2026.report',
-  // Monetarisierung v2.0 — WM Ringtones
-  ringtone1: 'at.ncn.stickerscout2026.ringtone.song1',
-  ringtone2: 'at.ncn.stickerscout2026.ringtone.song2',
-  ringtone3: 'at.ncn.stickerscout2026.ringtone.song3',
+  wmPass:      'at.ncn.stickerscout2026.wmpass',
+  scan50:      'at.ncn.stickerscout2026.scan50',
+  trade7d:     'at.ncn.stickerscout2026.trade7d',
+  report:      'at.ncn.stickerscout2026.report',
+  // Klingeltöne — €0,99
+  ringtone1:   'at.ncn.stickerscout2026.ringtone.song1',
+  ringtone2:   'at.ncn.stickerscout2026.ringtone.song2',
+  ringtone3:   'at.ncn.stickerscout2026.ringtone.song3',
+  // Full Tracks — €1,99 (NEU)
+  fulltrack1:  'at.ncn.stickerscout2026.fulltrack.song1',
+  fulltrack2:  'at.ncn.stickerscout2026.fulltrack.song2',
+  fulltrack3:  'at.ncn.stickerscout2026.fulltrack.song3',
 };
 
 export const RINGTONE_IDS = [
   'at.ncn.stickerscout2026.ringtone.song1',
   'at.ncn.stickerscout2026.ringtone.song2',
   'at.ncn.stickerscout2026.ringtone.song3',
+];
+
+export const FULLTRACK_IDS = [
+  'at.ncn.stickerscout2026.fulltrack.song1',
+  'at.ncn.stickerscout2026.fulltrack.song2',
+  'at.ncn.stickerscout2026.fulltrack.song3',
 ];
 
 export async function initRevenueCat() {
