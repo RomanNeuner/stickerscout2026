@@ -573,12 +573,19 @@ function ResultCard({ sticker, collection, insets, onAddToHave, onAddToNeed, onS
   const entry = useEntryAnimation({ delay: 0, distance: 24 });
   const alreadyOwned = collection.have.includes(sticker.id);
   const [count, setCount] = React.useState(getStickerCount(collection, sticker.id));
+  const [needAdded, setNeedAdded] = React.useState(false);
   const flag = sticker.team ? (TEAM_FLAGS[sticker.team] ?? '') : '🌍';
 
   const handleCountChange = async (n) => {
     const newCount = Math.max(0, n);
     await setStickerCount(sticker.id, newCount);
     setCount(newCount);
+  };
+
+  // Zur Suche hinzufügen: Feedback zeigen, dann nach 1.2s schließen
+  const handleNeedPress = () => {
+    setNeedAdded(true);
+    setTimeout(() => onAddToNeed(), 1200);
   };
 
   return (
@@ -641,9 +648,41 @@ function ResultCard({ sticker, collection, insets, onAddToHave, onAddToNeed, onS
         )}
 
         {!alreadyOwned && (
-          <TouchableOpacity onPress={onAddToNeed} style={styles.needBtn}>
-            <Text style={styles.needBtnText}>🔍 Zur Suche hinzufügen</Text>
-          </TouchableOpacity>
+          needAdded ? (
+            /* ✓ Bestätigung — erscheint nach Tap, vor dem Schließen */
+            <View style={[styles.needBtn, styles.needBtnDone]}>
+              <AppIcon
+                name="barcode-number"
+                variant="white"
+                size={20}
+                style={{ tintColor: COLORS.green }}
+              />
+              <View style={{ flex: 1 }}>
+                <Text style={[styles.needBtnText, { color: COLORS.green }]}>
+                  ✓ Zur Tausch-Suche hinzugefügt
+                </Text>
+                <Text style={styles.needBtnHint}>
+                  Album → Filter „Suche" zeigt alle gesuchten Sticker
+                </Text>
+              </View>
+            </View>
+          ) : (
+            /* Standard-Button */
+            <TouchableOpacity onPress={handleNeedPress} style={styles.needBtn}>
+              <AppIcon
+                name="barcode-number"
+                variant="white"
+                size={20}
+                style={{ tintColor: COLORS.red }}
+              />
+              <View style={{ flex: 1 }}>
+                <Text style={styles.needBtnText}>Zur Tausch-Suche hinzufügen</Text>
+                <Text style={styles.needBtnHint}>
+                  Zeigt dir passende Tauschpartner in der Börse
+                </Text>
+              </View>
+            </TouchableOpacity>
+          )
         )}
 
         <TouchableOpacity onPress={onDismiss} style={styles.dismissBtn}>
@@ -890,8 +929,24 @@ const styles = StyleSheet.create({
   countBtnPlus: { backgroundColor: COLORS.blueTint, borderColor: COLORS.borderBlue },
   countBtnPlusText: { color: COLORS.greenBright, fontSize: FONTS.sizes.lg, fontWeight: '700', lineHeight: 28 },
   countVal: { color: COLORS.gold, fontSize: FONTS.sizes.xl, fontWeight: '900', minWidth: 40, textAlign: 'center' },
-  needBtn: { backgroundColor: COLORS.surface, borderRadius: RADIUS.full, padding: SPACING.md, alignItems: 'center', marginTop: SPACING.sm, borderWidth: 1, borderColor: COLORS.red },
+  needBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: SPACING.md,
+    backgroundColor: COLORS.surface,
+    borderRadius: RADIUS.lg,
+    padding: SPACING.md,
+    paddingHorizontal: SPACING.lg,
+    marginTop: SPACING.sm,
+    borderWidth: 1,
+    borderColor: 'rgba(255,107,107,0.45)',
+  },
+  needBtnDone: {
+    borderColor: 'rgba(66,215,131,0.45)',
+    backgroundColor: 'rgba(66,215,131,0.06)',
+  },
   needBtnText: { color: COLORS.red, fontSize: FONTS.sizes.md, fontWeight: '600' },
+  needBtnHint: { color: COLORS.textMuted, fontSize: FONTS.sizes.xs, marginTop: 2 },
   albumBtn: { flexDirection: 'row', alignItems: 'center', gap: SPACING.sm, backgroundColor: COLORS.surfaceRaised, borderRadius: RADIUS.full, padding: SPACING.md, paddingHorizontal: SPACING.xl, marginTop: SPACING.md, borderWidth: 1, borderColor: COLORS.border },
   albumBtnText: { color: COLORS.textPrimary, fontSize: FONTS.sizes.md, fontWeight: '600', flex: 1 },
   dismissBtn: { alignSelf: 'center', marginTop: SPACING.lg },
