@@ -15,6 +15,7 @@ import { COLORS, NAV_THEME, FONTS, SPACING, RADIUS, SHADOWS } from './src/theme'
 import { isOnboarded } from './src/services/storage';
 import { initRevenueCat, getSubscriptionStatus } from './src/services/subscription';
 import { initNotifications } from './src/services/notifications';
+import { initFirebase } from './src/services/firebase';
 
 import ScanScreen from './src/screens/ScanScreen';
 import AlbumScreen from './src/screens/AlbumScreen';
@@ -120,6 +121,8 @@ export default function App() {
       setIsPro(sub.isPro);
       setAppReady(true);
 
+      // Firebase initialisieren (Analytics, Crashlytics, Remote Config)
+      initFirebase().catch(() => {});
       // Push-Notifications initialisieren (Permission + geplante Notifications)
       initNotifications().catch(() => {});
     };
@@ -188,7 +191,17 @@ export default function App() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
         <StatusBar style="light" />
-        <NavigationContainer theme={NAV_THEME} ref={navigationRef}>
+        <NavigationContainer
+          theme={NAV_THEME}
+          ref={navigationRef}
+          onStateChange={async () => {
+            const route = navigationRef.current?.getCurrentRoute();
+            if (route?.name) {
+              const { logScreen } = require('./src/services/firebase');
+              logScreen(route.name).catch(() => {});
+            }
+          }}
+        >
           <Tab.Navigator
             tabBar={props => <TabBar {...props} />}
             screenOptions={{
