@@ -14,7 +14,7 @@ import {
   View, Text, StyleSheet, ScrollView, TouchableOpacity,
   Alert, Platform, ActivityIndicator, Image, Animated,
 } from 'react-native';
-import { Ionicons, MaterialCommunityIcons, Feather } from '@expo/vector-icons';
+import { Ionicons, Feather } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
@@ -138,7 +138,7 @@ function SongCard({ song, isPlaying, onPlay, ownedRingtone, ownedFulltrack,
         {/* Bild nach oben verschoben für Gesicht */}
         <Image
           source={song.cover}
-          style={[s.coverImg, { transform: [{ translateY: song.faceOffset }] }]}
+          style={s.coverImg}
           resizeMode="cover"
         />
         {/* Vignette unten */}
@@ -364,7 +364,7 @@ export default function RingtonesScreen() {
         {/* ── Header ── */}
         <View style={s.header}>
           <View style={s.globeIcon}>
-            <MaterialCommunityIcons name="earth" size={24} color="#0D1F2D" />
+            <Ionicons name="globe-outline" size={24} color="#0D1F2D" />
           </View>
           <View style={s.headerCenter}>
             <Text style={s.h1}>WM 2026 Superhits</Text>
@@ -392,13 +392,13 @@ export default function RingtonesScreen() {
         {/* ── Trust Badges ── */}
         <View style={s.benefits}>
           {[
-            { icon: 'shield-check-outline', label: 'Sicherer Kauf',  sub: 'SSL-verschlüsselt' },
-            { icon: 'infinity',             label: 'Für immer',      sub: 'einmal kaufen' },
-            { icon: 'devices',              label: 'Alle Geräte',    sub: 'überall nutzbar' },
-            { icon: 'headphones',           label: 'Support',        sub: 'wir helfen' },
+            { icon: 'shield-checkmark-outline', label: 'Sicherer Kauf',  sub: 'SSL-verschlüsselt' },
+            { icon: 'infinite-outline',         label: 'Für immer',      sub: 'einmal kaufen' },
+            { icon: 'phone-portrait-outline',   label: 'Alle Geräte',    sub: 'überall nutzbar' },
+            { icon: 'headset-outline',          label: 'Support',        sub: 'wir helfen' },
           ].map((b, i) => (
             <View key={i} style={[s.benefit, i < 3 && s.benefitBorder]}>
-              <MaterialCommunityIcons name={b.icon} size={22} color="#F5C033" />
+              <Ionicons name={b.icon} size={22} color="#F5C033" />
               <Text style={s.benefitLabel}>{b.label}</Text>
               <Text style={s.benefitSub}>{b.sub}</Text>
             </View>
@@ -449,11 +449,11 @@ const s = StyleSheet.create({
   },
 
   // Cover
-  coverWrap: { height: COVER_H, overflow: 'hidden', position: 'relative', backgroundColor: '#0b1722' },
+  coverWrap: { height: COVER_H, overflow: 'hidden', backgroundColor: '#0b1722' },
   coverImg: {
+    // Höher als der Container → overflow:hidden zeigt oberen Teil = Gesichter sichtbar
     width: '100%',
-    height: COVER_H + 120, // extra height für offset
-    position: 'absolute', top: 0,
+    height: COVER_H + 180,
   },
 
   countryPill: {
