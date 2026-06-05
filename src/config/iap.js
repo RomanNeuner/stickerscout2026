@@ -33,20 +33,20 @@ export const SONGS = {
     cover: require('../../assets/ringtones/covers/song1_cover.png'),
     preview: require('../../assets/ringtones/song1_preview.mp3'),
     ringtone: require('../../assets/ringtones/song1_ringtone.mp3'),
-    ringtoneIOS: require('../../assets/ringtones/song1_ringtone.m4r'),
+    ringtoneIOS: require('../../assets/ringtones/song1_ringtone.mp3'), // .m4r kommt später
     fulltrack: require('../../assets/ringtones/song1_full.mp3'),
   },
   song2: {
     id: 'song2',
     artist: 'Leo Falk',
-    title: 'Wir halten zusammen',
+    title: 'Wir stehen zusammen',
     market: 'DE',
     ringtoneId: IAP_PRODUCTS.RINGTONE_SONG2,
     fulltrackId: IAP_PRODUCTS.FULLTRACK_SONG2,
     cover: require('../../assets/ringtones/covers/song2_cover.png'),
     preview: require('../../assets/ringtones/song2_preview.mp3'),
     ringtone: require('../../assets/ringtones/song2_ringtone.mp3'),
-    ringtoneIOS: require('../../assets/ringtones/song2_ringtone.m4r'),
+    ringtoneIOS: require('../../assets/ringtones/song2_ringtone.mp3'), // .m4r kommt später
     fulltrack: require('../../assets/ringtones/song2_full.mp3'),
   },
   song3: {
@@ -59,7 +59,7 @@ export const SONGS = {
     cover: require('../../assets/ringtones/covers/song3_cover.png'),
     preview: require('../../assets/ringtones/song3_preview.mp3'),
     ringtone: require('../../assets/ringtones/song3_ringtone.mp3'),
-    ringtoneIOS: require('../../assets/ringtones/song3_ringtone.m4r'),
+    ringtoneIOS: require('../../assets/ringtones/song3_ringtone.mp3'), // .m4r kommt später
     fulltrack: require('../../assets/ringtones/song3_full.mp3'),
   },
 };

@@ -3,7 +3,7 @@
  *
  * Songs:
  *   song1 — United Voices  "One World, One Game"   🌍 Gold
- *   song2 — Leo Falk       "Wir halten zusammen"   🇩🇪 Blau
+ *   song2 — Leo Falk       "Wir stehen zusammen"   🇩🇪 Blau
  *   song3 — Da Austro-Bua  "Unaufhoitboa"          🇦🇹 Rot
  *
  * Gesichter auf den Covers sichtbar:
@@ -60,7 +60,7 @@ const SONGS = [
   {
     id: 2,
     artist: 'Leo Falk',
-    title: 'Wir halten zusammen',
+    title: 'Wir stehen zusammen',
     subtitle: 'Deutschland Fan-Song',
     market: '🇩🇪',
     marketLabel: 'Deutschland',
