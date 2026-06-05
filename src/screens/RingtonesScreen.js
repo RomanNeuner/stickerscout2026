@@ -282,6 +282,7 @@ export default function RingtonesScreen() {
   const [ownedFulltracks, setOwnedFulltracks] = useState(new Set());
   const [playingId, setPlayingId]   = useState(null);
   const [isBuying, setIsBuying]     = useState(null);
+  const [showInfo, setShowInfo]     = useState(false);
 
   useFocusEffect(useCallback(() => {
     loadOwned();
@@ -369,7 +370,9 @@ export default function RingtonesScreen() {
           <View style={s.headerCenter}>
             <Text style={s.h1}>WM 2026 Superhits</Text>
           </View>
-          <View style={{ width: 46 }} />
+          <TouchableOpacity style={s.infoBtn} onPress={() => setShowInfo(true)}>
+            <Ionicons name="information-circle-outline" size={22} color="#F5C033" />
+          </TouchableOpacity>
         </View>
         <Text style={s.subtitle}>Exklusive WM 2026 Songs – nur in StickerScout</Text>
 
@@ -410,6 +413,41 @@ export default function RingtonesScreen() {
           <Text style={s.restoreText}>{t('ringtones.restore')}</Text>
         </TouchableOpacity>
       </ScrollView>
+
+      {/* ── Info Modal (Bottom Sheet) ── */}
+      {showInfo && (
+        <TouchableOpacity
+          style={s.sheetOverlay}
+          activeOpacity={1}
+          onPress={() => setShowInfo(false)}
+        >
+          <TouchableOpacity activeOpacity={1} style={s.sheet} onPress={() => {}}>
+            {/* Handle */}
+            <View style={s.sheetHandle} />
+            <Text style={s.sheetTitle}>Über die WM 2026 Superhits</Text>
+            <Text style={s.sheetDesc}>Drei exklusive Songs zur Weltmeisterschaft – nur in StickerScout.</Text>
+
+            {[
+              { icon: 'headset-outline',            title: 'Vorschau',         text: '30 Sekunden kostenlos anhören.' },
+              { icon: 'notifications-outline',      title: 'Klingelton',       text: 'Als Smartphone-Klingelton für €0,99.' },
+              { icon: 'musical-notes-outline',      title: 'Ganzer Song',      text: 'Vollständiger Download für €1,99 – für immer.' },
+              { icon: 'refresh-circle-outline',     title: 'Wiederherstellen', text: 'Käufe jederzeit im Profil wiederherstellen.' },
+            ].map((row, i) => (
+              <View key={i} style={s.sheetRow}>
+                <Ionicons name={row.icon} size={22} color="#F5C033" style={{ marginTop: 1 }} />
+                <Text style={s.sheetRowText}>
+                  <Text style={s.sheetRowBold}>{row.title}: </Text>
+                  {row.text}
+                </Text>
+              </View>
+            ))}
+
+            <TouchableOpacity style={s.sheetClose} onPress={() => setShowInfo(false)}>
+              <Text style={s.sheetCloseTxt}>Verstanden</Text>
+            </TouchableOpacity>
+          </TouchableOpacity>
+        </TouchableOpacity>
+      )}
     </View>
   );
 }
@@ -555,4 +593,47 @@ const s = StyleSheet.create({
 
   restoreBtn: { alignItems: 'center', paddingVertical: 12 },
   restoreText: { color: 'rgba(255,255,255,0.4)', fontSize: 12 },
+
+  // Info Button
+  infoBtn: {
+    width: 46, height: 46, borderRadius: 23,
+    alignItems: 'center', justifyContent: 'center',
+    backgroundColor: 'rgba(245,192,51,0.10)',
+    borderWidth: 1, borderColor: 'rgba(245,192,51,0.36)',
+  },
+
+  // Info Sheet
+  sheetOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0,0,0,0.65)',
+    justifyContent: 'flex-end', alignItems: 'center',
+    zIndex: 50,
+  },
+  sheet: {
+    width: '100%', maxWidth: 430,
+    backgroundColor: '#15324A',
+    borderTopLeftRadius: 28, borderTopRightRadius: 28,
+    padding: 20, paddingBottom: 36,
+    borderWidth: 1, borderColor: 'rgba(245,192,51,0.22)',
+  },
+  sheetHandle: {
+    width: 44, height: 5, borderRadius: 999,
+    backgroundColor: 'rgba(255,255,255,0.18)',
+    alignSelf: 'center', marginBottom: 18,
+  },
+  sheetTitle: { color: '#fff', fontSize: 20, fontWeight: '800', marginBottom: 6 },
+  sheetDesc: { color: 'rgba(255,255,255,0.65)', fontSize: 14, lineHeight: 20, marginBottom: 16 },
+  sheetRow: {
+    flexDirection: 'row', gap: 12, alignItems: 'flex-start',
+    padding: 13, borderRadius: 16, marginBottom: 8,
+    backgroundColor: 'rgba(255,255,255,0.04)',
+    borderWidth: 1, borderColor: 'rgba(255,255,255,0.08)',
+  },
+  sheetRowText: { flex: 1, color: 'rgba(255,255,255,0.82)', fontSize: 14, lineHeight: 20 },
+  sheetRowBold: { color: '#fff', fontWeight: '700' },
+  sheetClose: {
+    marginTop: 8, borderRadius: 16, padding: 16,
+    alignItems: 'center', backgroundColor: '#F5C033',
+  },
+  sheetCloseTxt: { color: '#0D1F2D', fontWeight: '800', fontSize: 16 },
 });
