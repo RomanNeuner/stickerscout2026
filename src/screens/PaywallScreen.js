@@ -14,16 +14,15 @@ import React, { useState, useMemo } from 'react';
 import {
   View, Text, TouchableOpacity, ScrollView, StyleSheet, Alert,
 } from 'react-native';
-import { MaterialCommunityIcons, Feather } from '@expo/vector-icons';
+import { Ionicons, Feather } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 
-import { purchasePlan, restorePurchases } from '../services/subscription';
+import { purchaseProductDirect, restorePurchases } from '../services/subscription';
 import {
   getEarlyBirdDays, getWMPassPrice, getSavingsLabel, getPlanLabel, isEarlyBird,
 } from '../services/pricing';
 import { IAP_PRODUCTS } from '../config/iap';
-import { OFFERINGS, PACKAGES } from '../config/revenueCat';
 
 // Design-Tokens (aus theme, hier inline für Kompaktheit)
 const C = {
@@ -55,40 +54,37 @@ export default function PaywallScreen({ onClose, onUnlocked }) {
 
   // Feature-Liste
   const features = [
-    { icon: <MaterialCommunityIcons name="infinity"          size={20} color={C.gold} />, label: t('paywall.feature1') },
-    { icon: <MaterialCommunityIcons name="swap-horizontal"   size={20} color={C.gold} />, label: t('paywall.feature2') },
-    { icon: <Feather                name="users"             size={20} color={C.gold} />, label: t('paywall.feature3') },
-    { icon: <Feather                name="file-text"         size={20} color={C.gold} />, label: t('paywall.feature4') },
+    { icon: <Ionicons name="infinite-outline"          size={20} color={C.gold} />, label: t('paywall.feature1') },
+    { icon: <Ionicons name="swap-horizontal-outline"   size={20} color={C.gold} />, label: t('paywall.feature2') },
+    { icon: <Feather  name="users"                     size={20} color={C.gold} />, label: t('paywall.feature3') },
+    { icon: <Feather  name="file-text"                 size={20} color={C.gold} />, label: t('paywall.feature4') },
   ];
 
   // Micro-IAPs
   const micros = [
-    { icon: 'camera-plus',   label: t('paywall.micro1'), product: IAP_PRODUCTS.SCAN_BOOST,  pkg: PACKAGES.SCAN_BOOST  },
-    { icon: 'swap-horizontal',label: t('paywall.micro2'), product: IAP_PRODUCTS.TRADE_SLOTS, pkg: PACKAGES.TRADE_SLOTS },
-    { icon: 'file-document',  label: t('paywall.micro3'), product: IAP_PRODUCTS.REPORT_PDF,  pkg: PACKAGES.REPORT_PDF  },
+    { icon: 'camera-outline',      label: t('paywall.micro1'), product: IAP_PRODUCTS.SCAN_BOOST  },
+    { icon: 'swap-horizontal',     label: t('paywall.micro2'), product: IAP_PRODUCTS.TRADE_SLOTS },
+    { icon: 'document-text-outline',label: t('paywall.micro3'), product: IAP_PRODUCTS.REPORT_PDF  },
   ];
 
-  // ── Kauf WM Pass ────────────────────────────────────────────────────────────
+  // ── Kauf WM Pass — direkt per Produkt-ID ────────────────────────────────────
   const handlePurchase = async () => {
     setLoading(true);
     try {
-      const res = await purchasePlan(
-        IAP_PRODUCTS.WM_PASS,
-        OFFERINGS.DEFAULT,
-        PACKAGES.WM_PASS,
-      );
+      const res = await purchaseProductDirect(IAP_PRODUCTS.WM_PASS);
       if (res?.success) { onUnlocked?.(); onClose?.(); }
       else if (!res?.cancelled) Alert.alert('Fehler', 'Kauf fehlgeschlagen.');
     } catch (e) {
-      Alert.alert('Fehler', e.message ?? 'Kauf fehlgeschlagen.');
+      if (!e?.userCancelled) Alert.alert('Fehler', e.message ?? 'Kauf fehlgeschlagen.');
     } finally { setLoading(false); }
   };
 
-  // ── Micro-IAP Kauf ──────────────────────────────────────────────────────────
-  const handleMicro = async (product, pkg) => {
+  // ── Micro-IAP Kauf — direkt per Produkt-ID ──────────────────────────────────
+  const handleMicro = async (product) => {
     setLoading(true);
     try {
-      await purchasePlan(product, OFFERINGS.DEFAULT, pkg);
+      const res = await purchaseProductDirect(product);
+      if (res?.success) Alert.alert('✅ Gekauft!', 'Dein Kauf wurde freigeschaltet.');
     } catch (e) {
       if (!e?.userCancelled) Alert.alert('Fehler', e.message ?? 'Kauf fehlgeschlagen.');
     } finally { setLoading(false); }
@@ -115,7 +111,7 @@ export default function PaywallScreen({ onClose, onUnlocked }) {
       <View style={s.header}>
         <View style={s.headerLeft}>
           <View style={s.logo}>
-            <MaterialCommunityIcons name="trophy" size={16} color={C.bg} />
+            <Ionicons name="trophy-outline" size={16} color={C.bg} />
           </View>
           <Text style={s.appName}>StickerScout 2026</Text>
         </View>
@@ -190,11 +186,11 @@ export default function PaywallScreen({ onClose, onUnlocked }) {
         <TouchableOpacity
           key={i}
           style={s.micro}
-          onPress={() => handleMicro(m.product, m.pkg)}
+          onPress={() => handleMicro(m.product)}
           disabled={loading}
         >
           <View style={s.microLeft}>
-            <MaterialCommunityIcons name={m.icon} size={16} color={C.textMuted} />
+            <Ionicons name={m.icon} size={16} color={C.textMuted} />
             <Text style={s.microLabel}>{m.label}</Text>
           </View>
           <View style={s.microPrice}>
