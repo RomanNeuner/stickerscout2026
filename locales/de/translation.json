@@ -59,16 +59,29 @@
     "search": "Team oder Spieler suchen",
     "teamProgress": "{{team}}: {{owned}}/{{count}}",
     "groups": {
-      "A": "Gruppe A", "B": "Gruppe B", "C": "Gruppe C",
-      "D": "Gruppe D", "E": "Gruppe E", "F": "Gruppe F",
-      "G": "Gruppe G", "H": "Gruppe H", "I": "Gruppe I",
-      "J": "Gruppe J", "K": "Gruppe K", "L": "Gruppe L"
+      "A": "Gruppe A",
+      "B": "Gruppe B",
+      "C": "Gruppe C",
+      "D": "Gruppe D",
+      "E": "Gruppe E",
+      "F": "Gruppe F",
+      "G": "Gruppe G",
+      "H": "Gruppe H",
+      "I": "Gruppe I",
+      "J": "Gruppe J",
+      "K": "Gruppe K",
+      "L": "Gruppe L"
     },
     "types": {
-      "NORMAL": "Normal", "FOIL": "Glitzer", "LOGO": "Logo", "STADIUM": "Stadion"
+      "NORMAL": "Normal",
+      "FOIL": "Glitzer",
+      "LOGO": "Logo",
+      "STADIUM": "Stadion"
     },
     "sticker": {
-      "owned": "Vorhanden", "missing": "Fehlt", "duplicate": "{{count}}× Doppelt"
+      "owned": "Vorhanden",
+      "missing": "Fehlt",
+      "duplicate": "{{count}}× Doppelt"
     }
   },
   "trade": {
@@ -172,7 +185,26 @@
     },
     "purchase": "Jetzt freischalten",
     "restore": "Kauf wiederherstellen",
-    "terms": "AGB & Datenschutz"
+    "terms": "AGB & Datenschutz",
+    "headline1": "Mehr sammeln.",
+    "headline2": "Schneller komplett.",
+    "earlyBird": "Early Bird — noch {{days}} Tage",
+    "earlyBirdSub": "danach regulär €3,99",
+    "bestValue": "BESTES PAKET",
+    "save25": "25% sparen",
+    "once": "einmalig",
+    "feature1": "Unbegrenzte Sticker-Scans",
+    "feature2": "Alle Tauschplätze freischalten",
+    "feature3": "Dream Team Builder unbegrenzt",
+    "feature4": "Sammelalbum-Auswertung als PDF",
+    "cta": "WM Pass für {{price}} holen",
+    "ctaSub": "Einmal zahlen · Kein Abo · Gültig bis 19. Juli 2026",
+    "orSingle": "oder einzeln",
+    "micro1": "+50 Scan-Boost",
+    "micro2": "+10 Tauschplätze (7 Tage)",
+    "micro3": "Completion Report PDF",
+    "continueFree": "Kostenlos weitermachen",
+    "legal": "Datenschutz · AGB"
   },
   "common": {
     "cancel": "Abbrechen",
@@ -212,9 +244,14 @@
   "adrenalyn": {
     "title": "Adrenalyn XL",
     "types": {
-      "GOLDEN_BALLER": "Golden Baller", "FF": "Fan Favourite",
-      "TEAM_CREST": "Team Crest", "IC": "Icon", "BASE": "Base",
-      "HERO": "Hero", "LIMITED_EDITION": "Limited Edition", "CONTENDER": "Contender"
+      "GOLDEN_BALLER": "Golden Baller",
+      "FF": "Fan Favourite",
+      "TEAM_CREST": "Team Crest",
+      "IC": "Icon",
+      "BASE": "Base",
+      "HERO": "Hero",
+      "LIMITED_EDITION": "Limited Edition",
+      "CONTENDER": "Contender"
     }
   }
 }

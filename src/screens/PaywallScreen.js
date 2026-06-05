@@ -1,296 +1,294 @@
+/**
+ * PaywallScreen — Redesign nach Spec v1.0 (5. Juni 2026)
+ *
+ * Fixes:
+ * - Kein Abo-Disclaimer mehr (Einmalkauf)
+ * - "KI-Duplikat-Erkennung" → "Dream Team Builder unbegrenzt"
+ * - Kompakter Header (Trophy-Logo + AppName + X)
+ * - Micro-IAPs ohne Scrollen sichtbar
+ * - Preis dynamisch (AT €1,99 / Early Bird €2,99 / Standard €3,99)
+ * - Early Bird Countdown dynamisch
+ * - Vector-Icons statt Emojis
+ */
 import React, { useState, useMemo } from 'react';
 import {
-  View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert,
+  View, Text, TouchableOpacity, ScrollView, StyleSheet, Alert,
 } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
+import { MaterialCommunityIcons, Feather } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import * as Localization from 'expo-localization';
+import { useTranslation } from 'react-i18next';
 
-import { COLORS, FONTS, SPACING, RADIUS, SHADOWS } from '../theme';
-import GoldButton from '../components/GoldButton';
 import { purchasePlan, restorePurchases } from '../services/subscription';
+import {
+  getEarlyBirdDays, getWMPassPrice, getSavingsLabel, getPlanLabel, isEarlyBird,
+} from '../services/pricing';
+import { IAP_PRODUCTS } from '../config/iap';
+import { OFFERINGS, PACKAGES } from '../config/revenueCat';
 
-const EARLY_BIRD_DEADLINE = new Date('2026-06-15T23:59:59');
-const getDaysLeft = () => Math.max(0, Math.ceil((EARLY_BIRD_DEADLINE - new Date()) / 86400000));
-const isAustria = () => { try { return Localization.getLocales()?.[0]?.regionCode === 'AT'; } catch { return false; } };
-
-const FEATURES = [
-  { icon: '📷', label: 'Unbegrenzte Sticker-Scans' },
-  { icon: '🔄', label: 'Alle Tauschplätze freischalten' },
-  { icon: '🤖', label: 'KI-Duplikat-Erkennung' },
-  { icon: '📊', label: 'Sammelalbum-Auswertung PDF' },
-];
-
-const MICRO_IAPS = [
-  { id: 'at.ncn.stickerscout2026.scan50',  label: '+50 Scan-Boost',          price: '€0,99' },
-  { id: 'at.ncn.stickerscout2026.trade7d', label: '+10 Trade-Slots (7 Tage)', price: '€0,99' },
-  { id: 'at.ncn.stickerscout2026.report',  label: 'Completion Report PDF',    price: '€0,99' },
-];
+// Design-Tokens (aus theme, hier inline für Kompaktheit)
+const C = {
+  bg:              '#0D1F2D',
+  gold:            '#F5C033',
+  blue:            '#4FC3F7',
+  white:           '#FFFFFF',
+  textBody:        '#E4EEF5',
+  textMuted:       '#8CA6B8',
+  textDim:         '#5F7787',
+  cardBg:          'rgba(255,255,255,0.04)',
+  cardBorderGold:  'rgba(245,192,51,0.35)',
+  earlyBirdBorder: 'rgba(245,192,51,0.40)',
+  chipBlue:        'rgba(79,195,247,0.15)',
+  microBg:         'rgba(255,255,255,0.04)',
+  divider:         'rgba(255,255,255,0.10)',
+};
 
 export default function PaywallScreen({ onClose, onUnlocked }) {
-  const insets = useSafeAreaInsets();
+  const { t }    = useTranslation();
+  const insets   = useSafeAreaInsets();
   const [loading, setLoading] = useState(false);
-  const daysLeft = useMemo(() => getDaysLeft(), []);
-  const isAT     = useMemo(() => isAustria(), []);
 
-  const price    = isAT ? '€1,99' : '€2,99';
-  const priceOld = '€3,99';
-  const savings  = isAT ? '50% sparen' : '25% sparen';
-  const planLabel = isAT ? '🇦🇹 ÖSTERREICH PREIS' : 'BESTES PAKET';
-  const ctaText   = isAT ? `WM Pass für ${price} holen 🇦🇹` : `WM Pass für ${price} holen`;
-  const badgeText = isAT
-    ? `🇦🇹 Österreich Early Bird — noch ${daysLeft} Tage`
-    : `⏱ Early Bird — noch ${daysLeft} Tage`;
-  const badgeSub  = isAT
-    ? `Exklusiv für Österreich · Danach ${priceOld}`
-    : `Danach regulär ${priceOld}`;
+  const days      = useMemo(() => getEarlyBirdDays(), []);
+  const price     = useMemo(() => getWMPassPrice(), []);
+  const savings   = useMemo(() => getSavingsLabel(), []);
+  const planLabel = useMemo(() => getPlanLabel(), []);
+  const earlyBird = useMemo(() => isEarlyBird(), []);
 
+  // Feature-Liste
+  const features = [
+    { icon: <MaterialCommunityIcons name="infinity"          size={20} color={C.gold} />, label: t('paywall.feature1') },
+    { icon: <MaterialCommunityIcons name="swap-horizontal"   size={20} color={C.gold} />, label: t('paywall.feature2') },
+    { icon: <Feather                name="users"             size={20} color={C.gold} />, label: t('paywall.feature3') },
+    { icon: <Feather                name="file-text"         size={20} color={C.gold} />, label: t('paywall.feature4') },
+  ];
+
+  // Micro-IAPs
+  const micros = [
+    { icon: 'camera-plus',   label: t('paywall.micro1'), product: IAP_PRODUCTS.SCAN_BOOST,  pkg: PACKAGES.SCAN_BOOST  },
+    { icon: 'swap-horizontal',label: t('paywall.micro2'), product: IAP_PRODUCTS.TRADE_SLOTS, pkg: PACKAGES.TRADE_SLOTS },
+    { icon: 'file-document',  label: t('paywall.micro3'), product: IAP_PRODUCTS.REPORT_PDF,  pkg: PACKAGES.REPORT_PDF  },
+  ];
+
+  // ── Kauf WM Pass ────────────────────────────────────────────────────────────
   const handlePurchase = async () => {
     setLoading(true);
     try {
-      const res = await purchasePlan('at.ncn.stickerscout2026.wmpass');
+      const res = await purchasePlan(
+        IAP_PRODUCTS.WM_PASS,
+        OFFERINGS.DEFAULT,
+        PACKAGES.WM_PASS,
+      );
       if (res?.success) { onUnlocked?.(); onClose?.(); }
-    } catch (e) { Alert.alert('Fehler', e.message ?? 'Kauf fehlgeschlagen.'); }
-    finally { setLoading(false); }
+      else if (!res?.cancelled) Alert.alert('Fehler', 'Kauf fehlgeschlagen.');
+    } catch (e) {
+      Alert.alert('Fehler', e.message ?? 'Kauf fehlgeschlagen.');
+    } finally { setLoading(false); }
   };
 
-  const handleMicro = async (id) => {
+  // ── Micro-IAP Kauf ──────────────────────────────────────────────────────────
+  const handleMicro = async (product, pkg) => {
     setLoading(true);
-    try { await purchasePlan(id); } catch (e) { Alert.alert('Fehler', e.message ?? 'Kauf fehlgeschlagen.'); }
-    finally { setLoading(false); }
+    try {
+      await purchasePlan(product, OFFERINGS.DEFAULT, pkg);
+    } catch (e) {
+      if (!e?.userCancelled) Alert.alert('Fehler', e.message ?? 'Kauf fehlgeschlagen.');
+    } finally { setLoading(false); }
   };
 
+  // ── Restore ─────────────────────────────────────────────────────────────────
   const handleRestore = async () => {
     setLoading(true);
     try {
       const res = await restorePurchases();
       if (res?.isPro) { onUnlocked?.(); onClose?.(); }
-      else Alert.alert('Kein Kauf gefunden', 'Kein aktiver Kauf auf diesem Account.');
-    } catch {} finally { setLoading(false); }
+      else Alert.alert('Wiederhergestellt', 'Keine aktiven Käufe gefunden.');
+    } catch { Alert.alert('Fehler', 'Wiederherstellung fehlgeschlagen.'); }
+    finally { setLoading(false); }
   };
 
   return (
-    <View style={[styles.wrap, { paddingTop: insets.top }]}>
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
-
-        {/* ── Close button ── */}
-        <TouchableOpacity style={[styles.closeBtn, { top: SPACING.md }]} onPress={onClose}>
-          <Text style={styles.closeX}>✕</Text>
+    <ScrollView
+      style={s.root}
+      contentContainerStyle={[s.content, { paddingTop: insets.top + 8, paddingBottom: insets.bottom + 24 }]}
+      bounces={false}
+    >
+      {/* ── 1. Header ────────────────────────────────────────────────────────── */}
+      <View style={s.header}>
+        <View style={s.headerLeft}>
+          <View style={s.logo}>
+            <MaterialCommunityIcons name="trophy" size={16} color={C.bg} />
+          </View>
+          <Text style={s.appName}>StickerScout 2026</Text>
+        </View>
+        <TouchableOpacity style={s.closeBtn} onPress={onClose}>
+          <Feather name="x" size={18} color={C.textMuted} />
         </TouchableOpacity>
+      </View>
 
-        {/* ── Hero ── */}
-        <View style={styles.hero}>
-          <Text style={styles.heroEmoji}>🏆</Text>
-          <Text style={styles.headline}>{'Mehr sammeln.\nSchneller komplett.'}</Text>
-          <Text style={styles.heroSub}>Schalte alle Premium-Funktionen frei.</Text>
-        </View>
+      {/* ── 2. Headline ──────────────────────────────────────────────────────── */}
+      <Text style={s.h1}>{t('paywall.headline1')}</Text>
+      <Text style={[s.h1, { color: C.gold }]}>{t('paywall.headline2')}</Text>
 
-        {/* ── Early Bird Badge ── */}
-        {daysLeft > 0 && (
-          <View style={[styles.badge, isAT ? styles.badgeRed : styles.badgeGold]}>
-            <Text style={[styles.badgeTitle, isAT && { color: COLORS.red }]}>{badgeText}</Text>
-            <Text style={styles.badgeSub}>{badgeSub}</Text>
+      {/* ── 3. Early Bird Badge ──────────────────────────────────────────────── */}
+      {earlyBird && days > 0 && (
+        <View style={s.earlyBird}>
+          <Feather name="clock" size={18} color={C.gold} />
+          <View style={{ marginLeft: 10, flex: 1 }}>
+            <Text style={s.ebTitle}>{t('paywall.earlyBird', { days })}</Text>
+            <Text style={s.ebSub}>{t('paywall.earlyBirdSub')}</Text>
           </View>
-        )}
+        </View>
+      )}
 
-        {/* ── Plan Card ── */}
-        <View style={styles.card}>
-          {/* Top row: label + savings chip */}
-          <View style={styles.cardTopRow}>
-            <View style={[styles.labelChip, isAT && styles.labelChipRed]}>
-              <Text style={[styles.labelChipText, isAT && { color: COLORS.red }]}>{planLabel}</Text>
-            </View>
-            <View style={styles.savingsChip}>
-              <Text style={styles.savingsText}>{savings}</Text>
-            </View>
+      {/* ── 4. Preis-Card ────────────────────────────────────────────────────── */}
+      <View style={s.priceCard}>
+        <View style={s.badges}>
+          <View style={s.badgeGold}>
+            <Text style={s.badgeGoldTxt}>{planLabel}</Text>
           </View>
-
-          {/* Price */}
-          <View style={styles.priceRow}>
-            <Text style={styles.price}>{price}</Text>
-            <View>
-              <Text style={styles.priceOld}>{priceOld}</Text>
-              <Text style={styles.priceNote}>einmalig</Text>
+          {savings && (
+            <View style={s.badgeBlue}>
+              <Text style={s.badgeBlueTxt}>{savings}</Text>
             </View>
+          )}
+        </View>
+
+        <View style={s.priceRow}>
+          <Text style={s.price}>{price}</Text>
+          <Text style={s.priceOld}>€3,99</Text>
+          <Text style={s.priceSuffix}>{t('paywall.once')}</Text>
+        </View>
+
+        {features.map((f, i) => (
+          <View key={i} style={s.featureRow}>
+            <View style={s.featureIcon}>{f.icon}</View>
+            <Text style={s.featureLabel}>{f.label}</Text>
           </View>
-
-          {/* Divider */}
-          <View style={styles.cardDivider} />
-
-          {/* Features */}
-          {FEATURES.map((f, i) => (
-            <View key={i} style={styles.featureRow}>
-              <View style={styles.featureIcon}>
-                <Text>{f.icon}</Text>
-              </View>
-              <Text style={styles.featureText}>
-                <Text style={styles.featureCheck}>✓  </Text>
-                {f.label}
-              </Text>
-            </View>
-          ))}
-        </View>
-
-        {/* ── CTA ── */}
-        <View style={styles.ctaWrap}>
-          <TouchableOpacity
-            style={[styles.ctaBtn, loading && styles.ctaBtnDisabled]}
-            onPress={handlePurchase}
-            disabled={loading}
-            activeOpacity={0.85}
-          >
-            <LinearGradient
-              colors={loading ? ['#555', '#444'] : ['#C49A28', '#F5C033', '#F9D46A', '#F5C033', '#C49A28']}
-              start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
-              style={styles.ctaGradient}
-            >
-              <Text style={styles.ctaText}>{loading ? 'Lade…' : ctaText}</Text>
-            </LinearGradient>
-          </TouchableOpacity>
-          <Text style={styles.ctaSub}>Einmal zahlen. Während der WM 2026 nutzen.</Text>
-        </View>
-
-        {/* ── Kostenlos ── */}
-        <TouchableOpacity onPress={onClose} style={styles.freeBtn}>
-          <Text style={styles.freeText}>Kostenlos weitermachen</Text>
-        </TouchableOpacity>
-
-        {/* ── Divider ── */}
-        <View style={styles.orRow}>
-          <View style={styles.orLine} />
-          <Text style={styles.orText}>oder einzeln kaufen</Text>
-          <View style={styles.orLine} />
-        </View>
-
-        {/* ── Micro-IAPs ── */}
-        {MICRO_IAPS.map(item => (
-          <TouchableOpacity
-            key={item.id}
-            style={styles.microRow}
-            onPress={() => handleMicro(item.id)}
-            disabled={loading}
-            activeOpacity={0.8}
-          >
-            <Text style={styles.microLabel}>{item.label}</Text>
-            <View style={styles.microChip}>
-              <Text style={styles.microPrice}>{item.price}</Text>
-            </View>
-          </TouchableOpacity>
         ))}
+      </View>
 
-        {/* ── Footer ── */}
-        <View style={styles.footer}>
-          <TouchableOpacity onPress={handleRestore}>
-            <Text style={styles.footerLink}>Kauf wiederherstellen</Text>
-          </TouchableOpacity>
-          <Text style={styles.dot}>·</Text>
-          <TouchableOpacity><Text style={styles.footerLink}>Datenschutz</Text></TouchableOpacity>
-          <Text style={styles.dot}>·</Text>
-          <TouchableOpacity><Text style={styles.footerLink}>AGB</Text></TouchableOpacity>
-        </View>
+      {/* ── 5. CTA-Button ────────────────────────────────────────────────────── */}
+      <TouchableOpacity
+        style={[s.cta, loading && { opacity: 0.7 }]}
+        onPress={handlePurchase}
+        disabled={loading}
+      >
+        <Text style={s.ctaTxt}>{t('paywall.cta', { price })}</Text>
+      </TouchableOpacity>
 
-        <Text style={styles.legal}>
-          Abonnements werden über deinen App Store Account abgerechnet und automatisch verlängert,
-          sofern nicht mindestens 24 Stunden vor Ende der Laufzeit gekündigt wird.
-        </Text>
-      </ScrollView>
-    </View>
+      {/* ── 6. CTA-Subtext ───────────────────────────────────────────────────── */}
+      <Text style={s.ctaSub}>{t('paywall.ctaSub')}</Text>
+
+      {/* ── 7. Divider ───────────────────────────────────────────────────────── */}
+      <View style={s.dividerRow}>
+        <View style={s.dividerLine} />
+        <Text style={s.dividerTxt}>{t('paywall.orSingle')}</Text>
+        <View style={s.dividerLine} />
+      </View>
+
+      {/* ── 8. Micro-IAPs ────────────────────────────────────────────────────── */}
+      {micros.map((m, i) => (
+        <TouchableOpacity
+          key={i}
+          style={s.micro}
+          onPress={() => handleMicro(m.product, m.pkg)}
+          disabled={loading}
+        >
+          <View style={s.microLeft}>
+            <MaterialCommunityIcons name={m.icon} size={16} color={C.textMuted} />
+            <Text style={s.microLabel}>{m.label}</Text>
+          </View>
+          <View style={s.microPrice}>
+            <Text style={s.microPriceTxt}>€0,99</Text>
+          </View>
+        </TouchableOpacity>
+      ))}
+
+      {/* ── 9. Footer ────────────────────────────────────────────────────────── */}
+      <TouchableOpacity onPress={onClose} style={s.freeLinkWrap}>
+        <Text style={s.freeLink}>{t('paywall.continueFree')}</Text>
+      </TouchableOpacity>
+
+      <View style={s.legalRow}>
+        <TouchableOpacity onPress={handleRestore}>
+          <Text style={s.legalLink}>{t('paywall.restore')}</Text>
+        </TouchableOpacity>
+        <Text style={s.legalDot}> · </Text>
+        <Text style={s.legalTxt}>{t('paywall.legal')}</Text>
+      </View>
+    </ScrollView>
   );
 }
 
-const styles = StyleSheet.create({
-  wrap:   { flex: 1, backgroundColor: COLORS.bg },
-  scroll: { paddingBottom: 60 },
+// ── Styles ───────────────────────────────────────────────────────────────────
+const s = StyleSheet.create({
+  root:    { flex: 1, backgroundColor: C.bg },
+  content: { paddingHorizontal: 20, paddingBottom: 24 },
 
-  closeBtn: {
-    position: 'absolute', right: SPACING.lg, zIndex: 10,
-    width: 34, height: 34, borderRadius: 17,
-    backgroundColor: 'rgba(255,255,255,0.12)',
-    alignItems: 'center', justifyContent: 'center',
+  // Header
+  header:     { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 },
+  headerLeft: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  logo:       { width: 30, height: 30, borderRadius: 8, backgroundColor: C.gold, alignItems: 'center', justifyContent: 'center' },
+  appName:    { color: C.white, fontSize: 15, fontWeight: '500' },
+  closeBtn:   { width: 30, height: 30, borderRadius: 15, backgroundColor: 'rgba(255,255,255,0.08)', alignItems: 'center', justifyContent: 'center' },
+
+  // Headline
+  h1: { color: C.white, fontSize: 27, fontWeight: '700', lineHeight: 32, letterSpacing: -0.5, marginTop: 14 },
+
+  // Early Bird
+  earlyBird: {
+    flexDirection: 'row', alignItems: 'center',
+    marginTop: 12, padding: 12,
+    borderWidth: 1, borderColor: C.earlyBirdBorder,
+    borderRadius: 12,
+    backgroundColor: 'rgba(245,192,51,0.06)',
   },
-  closeX: { color: COLORS.textSecondary, fontSize: 15, fontWeight: '600' },
+  ebTitle: { color: C.gold, fontSize: 14, fontWeight: '600' },
+  ebSub:   { color: C.textMuted, fontSize: 12, marginTop: 1 },
 
-  // Hero
-  hero: {
-    alignItems: 'center',
-    paddingTop: SPACING.xxxl + SPACING.xl,
-    paddingBottom: SPACING.xl,
-    paddingHorizontal: SPACING.xl,
+  // Price Card
+  priceCard: {
+    marginTop: 12,
+    backgroundColor: C.cardBg,
+    borderWidth: 1, borderColor: C.cardBorderGold,
+    borderRadius: 16, padding: 16,
   },
-  heroEmoji:  { fontSize: 52, marginBottom: SPACING.md },
-  headline:   { color: COLORS.textPrimary, fontSize: 26, fontWeight: '900', textAlign: 'center', lineHeight: 34, marginBottom: SPACING.sm },
-  heroSub:    { color: COLORS.textSecondary, fontSize: FONTS.sizes.md, textAlign: 'center' },
+  badges:       { flexDirection: 'row', gap: 8, marginBottom: 12 },
+  badgeGold:    { backgroundColor: C.gold, paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8 },
+  badgeGoldTxt: { color: C.bg, fontSize: 11, fontWeight: '700' },
+  badgeBlue:    { backgroundColor: C.chipBlue, paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8 },
+  badgeBlueTxt: { color: C.blue, fontSize: 11, fontWeight: '600' },
 
-  // Badge
-  badge: {
-    marginHorizontal: SPACING.lg, marginBottom: SPACING.lg,
-    borderRadius: RADIUS.md, padding: SPACING.md,
-    borderWidth: 0.5, alignItems: 'center',
-  },
-  badgeGold:  { backgroundColor: 'rgba(245,192,51,0.08)',  borderColor: 'rgba(245,192,51,0.35)' },
-  badgeRed:   { backgroundColor: 'rgba(255,107,107,0.08)', borderColor: 'rgba(255,107,107,0.40)' },
-  badgeTitle: { color: COLORS.gold, fontSize: FONTS.sizes.md, fontWeight: '700', marginBottom: 2 },
-  badgeSub:   { color: COLORS.textSecondary, fontSize: FONTS.sizes.sm },
+  priceRow:    { flexDirection: 'row', alignItems: 'baseline', gap: 10, marginBottom: 14 },
+  price:       { color: C.gold, fontSize: 42, fontWeight: '700', letterSpacing: -1 },
+  priceOld:    { color: C.textDim, fontSize: 18, textDecorationLine: 'line-through' },
+  priceSuffix: { color: C.textDim, fontSize: 14 },
 
-  // Plan Card
-  card: {
-    marginHorizontal: SPACING.lg, marginBottom: SPACING.lg,
-    backgroundColor: 'rgba(255,255,255,0.05)',
-    borderRadius: 16, borderWidth: 0.5, borderColor: 'rgba(245,192,51,0.40)',
-    padding: SPACING.xl,
-    ...SHADOWS.goldGlow,
-  },
-  cardTopRow:    { flexDirection: 'row', alignItems: 'center', gap: SPACING.sm, marginBottom: SPACING.lg },
-  labelChip:     { backgroundColor: 'rgba(245,192,51,0.12)', borderRadius: RADIUS.sm, paddingHorizontal: SPACING.md, paddingVertical: 4, borderWidth: 0.5, borderColor: 'rgba(245,192,51,0.40)' },
-  labelChipRed:  { backgroundColor: 'rgba(255,107,107,0.12)', borderColor: 'rgba(255,107,107,0.50)' },
-  labelChipText: { color: COLORS.gold, fontSize: FONTS.sizes.xs, fontWeight: '800', letterSpacing: 0.8 },
-  savingsChip:   { backgroundColor: 'rgba(79,195,247,0.12)', borderRadius: RADIUS.full, paddingHorizontal: SPACING.md, paddingVertical: 4, borderWidth: 0.5, borderColor: 'rgba(79,195,247,0.35)' },
-  savingsText:   { color: '#4FC3F7', fontSize: FONTS.sizes.xs, fontWeight: '700' },
-
-  priceRow:  { flexDirection: 'row', alignItems: 'flex-end', gap: SPACING.md, marginBottom: SPACING.lg },
-  price:     { color: COLORS.gold, fontSize: 44, fontWeight: '900', lineHeight: 48, ...SHADOWS.goldGlow },
-  priceOld:  { color: COLORS.textMuted, fontSize: FONTS.sizes.lg, textDecorationLine: 'line-through', lineHeight: 22 },
-  priceNote: { color: COLORS.textMuted, fontSize: FONTS.sizes.sm, lineHeight: 18 },
-
-  cardDivider: { height: 0.5, backgroundColor: 'rgba(255,255,255,0.10)', marginBottom: SPACING.lg },
-
-  featureRow:   { flexDirection: 'row', alignItems: 'center', marginBottom: SPACING.md, gap: SPACING.md },
-  featureIcon:  { width: 30, height: 30, borderRadius: 8, backgroundColor: 'rgba(245,192,51,0.10)', borderWidth: 0.5, borderColor: 'rgba(245,192,51,0.20)', alignItems: 'center', justifyContent: 'center' },
-  featureText:  { color: COLORS.textPrimary, fontSize: FONTS.sizes.md, flex: 1, lineHeight: 22 },
-  featureCheck: { color: COLORS.gold, fontWeight: '700' },
+  featureRow:  { flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 11 },
+  featureIcon: { width: 24, alignItems: 'center' },
+  featureLabel:{ color: C.textBody, fontSize: 15 },
 
   // CTA
-  ctaWrap:       { paddingHorizontal: SPACING.lg, marginBottom: SPACING.md },
-  ctaBtn:        { borderRadius: 14, overflow: 'hidden', ...SHADOWS.goldGlow },
-  ctaBtnDisabled:{ opacity: 0.5 },
-  ctaGradient:   { paddingVertical: 15, alignItems: 'center' },
-  ctaText:       { color: '#0D1F2D', fontSize: FONTS.sizes.lg, fontWeight: '800' },
-  ctaSub:        { color: COLORS.textSecondary, fontSize: FONTS.sizes.sm, textAlign: 'center', marginTop: SPACING.sm },
+  cta:    { marginTop: 14, backgroundColor: C.gold, borderRadius: 14, padding: 16, alignItems: 'center' },
+  ctaTxt: { color: C.bg, fontSize: 17, fontWeight: '700' },
+  ctaSub: { textAlign: 'center', color: C.textDim, fontSize: 12, marginTop: 8, lineHeight: 17 },
 
-  // Free
-  freeBtn: { alignItems: 'center', paddingVertical: SPACING.lg },
-  freeText: { color: COLORS.textSecondary, fontSize: FONTS.sizes.md, textDecorationLine: 'underline' },
+  // Divider
+  dividerRow:  { flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 16 },
+  dividerLine: { flex: 1, height: 1, backgroundColor: C.divider },
+  dividerTxt:  { color: C.textDim, fontSize: 12 },
 
-  // Or divider
-  orRow:  { flexDirection: 'row', alignItems: 'center', marginHorizontal: SPACING.lg, marginVertical: SPACING.lg, gap: SPACING.sm },
-  orLine: { flex: 1, height: 0.5, backgroundColor: 'rgba(255,255,255,0.10)' },
-  orText: { color: COLORS.textMuted, fontSize: FONTS.sizes.sm },
-
-  // Micro-IAPs
-  microRow: {
-    flexDirection: 'row', alignItems: 'center',
-    marginHorizontal: SPACING.lg, marginBottom: SPACING.sm,
-    backgroundColor: 'rgba(255,255,255,0.04)',
-    borderRadius: 10, borderWidth: 0.5, borderColor: 'rgba(255,255,255,0.07)',
-    paddingVertical: SPACING.md, paddingHorizontal: SPACING.lg,
-  },
-  microLabel: { color: COLORS.textPrimary, fontSize: FONTS.sizes.md, flex: 1 },
-  microChip:  { backgroundColor: 'rgba(245,192,51,0.08)', borderRadius: RADIUS.full, paddingHorizontal: SPACING.sm, paddingVertical: 3, borderWidth: 0.5, borderColor: 'rgba(245,192,51,0.40)' },
-  microPrice: { color: COLORS.gold, fontSize: FONTS.sizes.sm, fontWeight: '700' },
+  // Micro IAPs
+  micro:      { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: C.microBg, borderRadius: 10, padding: 13, marginTop: 8 },
+  microLeft:  { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  microLabel: { color: '#B8CAD6', fontSize: 14 },
+  microPrice: { borderWidth: 1, borderColor: C.earlyBirdBorder, paddingHorizontal: 10, paddingVertical: 3, borderRadius: 12 },
+  microPriceTxt: { color: C.gold, fontSize: 13, fontWeight: '600' },
 
   // Footer
-  footer:     { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: SPACING.sm, marginTop: SPACING.xl, marginBottom: SPACING.sm },
-  footerLink: { color: COLORS.textMuted, fontSize: FONTS.sizes.sm },
-  dot:        { color: COLORS.textMuted },
-  legal:      { color: COLORS.textMuted, fontSize: 10, textAlign: 'center', marginHorizontal: SPACING.xl, lineHeight: 15 },
+  freeLinkWrap: { alignItems: 'center', marginTop: 18 },
+  freeLink:     { color: '#7A93A5', fontSize: 14, textDecorationLine: 'underline' },
+  legalRow:     { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', flexWrap: 'wrap', marginTop: 10 },
+  legalLink:    { color: C.textDim, fontSize: 11, textDecorationLine: 'underline' },
+  legalDot:     { color: C.textDim, fontSize: 11 },
+  legalTxt:     { color: C.textDim, fontSize: 11 },
 });

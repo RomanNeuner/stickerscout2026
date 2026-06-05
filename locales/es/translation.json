@@ -59,16 +59,29 @@
     "search": "Buscar equipo o jugador",
     "teamProgress": "{{team}}: {{owned}}/{{count}}",
     "groups": {
-      "A": "Grupo A", "B": "Grupo B", "C": "Grupo C",
-      "D": "Grupo D", "E": "Grupo E", "F": "Grupo F",
-      "G": "Grupo G", "H": "Grupo H", "I": "Grupo I",
-      "J": "Grupo J", "K": "Grupo K", "L": "Grupo L"
+      "A": "Grupo A",
+      "B": "Grupo B",
+      "C": "Grupo C",
+      "D": "Grupo D",
+      "E": "Grupo E",
+      "F": "Grupo F",
+      "G": "Grupo G",
+      "H": "Grupo H",
+      "I": "Grupo I",
+      "J": "Grupo J",
+      "K": "Grupo K",
+      "L": "Grupo L"
     },
     "types": {
-      "NORMAL": "Normal", "FOIL": "Brillante", "LOGO": "Escudo", "STADIUM": "Estadio"
+      "NORMAL": "Normal",
+      "FOIL": "Brillante",
+      "LOGO": "Escudo",
+      "STADIUM": "Estadio"
     },
     "sticker": {
-      "owned": "Tengo", "missing": "Falta", "duplicate": "{{count}}× Duplicado"
+      "owned": "Tengo",
+      "missing": "Falta",
+      "duplicate": "{{count}}× Duplicado"
     }
   },
   "trade": {
@@ -172,7 +185,26 @@
     },
     "purchase": "Desbloquear ahora",
     "restore": "Restaurar compra",
-    "terms": "Términos y privacidad"
+    "terms": "Términos y privacidad",
+    "headline1": "Colecciona más.",
+    "headline2": "Completa más rápido.",
+    "earlyBird": "Early Bird — quedan {{days}} días",
+    "earlyBirdSub": "luego precio regular €3,99",
+    "bestValue": "MEJOR OFERTA",
+    "save25": "Ahorra 25%",
+    "once": "pago único",
+    "feature1": "Escaneos de stickers ilimitados",
+    "feature2": "Desbloquear todos los intercambios",
+    "feature3": "Dream Team Builder ilimitado",
+    "feature4": "Informe del álbum en PDF",
+    "cta": "Obtener Pase Mundial por {{price}}",
+    "ctaSub": "Pago único · Sin suscripción · Válido hasta el 19 de julio de 2026",
+    "orSingle": "o individualmente",
+    "micro1": "+50 Boost de Escaneos",
+    "micro2": "+10 Slots de Intercambio (7 días)",
+    "micro3": "PDF Informe Completo",
+    "continueFree": "Continuar gratis",
+    "legal": "Privacidad · Términos"
   },
   "common": {
     "cancel": "Cancelar",
@@ -212,9 +244,14 @@
   "adrenalyn": {
     "title": "Adrenalyn XL",
     "types": {
-      "GOLDEN_BALLER": "Golden Baller", "FF": "Fan Favourite",
-      "TEAM_CREST": "Team Crest", "IC": "Icon", "BASE": "Base",
-      "HERO": "Hero", "LIMITED_EDITION": "Limited Edition", "CONTENDER": "Contender"
+      "GOLDEN_BALLER": "Golden Baller",
+      "FF": "Fan Favourite",
+      "TEAM_CREST": "Team Crest",
+      "IC": "Icon",
+      "BASE": "Base",
+      "HERO": "Hero",
+      "LIMITED_EDITION": "Limited Edition",
+      "CONTENDER": "Contender"
     }
   }
 }

@@ -59,16 +59,29 @@
     "search": "Chercher équipe ou joueur",
     "teamProgress": "{{team}} : {{owned}}/{{count}}",
     "groups": {
-      "A": "Groupe A", "B": "Groupe B", "C": "Groupe C",
-      "D": "Groupe D", "E": "Groupe E", "F": "Groupe F",
-      "G": "Groupe G", "H": "Groupe H", "I": "Groupe I",
-      "J": "Groupe J", "K": "Groupe K", "L": "Groupe L"
+      "A": "Groupe A",
+      "B": "Groupe B",
+      "C": "Groupe C",
+      "D": "Groupe D",
+      "E": "Groupe E",
+      "F": "Groupe F",
+      "G": "Groupe G",
+      "H": "Groupe H",
+      "I": "Groupe I",
+      "J": "Groupe J",
+      "K": "Groupe K",
+      "L": "Groupe L"
     },
     "types": {
-      "NORMAL": "Normal", "FOIL": "Holographique", "LOGO": "Logo", "STADIUM": "Stade"
+      "NORMAL": "Normal",
+      "FOIL": "Holographique",
+      "LOGO": "Logo",
+      "STADIUM": "Stade"
     },
     "sticker": {
-      "owned": "Possédé", "missing": "Manquant", "duplicate": "{{count}}× Doublon"
+      "owned": "Possédé",
+      "missing": "Manquant",
+      "duplicate": "{{count}}× Doublon"
     }
   },
   "trade": {
@@ -172,7 +185,26 @@
     },
     "purchase": "Débloquer maintenant",
     "restore": "Restaurer l'achat",
-    "terms": "CGU & confidentialité"
+    "terms": "CGU & confidentialité",
+    "headline1": "Collectionnez plus.",
+    "headline2": "Complétez plus vite.",
+    "earlyBird": "Early Bird — encore {{days}} jours",
+    "earlyBirdSub": "puis prix régulier €3,99",
+    "bestValue": "MEILLEURE OFFRE",
+    "save25": "25% d'économie",
+    "once": "paiement unique",
+    "feature1": "Scans de stickers illimités",
+    "feature2": "Débloquer tous les échanges",
+    "feature3": "Dream Team Builder illimité",
+    "feature4": "Rapport d'album en PDF",
+    "cta": "Obtenir le Pass CM pour {{price}}",
+    "ctaSub": "Paiement unique · Sans abonnement · Valable jusqu'au 19 juillet 2026",
+    "orSingle": "ou individuellement",
+    "micro1": "+50 Boost de Scans",
+    "micro2": "+10 Slots d'échange (7 jours)",
+    "micro3": "PDF Rapport complet",
+    "continueFree": "Continuer gratuitement",
+    "legal": "Confidentialité · CGU"
   },
   "common": {
     "cancel": "Annuler",
@@ -212,9 +244,14 @@
   "adrenalyn": {
     "title": "Adrenalyn XL",
     "types": {
-      "GOLDEN_BALLER": "Golden Baller", "FF": "Fan Favourite",
-      "TEAM_CREST": "Team Crest", "IC": "Icon", "BASE": "Base",
-      "HERO": "Hero", "LIMITED_EDITION": "Édition Limitée", "CONTENDER": "Contender"
+      "GOLDEN_BALLER": "Golden Baller",
+      "FF": "Fan Favourite",
+      "TEAM_CREST": "Team Crest",
+      "IC": "Icon",
+      "BASE": "Base",
+      "HERO": "Hero",
+      "LIMITED_EDITION": "Édition Limitée",
+      "CONTENDER": "Contender"
     }
   }
 }

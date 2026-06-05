@@ -46,33 +46,8 @@
     }
   },
   "album": {
-    "title": "My Album",
-    "progress": "{{owned}} / {{total}} — {{percent}}% complete",
-    "filter": {
-      "all": "All",
-      "owned": "Have",
-      "missing": "Need",
-      "duplicates": "Doubles"
-    },
-    "search": "Search team or player",
-    "teamProgress": "{{team}}: {{owned}}/{{count}}",
-    "groups": {
-      "A": "Group A", "B": "Group B", "C": "Group C",
-      "D": "Group D", "E": "Group E", "F": "Group F",
-      "G": "Group G", "H": "Group H", "I": "Group I",
-      "J": "Group J", "K": "Group K", "L": "Group L"
-    },
-    "types": {
-      "NORMAL": "Normal",
-      "FOIL": "Foil",
-      "LOGO": "Logo",
-      "STADIUM": "Stadium"
-    },
-    "sticker": {
-      "owned": "Owned",
-      "missing": "Missing",
-      "duplicate": "{{count}}× Double"
-    }
+    "tabSticker": "📋 Stickers ({{owned}}/{{total}})",
+    "tabAdrenalyn": "⚡ Adrenalyn ({{owned}}/{{total}})"
   },
   "trade": {
     "title": "Trading Board",
@@ -175,7 +150,26 @@
     },
     "purchase": "Unlock now",
     "restore": "Restore purchase",
-    "terms": "Terms & Privacy"
+    "terms": "Terms & Privacy",
+    "headline1": "Collect more.",
+    "headline2": "Complete faster.",
+    "earlyBird": "Early Bird — {{days}} days left",
+    "earlyBirdSub": "then regular €3.99",
+    "bestValue": "BEST VALUE",
+    "save25": "Save 25%",
+    "once": "one-time",
+    "feature1": "Unlimited sticker scans",
+    "feature2": "Unlock all trade slots",
+    "feature3": "Dream Team Builder unlimited",
+    "feature4": "Collection report as PDF",
+    "cta": "Get World Cup Pass for {{price}}",
+    "ctaSub": "Pay once · No subscription · Valid until July 19, 2026",
+    "orSingle": "or individually",
+    "micro1": "+50 Scan Boost",
+    "micro2": "+10 Trade Slots (7 days)",
+    "micro3": "Completion Report PDF",
+    "continueFree": "Continue for free",
+    "legal": "Privacy · Terms"
   },
   "common": {
     "cancel": "Cancel",
@@ -215,13 +209,14 @@
   "adrenalyn": {
     "title": "Adrenalyn XL",
     "types": {
-      "GOLDEN_BALLER": "Golden Baller", "FF": "Fan Favourite",
-      "TEAM_CREST": "Team Crest", "IC": "Icon", "BASE": "Base",
-      "HERO": "Hero", "LIMITED_EDITION": "Limited Edition", "CONTENDER": "Contender"
+      "GOLDEN_BALLER": "Golden Baller",
+      "FF": "Fan Favourite",
+      "TEAM_CREST": "Team Crest",
+      "IC": "Icon",
+      "BASE": "Base",
+      "HERO": "Hero",
+      "LIMITED_EDITION": "Limited Edition",
+      "CONTENDER": "Contender"
     }
-  },
-  "album": {
-    "tabSticker": "📋 Stickers ({{owned}}/{{total}})",
-    "tabAdrenalyn": "⚡ Adrenalyn ({{owned}}/{{total}})"
   }
 }
