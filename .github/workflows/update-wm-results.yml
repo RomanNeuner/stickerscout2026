@@ -1,4 +1,4 @@
-name: WM 2026 Ergebnisse aktualisieren
+name: Update WM 2026 Results
 
 on:
   schedule:
@@ -17,11 +17,11 @@ jobs:
           cache: 'npm'
           cache-dependency-path: scripts/package.json
 
-      - name: Dependencies installieren
+      - name: Install dependencies
         run: npm install
         working-directory: scripts
 
-      - name: Ergebnisse aktualisieren
+      - name: Update results
         run: node update-results.js
         working-directory: scripts
         env:
