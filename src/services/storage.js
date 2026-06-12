@@ -55,6 +55,13 @@ export async function addToNeed(stickerId) {
   return col;
 }
 
+export async function removeFromNeed(stickerId) {
+  const col = await loadCollection();
+  col.need = col.need.filter(id => id !== stickerId);
+  await saveCollection(col);
+  return col;
+}
+
 export async function addDuplicate(stickerId) {
   const col = await loadCollection();
   if (!col.have.includes(stickerId)) col.have.push(stickerId);

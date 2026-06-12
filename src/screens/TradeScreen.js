@@ -6,14 +6,16 @@ import {
 import { useFocusEffect } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import * as Location from 'expo-location';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { COLORS, GRADIENTS, FONTS, SPACING, RADIUS, SHADOWS } from '../theme';
 import { lookupSticker } from '../data/stickerCatalog';
+import { lookupAdrenalyn, CARD_TYPE_LABELS } from '../data/adrenalynCatalog';
 import { TEAM_FLAGS } from '../data/stickerTypes';
-import { loadCollection, loadOffers, saveOffer, deleteOffer, FREE_OFFER_LIMIT } from '../services/storage';
+import { loadCollection, loadOffers, saveOffer, deleteOffer, removeFromNeed, FREE_OFFER_LIMIT } from '../services/storage';
 import GoldButton from '../components/GoldButton';
 import AppIcon from '../components/AppIcon';
 
@@ -33,6 +35,7 @@ export default function TradeScreen({ onShowPaywall, isPro }) {
   const [radiusKey, setRadiusKey] = useState('10km');
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [offerInput, setOfferInput] = useState({ offerId: '', needId: '' });
+  const [tradeType, setTradeType] = useState('sticker'); // 'sticker' | 'adrenalyn'
   const [location, setLocation] = useState(null);
   const [locationGranted, setLocationGranted] = useState(false);
 
@@ -56,19 +59,38 @@ export default function TradeScreen({ onShowPaywall, isPro }) {
   const myOffers = offers.filter(o => o.isOwn);
   const nearbyOffers = offers.filter(o => !o.isOwn);
 
-  // Live-Lookup mit Datenbank
-  const offerSticker = offerInput.offerId.length >= 2 ? lookupSticker(offerInput.offerId) : null;
-  const needSticker  = offerInput.needId.length  >= 2 ? lookupSticker(offerInput.needId)  : null;
+  // Live-Lookup — je nach Typ Sticker oder Adrenalyn
+  const isAdrenalyn = tradeType === 'adrenalyn';
+  const offerItem = offerInput.offerId.length >= 1
+    ? (isAdrenalyn ? lookupAdrenalyn(offerInput.offerId) : lookupSticker(offerInput.offerId))
+    : null;
+  const needItem = offerInput.needId.length >= 1
+    ? (isAdrenalyn ? lookupAdrenalyn(offerInput.needId) : lookupSticker(offerInput.needId))
+    : null;
+
+  const itemLabel = (item) => {
+    if (!item) return null;
+    if (isAdrenalyn) {
+      const typeLabel = CARD_TYPE_LABELS[item.type] ?? item.type ?? '';
+      return `#${item.number} · ${item.name ?? ''}${typeLabel ? ` · ${typeLabel}` : ''}`;
+    }
+    return `${item.id} · ${item.name}${item.teamName ? ` · ${TEAM_FLAGS[item.team] ?? ''} ${item.teamName}` : ''}`;
+  };
 
   const handleCreateOffer = async () => {
     if (!isPro && myOffers.length >= FREE_OFFER_LIMIT) { onShowPaywall?.(); return; }
-    if (!offerSticker || !needSticker) {
-      Alert.alert('Fehler', 'Sticker-ID nicht gefunden. Beispiel: GER10, AUT4, CC2');
+    if (!offerItem || !needItem) {
+      Alert.alert(t('common.error'), isAdrenalyn
+        ? t('trade.createOfferErrorAdrenalyn')
+        : t('trade.createOfferErrorSticker'));
       return;
     }
+    const offeredId = isAdrenalyn ? String(offerItem.number) : offerItem.id;
+    const neededId  = isAdrenalyn ? String(needItem.number)  : needItem.id;
     const updated = await saveOffer({
-      offeredStickers: [offerSticker.id],
-      wantedStickers:  [needSticker.id],
+      offerType:       tradeType,
+      offeredStickers: [offeredId],
+      wantedStickers:  [neededId],
       isOwn: true,
       location,
       status: 'ACTIVE',
@@ -84,6 +106,17 @@ export default function TradeScreen({ onShowPaywall, isPro }) {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
   };
 
+  const handleRemoveFromNeed = async (stickerId) => {
+    const col = await removeFromNeed(stickerId);
+    setCollection(col);
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+  };
+
+  const handleCreateOfferFromNeed = (needId) => {
+    setOfferInput(p => ({ ...p, needId }));
+    setShowCreateModal(true);
+  };
+
   const displayOffers = tab === 'mine' ? myOffers : nearbyOffers;
 
   // Doppelte aus Sammlung als Vorschlag für "Ich biete"
@@ -97,7 +130,7 @@ export default function TradeScreen({ onShowPaywall, isPro }) {
         <View style={styles.locationRow}>
           <Text style={styles.locationDot}>{locationGranted ? '🟢' : '🔴'}</Text>
           <Text style={styles.locationText}>
-            {locationGranted ? 'Standort aktiv' : 'Standort nicht verfügbar'}
+            {locationGranted ? t('trade.locationActive') : t('trade.locationUnavailable')}
           </Text>
           {!locationGranted && (
             <TouchableOpacity onPress={async () => {
@@ -108,13 +141,13 @@ export default function TradeScreen({ onShowPaywall, isPro }) {
                 setLocation({ lat: loc.coords.latitude, lng: loc.coords.longitude });
               }
             }}>
-              <Text style={styles.locationEnable}>Aktivieren →</Text>
+              <Text style={styles.locationEnable}>{t('trade.locationEnable')}</Text>
             </TouchableOpacity>
           )}
         </View>
 
         {/* Radius */}
-        <Text style={styles.radiusLabel}>Tauschpartner-Radius</Text>
+        <Text style={styles.radiusLabel}>{t('trade.radiusLabel')}</Text>
         <View style={styles.radiusRow}>
           {RADIUS_OPTIONS.map(opt => (
             <TouchableOpacity
@@ -133,8 +166,9 @@ export default function TradeScreen({ onShowPaywall, isPro }) {
       {/* Tabs */}
       <View style={styles.tabRow}>
         {[
-          { key: 'nearby', label: `In der Nähe (${nearbyOffers.length})` },
-          { key: 'mine',   label: `Meine Angebote (${myOffers.length})` },
+          { key: 'nearby', label: t('trade.tabNearby', { count: nearbyOffers.length }) },
+          { key: 'mine',   label: t('trade.tabMine',   { count: myOffers.length }) },
+          { key: 'search', label: t('trade.tabSearch', { count: collection.need.length }) },
         ].map(tb => (
           <TouchableOpacity
             key={tb.key}
@@ -150,40 +184,71 @@ export default function TradeScreen({ onShowPaywall, isPro }) {
       {tab === 'mine' && duplicateIds.length > 0 && (
         <View style={styles.duplicateHint}>
           <Text style={styles.duplicateHintText}>
-            💡 Du hast {duplicateIds.length} Doppelte — ideal zum Tauschen!
+            {t('trade.duplicateHint', { count: duplicateIds.length })}
           </Text>
         </View>
       )}
 
-      {/* Angebotsliste */}
-      <FlatList
-        data={displayOffers}
-        keyExtractor={o => o.id}
-        renderItem={({ item }) => (
-          <OfferCard offer={item} isOwn={item.isOwn} onDelete={() => handleDeleteOffer(item.id)} />
-        )}
-        ListEmptyComponent={
-          <View style={styles.empty}>
-            <Text style={styles.emptyEmoji}>🔄</Text>
-            <Text style={styles.emptyText}>
-              {tab === 'nearby'
-                ? 'Keine Angebote in der Nähe.\nErweitere den Radius oder erstelle ein Angebot.'
-                : 'Noch keine eigenen Angebote.\nTippe auf + um ein Angebot zu erstellen.'}
-            </Text>
+      {/* Meine Suche */}
+      {tab === 'search' ? (
+        <FlatList
+          data={collection.need}
+          keyExtractor={id => id}
+          renderItem={({ item }) => (
+            <NeedCard
+              stickerId={item}
+              onRemove={() => handleRemoveFromNeed(item)}
+              onCreateOffer={() => handleCreateOfferFromNeed(item)}
+            />
+          )}
+          ListHeaderComponent={collection.need.length > 0 ? (
+            <View style={styles.searchHint}>
+              <Text style={styles.searchHintText}>
+                {t('trade.searchHint', { count: collection.need.length })}
+              </Text>
+            </View>
+          ) : null}
+          ListEmptyComponent={
+            <View style={styles.empty}>
+              <Text style={styles.emptyEmoji}>🔍</Text>
+              <Text style={styles.emptyText}>
+                {t('trade.emptySearch')}
+              </Text>
+            </View>
+          }
+          contentContainerStyle={styles.list}
+        />
+      ) : (
+        /* Angebotsliste */
+        <FlatList
+          data={displayOffers}
+          keyExtractor={o => o.id}
+          renderItem={({ item }) => (
+            <OfferCard offer={item} isOwn={item.isOwn} onDelete={() => handleDeleteOffer(item.id)} />
+          )}
+          ListEmptyComponent={
+            <View style={styles.empty}>
+              <View style={styles.emptyIconWrap}>
+            <Ionicons name="swap-horizontal" size={36} color={COLORS.gold} />
           </View>
-        }
-        contentContainerStyle={styles.list}
-      />
+              <Text style={styles.emptyText}>
+                {tab === 'nearby' ? t('trade.emptyNearby') : t('trade.emptyMine')}
+              </Text>
+            </View>
+          }
+          contentContainerStyle={styles.list}
+        />
+      )}
 
       {/* FAB */}
       <View style={styles.fab}>
         {!isPro && myOffers.length >= FREE_OFFER_LIMIT ? (
           <TouchableOpacity onPress={onShowPaywall} style={styles.limitRow}>
-            <Text style={styles.limitText}>Maximum {FREE_OFFER_LIMIT} Angebote (Free)</Text>
-            <Text style={styles.limitUpgrade}>👑 Auf Premium upgraden →</Text>
+            <Text style={styles.limitText}>{t('trade.offerLimit', { limit: FREE_OFFER_LIMIT })}</Text>
+            <Text style={styles.limitUpgrade}>{t('trade.upgradePrompt')}</Text>
           </TouchableOpacity>
         ) : (
-          <GoldButton title="+ Tauschangebot erstellen" onPress={() => setShowCreateModal(true)} />
+          <GoldButton title={t('trade.addOffer')} onPress={() => setShowCreateModal(true)} />
         )}
       </View>
 
@@ -191,60 +256,74 @@ export default function TradeScreen({ onShowPaywall, isPro }) {
       <Modal visible={showCreateModal} animationType="slide" transparent>
         <View style={styles.modalOverlay}>
           <LinearGradient colors={GRADIENTS.cardDark} style={styles.modal}>
-            <Text style={styles.modalTitle}>Tauschangebot erstellen</Text>
+            <Text style={styles.modalTitle}>{t('trade.modalTitle')}</Text>
+
+            {/* Typ-Toggle */}
+            <View style={styles.typeToggle}>
+              {[
+                { key: 'sticker',   label: '🎴 Sticker' },
+                { key: 'adrenalyn', label: '📇 Adrenalyn' },
+              ].map(typeOpt => (
+                <TouchableOpacity
+                  key={typeOpt.key}
+                  style={[styles.typeBtn, tradeType === typeOpt.key && styles.typeBtnActive]}
+                  onPress={() => { setTradeType(typeOpt.key); setOfferInput({ offerId: '', needId: '' }); }}
+                >
+                  <Text style={[styles.typeBtnText, tradeType === typeOpt.key && styles.typeBtnTextActive]}>
+                    {typeOpt.label}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
 
             {/* Ich biete */}
-            <Text style={styles.fieldLabel}>Ich biete — Sticker-ID eingeben</Text>
+            <Text style={styles.fieldLabel}>
+              {isAdrenalyn ? t('trade.offerFieldAdrenalyn') : t('trade.offerFieldSticker')}
+            </Text>
             <TextInput
               style={styles.modalInput}
-              placeholder="z.B. GER10, MEX20, AUT4, CC2"
+              placeholder={isAdrenalyn ? t('trade.offerPlaceholderAdrenalyn') : t('trade.offerPlaceholderSticker')}
               placeholderTextColor={COLORS.textMuted}
-              autoCapitalize="characters"
+              autoCapitalize={isAdrenalyn ? 'none' : 'characters'}
+              keyboardType={isAdrenalyn ? 'numeric' : 'default'}
               value={offerInput.offerId}
-              onChangeText={v => setOfferInput(p => ({ ...p, offerId: v.toUpperCase() }))}
-              maxLength={8}
+              onChangeText={v => setOfferInput(p => ({ ...p, offerId: isAdrenalyn ? v.replace(/\D/g, '') : v.toUpperCase() }))}
+              maxLength={isAdrenalyn ? 3 : 8}
             />
-            {offerInput.offerId.length >= 2 && (
-              <View style={[styles.preview, offerSticker ? styles.previewOk : styles.previewErr]}>
-                {offerSticker ? (
-                  <Text style={styles.previewText}>
-                    ✅ {offerSticker.id} · {offerSticker.name}
-                    {offerSticker.teamName ? ` · ${TEAM_FLAGS[offerSticker.team] ?? ''} ${offerSticker.teamName}` : ''}
-                  </Text>
-                ) : (
-                  <Text style={styles.previewTextErr}>❌ Sticker nicht gefunden</Text>
-                )}
+            {offerInput.offerId.length >= 1 && (
+              <View style={[styles.preview, offerItem ? styles.previewOk : styles.previewErr]}>
+                <Text style={offerItem ? styles.previewText : styles.previewTextErr}>
+                  {offerItem ? `✅ ${itemLabel(offerItem)}` : t(isAdrenalyn ? 'trade.itemNotFoundCard' : 'trade.itemNotFoundSticker')}
+                </Text>
               </View>
             )}
 
             {/* Ich suche */}
-            <Text style={[styles.fieldLabel, { marginTop: SPACING.lg }]}>Ich suche — Sticker-ID eingeben</Text>
+            <Text style={[styles.fieldLabel, { marginTop: SPACING.lg }]}>
+              {isAdrenalyn ? t('trade.searchFieldAdrenalyn') : t('trade.searchFieldSticker')}
+            </Text>
             <TextInput
               style={styles.modalInput}
-              placeholder="z.B. AUT1, FRA8, CC11"
+              placeholder={isAdrenalyn ? t('trade.searchPlaceholderAdrenalyn') : t('trade.searchPlaceholderSticker')}
               placeholderTextColor={COLORS.textMuted}
-              autoCapitalize="characters"
+              autoCapitalize={isAdrenalyn ? 'none' : 'characters'}
+              keyboardType={isAdrenalyn ? 'numeric' : 'default'}
               value={offerInput.needId}
-              onChangeText={v => setOfferInput(p => ({ ...p, needId: v.toUpperCase() }))}
-              maxLength={8}
+              onChangeText={v => setOfferInput(p => ({ ...p, needId: isAdrenalyn ? v.replace(/\D/g, '') : v.toUpperCase() }))}
+              maxLength={isAdrenalyn ? 3 : 8}
             />
-            {offerInput.needId.length >= 2 && (
-              <View style={[styles.preview, needSticker ? styles.previewOk : styles.previewErr]}>
-                {needSticker ? (
-                  <Text style={styles.previewText}>
-                    ✅ {needSticker.id} · {needSticker.name}
-                    {needSticker.teamName ? ` · ${TEAM_FLAGS[needSticker.team] ?? ''} ${needSticker.teamName}` : ''}
-                  </Text>
-                ) : (
-                  <Text style={styles.previewTextErr}>❌ Sticker nicht gefunden</Text>
-                )}
+            {offerInput.needId.length >= 1 && (
+              <View style={[styles.preview, needItem ? styles.previewOk : styles.previewErr]}>
+                <Text style={needItem ? styles.previewText : styles.previewTextErr}>
+                  {needItem ? `✅ ${itemLabel(needItem)}` : t(isAdrenalyn ? 'trade.itemNotFoundCard' : 'trade.itemNotFoundSticker')}
+                </Text>
               </View>
             )}
 
-            {/* Doppelte als Schnellauswahl */}
-            {duplicateIds.length > 0 && (
+            {/* Schnellauswahl Doppelte — nur für Sticker */}
+            {!isAdrenalyn && duplicateIds.length > 0 && (
               <View style={styles.quickPick}>
-                <Text style={styles.quickPickLabel}>💡 Deine Doppelten:</Text>
+                <Text style={styles.quickPickLabel}>{t('trade.yourDuplicates')}</Text>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                   {duplicateIds.slice(0, 8).map(id => (
                     <TouchableOpacity
@@ -261,13 +340,16 @@ export default function TradeScreen({ onShowPaywall, isPro }) {
 
             <View style={styles.modalActions}>
               <GoldButton
-                title="Angebot erstellen"
+                title={t('trade.addOffer')}
                 onPress={handleCreateOffer}
-                disabled={!offerSticker || !needSticker}
+                disabled={!offerItem || !needItem}
                 style={{ flex: 1, marginRight: SPACING.sm }}
               />
-              <TouchableOpacity onPress={() => { setShowCreateModal(false); setOfferInput({ offerId: '', needId: '' }); }} style={styles.cancelBtn}>
-                <Text style={styles.cancelText}>Abbrechen</Text>
+              <TouchableOpacity
+                onPress={() => { setShowCreateModal(false); setOfferInput({ offerId: '', needId: '' }); }}
+                style={styles.cancelBtn}
+              >
+                <Text style={styles.cancelText}>{t('common.cancel')}</Text>
               </TouchableOpacity>
             </View>
           </LinearGradient>
@@ -277,28 +359,73 @@ export default function TradeScreen({ onShowPaywall, isPro }) {
   );
 }
 
+function NeedCard({ stickerId, onRemove, onCreateOffer }) {
+  const { t } = useTranslation();
+  const sticker = lookupSticker(stickerId);
+  const flag = sticker?.team ? (TEAM_FLAGS[sticker.team] ?? '🌍') : '🌍';
+  return (
+    <View style={styles.needCard}>
+      <View style={styles.needInfo}>
+        <Text style={styles.needFlag}>{flag}</Text>
+        <View style={styles.needText}>
+          <Text style={styles.needId}>{stickerId}</Text>
+          {sticker && (
+            <Text style={styles.needName} numberOfLines={1}>
+              {sticker.name}{sticker.teamName ? ` · ${sticker.teamName}` : ''}
+            </Text>
+          )}
+        </View>
+      </View>
+      <View style={styles.needActions}>
+        <TouchableOpacity onPress={onCreateOffer} style={styles.needOfferBtn}>
+          <Text style={styles.needOfferBtnText}>{t('trade.addOffer')}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={onRemove} style={styles.needRemoveBtn}>
+          <Text style={styles.needRemoveBtnText}>✕</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+}
+
 function OfferCard({ offer, isOwn, onDelete }) {
-  const offered = (offer.offeredStickers ?? []).map(id => lookupSticker(id)).filter(Boolean);
-  const wanted  = (offer.wantedStickers  ?? []).map(id => lookupSticker(id)).filter(Boolean);
+  const { t } = useTranslation();
+  const isAdrenalyn = offer.offerType === 'adrenalyn';
+
+  const resolveItem = (id) => {
+    if (isAdrenalyn) {
+      const card = lookupAdrenalyn(id);
+      if (!card) return null;
+      const typeLabel = CARD_TYPE_LABELS[card.type] ?? '';
+      return { key: String(card.number), label: `#${card.number} · ${card.name ?? ''}${typeLabel ? ` · ${typeLabel}` : ''}` };
+    }
+    const s = lookupSticker(id);
+    if (!s) return null;
+    return { key: s.id, label: `${TEAM_FLAGS[s.team] ?? '🌍'} ${s.id} · ${s.name}` };
+  };
+
+  const offered = (offer.offeredStickers ?? []).map(resolveItem).filter(Boolean);
+  const wanted  = (offer.wantedStickers  ?? []).map(resolveItem).filter(Boolean);
 
   return (
     <View style={styles.offerCard}>
+      {isAdrenalyn && (
+        <View style={styles.offerTypeBadge}>
+          <Text style={styles.offerTypeBadgeText}>📇 Adrenalyn XL</Text>
+        </View>
+      )}
       <View style={styles.offerRow}>
         <View style={styles.offerSide}>
-          <Text style={styles.offerSideLabel}>Ich biete</Text>
-          {offered.map(s => (
-            <Text key={s.id} style={styles.offerSticker}>
-              {TEAM_FLAGS[s.team] ?? '🌍'} {s.id} · {s.name}
-            </Text>
+          <Text style={styles.offerSideLabel}>{t('trade.offer.iOffer')}</Text>
+          {offered.map(item => (
+            <Text key={item.key} style={styles.offerSticker}>{item.label}</Text>
           ))}
         </View>
-        <Text style={styles.offerArrow}>⇄</Text>
+        <Ionicons name="swap-horizontal" size={22} color={COLORS.gold} style={{ marginHorizontal: SPACING.sm, marginTop: SPACING.xs }} />
         <View style={styles.offerSide}>
-          <Text style={styles.offerSideLabel}>Ich suche</Text>
-          {wanted.map(s => (
-            <Text key={s.id} style={styles.offerSticker}>
-              {TEAM_FLAGS[s.team] ?? '🌍'} {s.id} · {s.name}
-            </Text>
+          <Text style={styles.offerSideLabel}>{t('trade.offer.iNeed')}</Text>
+          {wanted.map(item => (
+            <Text key={item.key} style={styles.offerSticker}>{item.label}</Text>
           ))}
         </View>
       </View>
@@ -308,11 +435,11 @@ function OfferCard({ offer, isOwn, onDelete }) {
       <View style={styles.offerActions}>
         {isOwn ? (
           <TouchableOpacity onPress={onDelete} style={styles.deleteBtn}>
-            <Text style={styles.deleteBtnText}>🗑 Löschen</Text>
+            <Text style={styles.deleteBtnText}>{t('trade.deleteOffer')}</Text>
           </TouchableOpacity>
         ) : (
           <TouchableOpacity style={styles.contactBtn}>
-            <Text style={styles.contactBtnText}>💬 Kontakt aufnehmen</Text>
+            <Text style={styles.contactBtnText}>{t('trade.contactOffer')}</Text>
           </TouchableOpacity>
         )}
       </View>
@@ -351,7 +478,13 @@ const styles = StyleSheet.create({
 
   list: { padding: SPACING.md, paddingBottom: 120 },
   empty: { alignItems: 'center', marginTop: SPACING.xxxl, paddingHorizontal: SPACING.xxl },
-  emptyEmoji: { fontSize: 48, marginBottom: SPACING.lg },
+  emptyIconWrap: {
+    width: 72, height: 72, borderRadius: 36,
+    backgroundColor: 'rgba(245,192,51,0.12)',
+    borderWidth: 1, borderColor: 'rgba(245,192,51,0.3)',
+    alignItems: 'center', justifyContent: 'center',
+    marginBottom: SPACING.lg,
+  },
   emptyText: { color: COLORS.textSecondary, fontSize: FONTS.sizes.lg, textAlign: 'center', lineHeight: 24 },
 
   fab: { position: 'absolute', bottom: SPACING.xxl, left: SPACING.xl, right: SPACING.xl },
@@ -368,7 +501,13 @@ const styles = StyleSheet.create({
   offerSide: { flex: 1 },
   offerSideLabel: { color: COLORS.textMuted, fontSize: FONTS.sizes.sm, marginBottom: 4, fontWeight: '600' },
   offerSticker: { color: COLORS.textPrimary, fontSize: FONTS.sizes.md, lineHeight: 22 },
-  offerArrow: { color: COLORS.gold, fontSize: FONTS.sizes.xxl, marginHorizontal: SPACING.md, marginTop: SPACING.xs },
+  offerTypeBadge: {
+    backgroundColor: 'rgba(79,195,247,0.12)',
+    borderRadius: RADIUS.sm, paddingHorizontal: SPACING.sm, paddingVertical: 3,
+    alignSelf: 'flex-start', marginBottom: SPACING.sm,
+    borderWidth: 1, borderColor: 'rgba(79,195,247,0.25)',
+  },
+  offerTypeBadgeText: { color: COLORS.blue, fontSize: FONTS.sizes.xs, fontWeight: '700' },
   offerDistance: { color: COLORS.textMuted, fontSize: FONTS.sizes.sm, marginBottom: SPACING.sm },
   offerActions: { flexDirection: 'row', justifyContent: 'flex-end' },
   deleteBtn: { paddingVertical: SPACING.sm, paddingHorizontal: SPACING.lg, borderRadius: RADIUS.sm, borderWidth: 1, borderColor: COLORS.red },
@@ -398,7 +537,55 @@ const styles = StyleSheet.create({
   quickPickChip: { backgroundColor: COLORS.goldDeep, borderRadius: RADIUS.sm, paddingHorizontal: SPACING.md, paddingVertical: SPACING.xs, marginRight: SPACING.sm, borderWidth: 1, borderColor: COLORS.gold },
   quickPickText: { color: COLORS.gold, fontSize: FONTS.sizes.md, fontWeight: '700' },
 
+  typeToggle: {
+    flexDirection: 'row', gap: SPACING.sm,
+    marginBottom: SPACING.lg,
+    backgroundColor: COLORS.surfaceRaised,
+    borderRadius: RADIUS.md, padding: 4,
+  },
+  typeBtn: {
+    flex: 1, paddingVertical: SPACING.sm, borderRadius: RADIUS.sm,
+    alignItems: 'center',
+  },
+  typeBtnActive: { backgroundColor: COLORS.gold },
+  typeBtnText: { color: COLORS.textSecondary, fontSize: FONTS.sizes.md, fontWeight: '600' },
+  typeBtnTextActive: { color: '#0D1F2D', fontWeight: '800' },
+
   modalActions: { flexDirection: 'row', alignItems: 'center', marginTop: SPACING.lg },
   cancelBtn: { paddingVertical: SPACING.md, paddingHorizontal: SPACING.lg },
   cancelText: { color: COLORS.textSecondary, fontSize: FONTS.sizes.md },
+
+  // Meine Suche
+  searchHint: {
+    backgroundColor: 'rgba(79,195,247,0.10)',
+    borderRadius: RADIUS.md, padding: SPACING.md,
+    marginBottom: SPACING.md,
+    borderWidth: 1, borderColor: 'rgba(79,195,247,0.25)',
+  },
+  searchHintText: { color: COLORS.blue, fontSize: FONTS.sizes.sm },
+
+  needCard: {
+    backgroundColor: COLORS.surface, borderRadius: RADIUS.lg,
+    padding: SPACING.md, marginBottom: SPACING.sm,
+    borderWidth: 1, borderColor: COLORS.border,
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+  },
+  needInfo: { flexDirection: 'row', alignItems: 'center', flex: 1, gap: SPACING.md },
+  needFlag: { fontSize: 22 },
+  needText: { flex: 1 },
+  needId: { color: COLORS.gold, fontWeight: '800', fontSize: FONTS.sizes.lg },
+  needName: { color: COLORS.textSecondary, fontSize: FONTS.sizes.sm, marginTop: 2 },
+  needActions: { flexDirection: 'row', alignItems: 'center', gap: SPACING.sm },
+  needOfferBtn: {
+    backgroundColor: COLORS.blueTint, borderRadius: RADIUS.sm,
+    paddingVertical: SPACING.xs, paddingHorizontal: SPACING.md,
+  },
+  needOfferBtnText: { color: COLORS.greenBright, fontSize: FONTS.sizes.sm, fontWeight: '700' },
+  needRemoveBtn: {
+    width: 32, height: 32, borderRadius: 16,
+    backgroundColor: 'rgba(255,107,107,0.12)',
+    alignItems: 'center', justifyContent: 'center',
+    borderWidth: 1, borderColor: 'rgba(255,107,107,0.3)',
+  },
+  needRemoveBtnText: { color: COLORS.red, fontSize: FONTS.sizes.md, fontWeight: '700' },
 });

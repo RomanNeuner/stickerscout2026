@@ -3814,7 +3814,7 @@
   "update_set": {
     "name": "FIFA World Cup 2026 Adrenalyn XL Checklist Upgrade",
     "product_name_box": "FIFA 2026 Card Update Set",
-    "price_eur": 15.0,
+    "price_eur": 15,
     "support_in_app": true,
     "total_cards": 50,
     "expiry_date": "2026-08-31",
@@ -4130,5 +4130,340 @@
       }
     ]
   },
-  "card_191_confirmed": "GER Team Crest #191 ✅ (holografisch, +5 Bonus)"
+  "card_191_confirmed": "GER Team Crest #191 ✅ (holografisch, +5 Bonus)",
+  "dream_box": [
+    {
+      "id": "DB01",
+      "name": "Di María",
+      "team": "ARG",
+      "type": "DREAM_BOX"
+    },
+    {
+      "id": "DB02",
+      "name": "Mascherano",
+      "team": "ARG",
+      "type": "DREAM_BOX"
+    },
+    {
+      "id": "DB03",
+      "name": "Messi",
+      "team": "ARG",
+      "type": "DREAM_BOX"
+    },
+    {
+      "id": "DB04",
+      "name": "Batistuta",
+      "team": "ARG",
+      "type": "DREAM_BOX"
+    },
+    {
+      "id": "DB05",
+      "name": "Pelé",
+      "team": "BRA",
+      "type": "DREAM_BOX"
+    },
+    {
+      "id": "DB06",
+      "name": "Ronaldo",
+      "team": "BRA",
+      "type": "DREAM_BOX"
+    },
+    {
+      "id": "DB07",
+      "name": "Rivaldo",
+      "team": "BRA",
+      "type": "DREAM_BOX"
+    },
+    {
+      "id": "DB08",
+      "name": "Kaká",
+      "team": "BRA",
+      "type": "DREAM_BOX"
+    },
+    {
+      "id": "DB09",
+      "name": "Modrić",
+      "team": "CRO",
+      "type": "DREAM_BOX"
+    },
+    {
+      "id": "DB10",
+      "name": "Platini",
+      "team": "FRA",
+      "type": "DREAM_BOX"
+    },
+    {
+      "id": "DB11",
+      "name": "Zidane",
+      "team": "FRA",
+      "type": "DREAM_BOX"
+    },
+    {
+      "id": "DB12",
+      "name": "Henry",
+      "team": "FRA",
+      "type": "DREAM_BOX"
+    },
+    {
+      "id": "DB13",
+      "name": "Neuer",
+      "team": "GER",
+      "type": "DREAM_BOX"
+    },
+    {
+      "id": "DB14",
+      "name": "Beckenbauer",
+      "team": "GER",
+      "type": "DREAM_BOX"
+    },
+    {
+      "id": "DB15",
+      "name": "Matthäus",
+      "team": "GER",
+      "type": "DREAM_BOX"
+    },
+    {
+      "id": "DB16",
+      "name": "Klose",
+      "team": "GER",
+      "type": "DREAM_BOX"
+    },
+    {
+      "id": "DB17",
+      "name": "Maldini",
+      "team": "ITA",
+      "type": "DREAM_BOX"
+    },
+    {
+      "id": "DB18",
+      "name": "Cannavaro",
+      "team": "ITA",
+      "type": "DREAM_BOX"
+    },
+    {
+      "id": "DB19",
+      "name": "Totti",
+      "team": "ITA",
+      "type": "DREAM_BOX"
+    },
+    {
+      "id": "DB20",
+      "name": "van Persie",
+      "team": "NED",
+      "type": "DREAM_BOX"
+    },
+    {
+      "id": "DB21",
+      "name": "Iniesta",
+      "team": "ESP",
+      "type": "DREAM_BOX"
+    },
+    {
+      "id": "DB22",
+      "name": "Busquets",
+      "team": "ESP",
+      "type": "DREAM_BOX"
+    },
+    {
+      "id": "DB23",
+      "name": "Villa",
+      "team": "ESP",
+      "type": "DREAM_BOX"
+    },
+    {
+      "id": "DB24",
+      "name": "Luis Suárez",
+      "team": "URU",
+      "type": "DREAM_BOX"
+    }
+  ],
+  "standard_le": {
+    "note": "Offene Liste. Gesamt ~116 Standard-LEs global; nicht alle Namen transkribiert.",
+    "confirmed_count": 26,
+    "estimated_total": 116,
+    "cards": [
+      {
+        "id": "LE-MIX1-01",
+        "name": "Lionel Messi",
+        "team": "ARG",
+        "type": "STANDARD_LE",
+        "series": "Mix 1"
+      },
+      {
+        "id": "LE-MIX1-02",
+        "name": "Julián Álvarez",
+        "team": "ARG",
+        "type": "STANDARD_LE",
+        "series": "Mix 1"
+      },
+      {
+        "id": "LE-MIX1-03",
+        "name": "Kevin De Bruyne",
+        "team": "BEL",
+        "type": "STANDARD_LE",
+        "series": "Mix 1"
+      },
+      {
+        "id": "LE-MIX1-04",
+        "name": "Vinícius Júnior",
+        "team": "BRA",
+        "type": "STANDARD_LE",
+        "series": "Mix 1"
+      },
+      {
+        "id": "LE-MIX1-05",
+        "name": "Luka Modrić",
+        "team": "CRO",
+        "type": "STANDARD_LE",
+        "series": "Mix 1"
+      },
+      {
+        "id": "LE-MIX1-06",
+        "name": "Moisés Caicedo",
+        "team": "ECU",
+        "type": "STANDARD_LE",
+        "series": "Mix 1"
+      },
+      {
+        "id": "LE-MIX1-07",
+        "name": "Mohamed Salah",
+        "team": "EGY",
+        "type": "STANDARD_LE",
+        "series": "Mix 1"
+      },
+      {
+        "id": "LE-MIX1-08",
+        "name": "Cole Palmer",
+        "team": "ENG",
+        "type": "STANDARD_LE",
+        "series": "Mix 1"
+      },
+      {
+        "id": "LE-MIX1-09",
+        "name": "Harry Kane",
+        "team": "ENG",
+        "type": "STANDARD_LE",
+        "series": "Mix 1"
+      },
+      {
+        "id": "LE-MIX1-10",
+        "name": "Kylian Mbappé",
+        "team": "FRA",
+        "type": "STANDARD_LE",
+        "series": "Mix 1"
+      },
+      {
+        "id": "LE-MIX1-11",
+        "name": "Ousmane Dembélé",
+        "team": "FRA",
+        "type": "STANDARD_LE",
+        "series": "Mix 1"
+      },
+      {
+        "id": "LE-MIX1-12",
+        "name": "Florian Wirtz",
+        "team": "GER",
+        "type": "STANDARD_LE",
+        "series": "Mix 1"
+      },
+      {
+        "id": "LE-MIX1-13",
+        "name": "Heung-min Son",
+        "team": "KOR",
+        "type": "STANDARD_LE",
+        "series": "Mix 1"
+      },
+      {
+        "id": "LE-MIX1-14",
+        "name": "Achraf Hakimi",
+        "team": "MAR",
+        "type": "STANDARD_LE",
+        "series": "Mix 1"
+      },
+      {
+        "id": "LE-MIX1-15",
+        "name": "Tijjani Reijnders",
+        "team": "NED",
+        "type": "STANDARD_LE",
+        "series": "Mix 1"
+      },
+      {
+        "id": "LE-MIX1-16",
+        "name": "Erling Haaland",
+        "team": "NOR",
+        "type": "STANDARD_LE",
+        "series": "Mix 1"
+      },
+      {
+        "id": "LE-MIX1-17",
+        "name": "Rafael Leão",
+        "team": "POR",
+        "type": "STANDARD_LE",
+        "series": "Mix 1"
+      },
+      {
+        "id": "LE-MIX1-18",
+        "name": "Cristiano Ronaldo",
+        "team": "POR",
+        "type": "STANDARD_LE",
+        "series": "Mix 1"
+      },
+      {
+        "id": "LE-MIX1-19",
+        "name": "Pedri",
+        "team": "ESP",
+        "type": "STANDARD_LE",
+        "series": "Mix 1"
+      },
+      {
+        "id": "LE-MIX1-20",
+        "name": "Lamine Yamal",
+        "team": "ESP",
+        "type": "STANDARD_LE",
+        "series": "Mix 1"
+      },
+      {
+        "id": "LE-MIX2-01",
+        "name": "David Alaba",
+        "team": "AUT",
+        "type": "STANDARD_LE",
+        "series": "Mix 2"
+      },
+      {
+        "id": "LE-MIX2-02",
+        "name": "Mathew Ryan",
+        "team": "AUS",
+        "type": "STANDARD_LE",
+        "series": "Mix 2"
+      },
+      {
+        "id": "LE-DE-01",
+        "name": "Leon Goretzka",
+        "team": "GER",
+        "type": "STANDARD_LE",
+        "series": "DE-Exklusiv"
+      },
+      {
+        "id": "LE-DE-02",
+        "name": "Leroy Sané",
+        "team": "GER",
+        "type": "STANDARD_LE",
+        "series": "DE-Exklusiv"
+      },
+      {
+        "id": "LE-DE-03",
+        "name": "Jonathan Tah",
+        "team": "GER",
+        "type": "STANDARD_LE",
+        "series": "DE-Exklusiv"
+      },
+      {
+        "id": "LE-DE-04",
+        "name": "Marc-André ter Stegen",
+        "team": "GER",
+        "type": "STANDARD_LE",
+        "series": "DE-Exklusiv"
+      }
+    ]
+  }
 }

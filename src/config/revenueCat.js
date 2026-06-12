@@ -1,6 +1,7 @@
 // src/config/revenueCat.js
 export const OFFERINGS = {
   DEFAULT:      'default',
+  EARLY_BIRD:   'default_earlybird',   // eigenes Produkt wmpass_earlybird
   SCAN_UPSELL:  'scan_upsell',
   TRADE_UPSELL: 'trade_upsell',
   REPORT:       'report',
@@ -8,7 +9,8 @@ export const OFFERINGS = {
 };
 
 export const PACKAGES = {
-  WM_PASS:        'wm_pass',
+  WM_PASS:            'WM_Pass',       // gleicher Package-ID in BEIDEN Offerings
+  WM_PASS_EARLY_BIRD: 'WM_Pass',       // identisch — Offering entscheidet das Produkt
   SCAN_BOOST:     'scan_boost_50',
   TRADE_SLOTS:    'trade_slots_7d',
   REPORT_PDF:     'report_pdf',

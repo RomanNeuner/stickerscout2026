@@ -4,6 +4,7 @@ import { Platform } from 'react-native';
 
 import { IAP_PRODUCTS } from '../config/iap';
 import { OFFERINGS, PACKAGES } from '../config/revenueCat';
+import { logPurchaseEvent } from './firebase';
 
 const RC_IOS_KEY     = process.env.EXPO_PUBLIC_RC_IOS_KEY     ?? '';
 const RC_ANDROID_KEY = process.env.EXPO_PUBLIC_RC_ANDROID_KEY ?? '';
@@ -71,7 +72,8 @@ export async function getSubscriptionStatus() {
   if (cached !== null) return { isPro: cached, source: 'cache' };
   try {
     const info  = await Purchases.getCustomerInfo();
-    const isPro = Object.keys(info.entitlements.active).length > 0;
+    const activeKeys = Object.keys(info.entitlements.active);
+    const isPro = activeKeys.includes('Pro') || activeKeys.includes('wm_pass');
     await setLocalProStatus(isPro);
     return { isPro, source: 'revenuecat' };
   } catch {
@@ -91,12 +93,16 @@ export async function purchasePackageFromOffering(offeringId, packageId) {
     const offering  = offerings.all[offeringId] ?? offerings.current;
     if (!offering) throw new Error(`Offering nicht gefunden: ${offeringId}`);
 
-    const pkg = offering.availablePackages.find(p => p.identifier === packageId);
-    if (!pkg) throw new Error(`Package nicht gefunden: ${packageId} in ${offeringId}`);
+    // Per Identifier suchen, Fallback auf erstes verfügbares Package
+    const pkg = offering.availablePackages.find(p => p.identifier === packageId)
+              ?? offering.availablePackages[0];
+    if (!pkg) throw new Error(`Keine Packages in Offering: ${offeringId}`);
 
-    const { customerInfo } = await Purchases.purchasePackage(pkg);
-    const isPro = Object.keys(customerInfo.entitlements.active).length > 0;
+    const { customerInfo, transaction } = await Purchases.purchasePackage(pkg);
+    const isPro = Object.keys(customerInfo.entitlements.active).includes('Pro');
     await setLocalProStatus(isPro);
+    // GA4 purchase event — additiv, blockiert Kauf-Flow nicht
+    logPurchaseEvent(pkg.product, transaction).catch(() => {});
     return { success: true, isPro, customerInfo };
   } catch (e) {
     if (e.userCancelled) return { success: false, cancelled: true };
@@ -111,9 +117,11 @@ export async function purchaseProductDirect(productId) {
   try {
     const products = await Purchases.getProducts([productId]);
     if (!products.length) throw new Error(`Produkt nicht gefunden: ${productId}`);
-    const { customerInfo } = await Purchases.purchaseStoreProduct(products[0]);
-    const isPro = Object.keys(customerInfo.entitlements.active).length > 0;
+    const { customerInfo, transaction } = await Purchases.purchaseStoreProduct(products[0]);
+    const isPro = Object.keys(customerInfo.entitlements.active).includes('Pro');
     if (isPro) await setLocalProStatus(true);
+    // GA4 purchase event — StoreProduct hat .price/.currencyCode direkt (kein .product wrapper)
+    logPurchaseEvent(products[0], transaction).catch(() => {});
     return { success: true, isPro, customerInfo };
   } catch (e) {
     if (e.userCancelled) return { success: false, cancelled: true };
@@ -149,10 +157,66 @@ export async function getOffering(offeringId = OFFERINGS.DEFAULT) {
   }
 }
 
+// ── WM Pass Package — datums-gesteuert Early Bird vs. Standard ────────────────
+const EARLYBIRD_END = new Date('2026-06-15T23:59:59+02:00');
+const REGULAR_PRICE_NUM = 3.99; // für Savings-Berechnung
+
+export async function getWMPassPackage() {
+  try {
+    const isEarlyBirdDate = new Date() < EARLYBIRD_END;
+    const preferredId = isEarlyBirdDate ? OFFERINGS.EARLY_BIRD : OFFERINGS.DEFAULT;
+    const offerings = await Purchases.getOfferings();
+
+    // Bevorzugtes Offering laden, Fallback auf default
+    let offering = offerings.all[preferredId];
+    let isEarlyBird = isEarlyBirdDate;
+
+    if (!offering?.availablePackages?.length) {
+      offering = offerings.all[OFFERINGS.DEFAULT] ?? offerings.current;
+      isEarlyBird = false; // Early Bird Offering nicht verfügbar
+    }
+
+    const pkg = offering?.availablePackages?.find(p => p.identifier === PACKAGES.WM_PASS)
+              ?? offering?.availablePackages?.[0]
+              ?? null;
+
+    if (!pkg) return { pkg: null, isEarlyBird: false, priceString: null, savingsPercent: null };
+
+    // Regulären Preis aus default-Offering laden (für gestrichenen Preis + Savings)
+    let regularPriceString = null;
+    let regularPriceNum = REGULAR_PRICE_NUM; // Fallback: hardcoded 3.99
+    if (isEarlyBird) {
+      const regularOffering = offerings.all[OFFERINGS.DEFAULT];
+      const regularPkg = regularOffering?.availablePackages?.find(p => p.identifier === PACKAGES.WM_PASS)
+                       ?? regularOffering?.availablePackages?.[0];
+      if (regularPkg?.product?.priceString) {
+        regularPriceString = regularPkg.product.priceString;
+        regularPriceNum = regularPkg.product.price ?? REGULAR_PRICE_NUM;
+      }
+    }
+
+    // Numerischer Preis für Savings-Berechnung (RC stellt .price bereit)
+    const priceNum = pkg.product?.price ?? null;
+    const savingsPercent = (isEarlyBird && priceNum)
+      ? Math.round((1 - priceNum / regularPriceNum) * 100)
+      : null;
+
+    return {
+      pkg,
+      isEarlyBird,
+      priceString:        pkg.product?.priceString ?? null,
+      regularPriceString,
+      savingsPercent,
+    };
+  } catch {
+    return { pkg: null, isEarlyBird: false, priceString: null, savingsPercent: null };
+  }
+}
+
 // ── Restore ───────────────────────────────────────────────────────────────────
 export async function restorePurchases() {
   const info  = await Purchases.restorePurchases();
-  const isPro = Object.keys(info.entitlements.active).length > 0;
+  const isPro = Object.keys(info.entitlements.active).includes('Pro');
   await setLocalProStatus(isPro);
   return { isPro };
 }

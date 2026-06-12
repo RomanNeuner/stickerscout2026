@@ -19,7 +19,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 // ──────────────────────────────────────────────────────────────────────────────
 const KEYS = {
   PUSH_ENABLED:       '@stickerscout_push_enabled',
-  GAME_REMINDERS_SET: '@stickerscout_game_reminders_set',
+  GAME_REMINDERS_SET: '@stickerscout_game_reminders_v2_set', // v2: Gruppe J (ARG/ALG/JOR)
   EARLY_BIRD_SET:     '@stickerscout_early_bird_set',
   SCAN_RESET_SET:     '@stickerscout_scan_reset_set',
   MILESTONE_SENT:     '@stickerscout_milestone_sent', // JSON array of sent %
@@ -147,35 +147,41 @@ export async function notifyTradeMatch(partnerName = 'Jemand', item = 'einen Sti
 //    → + Erinnerung 30 Min vor Anstoß CEST
 // ──────────────────────────────────────────────────────────────────────────────
 
-// AUT-Spielzeiten umgerechnet auf CEST (UTC+2):
-// GER vs AUT  — Dallas (CT = UTC-5):  21:00 CT = 04:00 CEST 15.06.
-// AUT vs CHE  — Vancouver (PT=UTC-7): 18:00 PT = 03:00 CEST 20.06.
-// SRB vs AUT  — San Fran (PT=UTC-7): 21:00 PT = 06:00 CEST 25.06.
+// AUT-Spielzeiten (Gruppe J) umgerechnet auf MESZ (UTC+2):
+// AUT vs JOR  — Dallas (CDT=UTC-5):   23:00 CDT 16.06. = 06:00 MESZ 17.06.
+// ARG vs AUT  — Dallas (CDT=UTC-5):   12:00 CDT 22.06. = 19:00 MESZ 22.06.
+// ALG vs AUT  — Kansas City (CDT=-5): 21:00 CDT 27.06. = 04:00 MESZ 28.06.
 const AUT_GAMES = [
   {
-    id:       'aut_ger',
-    opponent: 'Deutschland',
-    emoji:    '🇩🇪',
+    id:       'aut_jor',
+    opponent: 'Jordanien',
+    emoji:    '🇯🇴',
     venue:    'Dallas',
-    gameDay:  { year: 2026, month: 6, day: 14 },       // Spieltag in DE/AT
-    kickoff:  { year: 2026, month: 6, day: 15, h: 4 }, // 04:00 CEST (nachts)
+    gameDay:  { year: 2026, month: 6, day: 17 },
+    kickoff:  { year: 2026, month: 6, day: 17, h: 6 }, // 06:00 MESZ
   },
   {
-    id:       'aut_che',
-    opponent: 'Schweiz',
-    emoji:    '🇨🇭',
-    venue:    'Vancouver',
-    gameDay:  { year: 2026, month: 6, day: 19 },
-    kickoff:  { year: 2026, month: 6, day: 20, h: 3 }, // 03:00 CEST
+    id:       'aut_arg',
+    opponent: 'Argentinien',
+    emoji:    '🇦🇷',
+    venue:    'Dallas',
+    gameDay:  { year: 2026, month: 6, day: 22 },
+    kickoff:  { year: 2026, month: 6, day: 22, h: 19 }, // 19:00 MESZ
   },
   {
-    id:       'aut_srb',
-    opponent: 'Serbien',
-    emoji:    '🇷🇸',
-    venue:    'San Francisco',
-    gameDay:  { year: 2026, month: 6, day: 24 },
-    kickoff:  { year: 2026, month: 6, day: 25, h: 6 }, // 06:00 CEST
+    id:       'aut_alg',
+    opponent: 'Algerien',
+    emoji:    '🇩🇿',
+    venue:    'Kansas City',
+    gameDay:  { year: 2026, month: 6, day: 27 },
+    kickoff:  { year: 2026, month: 6, day: 28, h: 4 }, // 04:00 MESZ
   },
+];
+
+const OLD_GAME_IDS = [
+  'aut_ger_morning', 'aut_ger_kickoff',
+  'aut_che_morning', 'aut_che_kickoff',
+  'aut_srb_morning', 'aut_srb_kickoff',
 ];
 
 export async function scheduleGameReminders() {
@@ -183,6 +189,11 @@ export async function scheduleGameReminders() {
   if (!enabled) return;
   const done = await AsyncStorage.getItem(KEYS.GAME_REMINDERS_SET);
   if (done === 'true') return; // nicht mehrfach anlegen
+
+  // Alte falsche Notifications (Gruppe D: GER/CHE/SRB) canceln
+  for (const id of OLD_GAME_IDS) {
+    await Notifications.cancelScheduledNotificationAsync(id).catch(() => {});
+  }
 
   const now = Date.now();
 
@@ -319,8 +330,8 @@ export async function scheduleDailyScanReset() {
   await Notifications.scheduleNotificationAsync({
     identifier: 'daily_scan_reset',
     content: {
-      title: '📷 Deine Scans sind wieder verfügbar!',
-      body: '10 kostenlose Scans warten auf dich. Welchen Sticker findest du heute?',
+      title: '🏆 Bereit für neue Sticker?',
+      body: '10 Freiscans warten – scanne dein nächstes Sammelstück!',
       data: { type: 'scan_reset' },
       ...(Platform.OS === 'android' && { channelId: 'general' }),
     },

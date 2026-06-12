@@ -1,6 +1,8 @@
 apply plugin: "com.android.application"
 apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
+apply plugin: "com.google.gms.google-services"
+apply plugin: "com.google.firebase.crashlytics"
 
 def projectRoot = rootDir.getAbsoluteFile().getParentFile().getAbsolutePath()
 
@@ -92,9 +94,8 @@ android {
         applicationId 'at.ncn.stickerscout2026'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 5
-        versionName "1.0.4"
-        multiDexEnabled true
+        versionCode 26
+        versionName "1.1.26"
 
         buildConfigField "String", "REACT_NATIVE_RELEASE_LEVEL", "\"${findProperty('reactNativeReleaseLevel') ?: 'stable'}\""
     }
@@ -130,6 +131,8 @@ android {
         jniLibs {
             def enableLegacyPackaging = findProperty('expo.useLegacyPackaging') ?: 'false'
             useLegacyPackaging enableLegacyPackaging.toBoolean()
+            // Fix: SoLoaderDSONotFoundError — mehrere Native-Module liefern libc++_shared.so
+            pickFirsts += ['**/libc++_shared.so']
         }
     }
     androidResources {
@@ -158,7 +161,6 @@ android {
 }
 
 dependencies {
-    implementation("androidx.multidex:multidex:2.0.1")
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
 
@@ -186,6 +188,3 @@ dependencies {
         implementation jscFlavor
     }
 }
-
-apply plugin: "com.google.gms.google-services"
-apply plugin: "com.google.firebase.crashlytics"

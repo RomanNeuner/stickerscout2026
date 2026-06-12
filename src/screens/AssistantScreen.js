@@ -47,9 +47,14 @@ async function askClaude(userMessage, collection, lang = 'de') {
     .map(([id, count]) => `${id}(${count}x)`)
     .join(', ');
 
-  const langInstruction = lang === 'de'
-    ? 'Antworte immer auf Deutsch, präzise und hilfreich (max. 150 Wörter).'
-    : 'Always respond in English, concise and helpful (max. 150 words).';
+  const LANG_INSTRUCTIONS = {
+    de: 'Antworte immer auf Deutsch in kurzem Markdown (max. 150 Wörter). Nutze # für Überschriften, **fett** für Schlüsselwörter, - für Listen.',
+    en: 'Always respond in English in brief Markdown (max. 150 words). Use # for headings, **bold** for key terms, - for lists.',
+    es: 'Responde siempre en español en Markdown breve (máx. 150 palabras). Usa # para títulos, **negrita** para términos clave, - para listas.',
+    pt: 'Responda sempre em português em Markdown breve (máx. 150 palavras). Use # para títulos, **negrito** para termos-chave, - para listas.',
+    fr: 'Réponds toujours en français en Markdown court (max. 150 mots). Utilise # pour les titres, **gras** pour les termes clés, - pour les listes.',
+  };
+  const langInstruction = LANG_INSTRUCTIONS[lang] ?? LANG_INSTRUCTIONS.en;
 
   const systemPrompt = `You are StickerScout, the personal collection assistant for the WM 2026 sticker and trading card collection.
 ${langInstruction}
@@ -91,8 +96,9 @@ export default function AssistantScreen() {
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
   const suggestions = [t('assistant.suggestions.1'), t('assistant.suggestions.2'), t('assistant.suggestions.3'), t('assistant.suggestions.4'), t('assistant.suggestions.5')];
+  // isGreeting:true → Text wird zur Render-Zeit aus i18n gezogen (nie hartkodiert)
   const [messages, setMessages] = useState([
-    { id: '0', role: 'assistant', text: t('assistant.greeting') }
+    { id: '0', role: 'assistant', isGreeting: true }
   ]);
   const [input, setInput]       = useState('');
   const [loading, setLoading]   = useState(false);
@@ -143,16 +149,24 @@ export default function AssistantScreen() {
         keyExtractor={m => m.id}
         contentContainerStyle={styles.list}
         onContentSizeChange={() => listRef.current?.scrollToEnd({ animated: false })}
-        renderItem={({ item }) => (
-          <View style={[styles.bubble, item.role === 'user' ? styles.bubbleUser : styles.bubbleBot]}>
-            {item.role === 'assistant' && (
-              <View style={styles.botAvatar}><Text style={styles.botAvatarText}>🏆</Text></View>
-            )}
-            <View style={[styles.bubbleText, item.role === 'user' ? styles.bubbleTextUser : styles.bubbleTextBot]}>
-              <Text style={[styles.msgText, item.role === 'user' && styles.msgTextUser]}>{item.text}</Text>
+        renderItem={({ item }) => {
+          const bubbleText = item.isGreeting ? t('assistant.greeting') : (item.text ?? '');
+          const isUser = item.role === 'user';
+          return (
+            <View style={[styles.bubble, isUser ? styles.bubbleUser : styles.bubbleBot]}>
+              {!isUser && (
+                <View style={styles.botAvatar}><Text style={styles.botAvatarText}>🏆</Text></View>
+              )}
+              <View style={[styles.bubbleText, isUser ? styles.bubbleTextUser : styles.bubbleTextBot]}>
+                {isUser ? (
+                  <Text style={[styles.msgText, styles.msgTextUser]}>{bubbleText}</Text>
+                ) : (
+                  <MarkdownText text={bubbleText} baseStyle={styles.msgText} />
+                )}
+              </View>
             </View>
-          </View>
-        )}
+          );
+        }}
         ListFooterComponent={loading ? (
           <View style={styles.loadingRow}>
             <View style={styles.botAvatar}><Text style={styles.botAvatarText}>🏆</Text></View>
@@ -203,6 +217,106 @@ export default function AssistantScreen() {
     </KeyboardAvoidingView>
   );
 }
+
+// ---------------------------------------------------------------------------
+// Lightweight Markdown Renderer — kein externes Package
+// Unterstützt: # H1, ## H2, **fett**, - Listen, leere Zeilen, Emojis
+// ---------------------------------------------------------------------------
+
+/** Inline-Parser: **fett** → <Text bold> */
+function parseInline(text, baseStyle, boldStyle) {
+  const parts = text.split(/(\*\*[^*\n]+\*\*)/);
+  return parts.map((part, i) => {
+    if (part.startsWith('**') && part.endsWith('**')) {
+      return <Text key={i} style={boldStyle}>{part.slice(2, -2)}</Text>;
+    }
+    return <Text key={i} style={baseStyle}>{part}</Text>;
+  });
+}
+
+function MarkdownText({ text, baseStyle }) {
+  if (!text) return null;
+  const lines = text.split('\n');
+  return (
+    <View>
+      {lines.map((line, idx) => {
+        // H1
+        if (/^#\s+/.test(line)) {
+          return (
+            <Text key={idx} style={mdStyles.h1}>
+              {line.replace(/^#+\s*/, '')}
+            </Text>
+          );
+        }
+        // H2
+        if (/^##\s+/.test(line)) {
+          return (
+            <Text key={idx} style={mdStyles.h2}>
+              {line.replace(/^#+\s*/, '')}
+            </Text>
+          );
+        }
+        // Bullet -/*/•
+        if (/^[-*•]\s+/.test(line)) {
+          return (
+            <View key={idx} style={mdStyles.bulletRow}>
+              <Text style={mdStyles.bullet}>{'· '}</Text>
+              <Text style={{ flex: 1, flexWrap: 'wrap' }}>
+                {parseInline(line.replace(/^[-*•]\s+/, ''), baseStyle, mdStyles.bold)}
+              </Text>
+            </View>
+          );
+        }
+        // Leerzeile
+        if (line.trim() === '') {
+          return <View key={idx} style={{ height: 6 }} />;
+        }
+        // Normaler Absatz
+        return (
+          <Text key={idx} style={mdStyles.paragraph}>
+            {parseInline(line, baseStyle, mdStyles.bold)}
+          </Text>
+        );
+      })}
+    </View>
+  );
+}
+
+const mdStyles = StyleSheet.create({
+  h1: {
+    color: COLORS.gold,
+    fontSize: FONTS.sizes.lg,
+    fontWeight: '800',
+    marginBottom: 4,
+    marginTop: 6,
+  },
+  h2: {
+    color: COLORS.gold,
+    fontSize: FONTS.sizes.md,
+    fontWeight: '700',
+    marginBottom: 3,
+    marginTop: 5,
+  },
+  bold: {
+    color: '#fff',
+    fontWeight: '700',
+  },
+  paragraph: {
+    fontSize: FONTS.sizes.md,
+    lineHeight: 22,
+    marginBottom: 2,
+  },
+  bulletRow: {
+    flexDirection: 'row',
+    marginBottom: 2,
+    alignItems: 'flex-start',
+  },
+  bullet: {
+    color: COLORS.gold,
+    fontSize: FONTS.sizes.md,
+    lineHeight: 22,
+  },
+});
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.bg },

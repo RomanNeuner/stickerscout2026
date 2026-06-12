@@ -1,7 +1,7 @@
 package at.ncn.stickerscout2026
 
+import android.app.Application
 import android.content.res.Configuration
-import androidx.multidex.MultiDexApplication
 
 import com.facebook.react.PackageList
 import com.facebook.react.ReactApplication
@@ -14,7 +14,7 @@ import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint
 import expo.modules.ApplicationLifecycleDispatcher
 import expo.modules.ExpoReactHostFactory
 
-class MainApplication : MultiDexApplication(), ReactApplication {
+class MainApplication : Application(), ReactApplication {
 
   override val reactHost: ReactHost by lazy {
     ExpoReactHostFactory.getDefaultReactHost(

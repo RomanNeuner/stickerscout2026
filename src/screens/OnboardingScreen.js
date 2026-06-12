@@ -1,7 +1,7 @@
 import React from 'react';
 import {
   View, Text, StyleSheet, Image, TouchableOpacity,
-  Dimensions, StatusBar,
+  Dimensions,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
@@ -22,8 +22,6 @@ export default function OnboardingScreen({ onComplete }) {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#0D1F2D" />
-
       {/* Background pattern overlay */}
       <View style={styles.bgPatternTop} />
       <View style={styles.bgPatternBottom} />

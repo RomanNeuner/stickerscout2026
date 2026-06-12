@@ -1,14 +1,16 @@
 {
   "expo": {
     "name": "StickerScout 2026",
-    "slug": "stickerscout2026",
-    "version": "1.0.1",
+    "slug": "stickerswap2026",
+    "version": "1.1.26",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "at.ncn.stickerscout2026",
+      "buildNumber": "1",
+      "minimumOsVersion": "16.0",
       "infoPlist": {
         "NSCameraUsageDescription": "Der Sticker-Scanner benötigt Zugriff auf die Kamera.",
         "NSLocationWhenInUseUsageDescription": "Für lokale Tauschpartner-Suche wird dein Standort benötigt.",
@@ -17,10 +19,11 @@
     },
     "android": {
       "package": "at.ncn.stickerscout2026",
+      "edgeToEdgeEnabled": true,
       "icon": "./assets/icon.png",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/icon-foreground.png",
-        "backgroundColor": "#0D1F2D"
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundImage": "./assets/adaptive-background.png"
       },
       "permissions": [
         "android.permission.CAMERA",
@@ -29,13 +32,16 @@
         "android.permission.RECORD_AUDIO",
         "android.permission.RECEIVE_BOOT_COMPLETED",
         "android.permission.VIBRATE",
-        "android.permission.POST_NOTIFICATIONS"
+        "android.permission.POST_NOTIFICATIONS",
+        "com.google.android.gms.permission.AD_ID"
       ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
+      "@react-native-firebase/app",
+      "@react-native-firebase/crashlytics",
       "expo-localization",
       "expo-camera",
       [
@@ -57,7 +63,8 @@
         }
       ],
       "expo-sharing",
-      "expo-audio"
+      "expo-audio",
+      "expo-asset"
     ],
     "extra": {
       "eas": {

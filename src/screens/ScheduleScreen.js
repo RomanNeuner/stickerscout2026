@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View, Text, StyleSheet, SectionList, TouchableOpacity,
 } from 'react-native';
@@ -9,6 +9,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { COLORS, GRADIENTS, FONTS, SPACING, RADIUS, SHADOWS } from '../theme';
 import { GROUP_MATCHES, KNOCKOUT_MATCHES, STAGE } from '../data/schedule';
 import { TEAM_FLAGS } from '../data/stickerTypes';
+import { initRemoteConfig, getMatchResults } from '../services/remoteConfig';
 
 const TABS = ['group', 'knockout'];
 
@@ -17,6 +18,11 @@ export default function ScheduleScreen() {
   const insets = useSafeAreaInsets();
   const [activeTab, setActiveTab] = useState('group');
   const [predictions, setPredictions] = useState({});
+  const [results, setResults] = useState({});
+
+  useEffect(() => {
+    initRemoteConfig().then(() => setResults(getMatchResults()));
+  }, []);
 
   const groupSections = buildGroupSections(GROUP_MATCHES, t);
   const knockoutSections = buildKnockoutSections(KNOCKOUT_MATCHES, t);
@@ -54,6 +60,7 @@ export default function ScheduleScreen() {
         renderItem={({ item }) => (
           <MatchCard
             match={item}
+            result={results[item.id]}
             prediction={predictions[item.id]}
             onPredict={team => predict(item.id, team)}
           />
@@ -65,51 +72,84 @@ export default function ScheduleScreen() {
   );
 }
 
-function MatchCard({ match, prediction, onPredict }) {
-  const { t } = useTranslation();
+function MatchCard({ match, result, prediction, onPredict }) {
+  const { t, i18n } = useTranslation();
   const homeFlag = TEAM_FLAGS[match.home] ?? '🏳️';
   const awayFlag = TEAM_FLAGS[match.away] ?? '🏳️';
-  const isKnockout = match.stage !== STAGE.GROUP;
+  const isFinished = result != null;
 
   const formatDate = (dateStr) => {
     const d = new Date(dateStr);
-    return d.toLocaleDateString('de-DE', { weekday: 'short', day: '2-digit', month: '2-digit' });
+    return d.toLocaleDateString(i18n.language, { weekday: 'short', day: '2-digit', month: '2-digit' });
   };
 
+  // Wer hat gewonnen (für Hervorhebung)
+  const homeWon = isFinished && result.h > result.a;
+  const awayWon = isFinished && result.a > result.h;
+
   return (
-    <View style={styles.matchCard}>
-      <Text style={styles.matchDate}>{formatDate(match.date)} · {match.time}</Text>
+    <View style={[styles.matchCard, isFinished && styles.matchCardFinished]}>
+      <View style={styles.matchHeaderRow}>
+        <Text style={styles.matchDate}>{formatDate(match.date)} · {match.time}</Text>
+        {isFinished && (
+          <View style={styles.finishedBadge}>
+            <Text style={styles.finishedBadgeText}>FT</Text>
+          </View>
+        )}
+      </View>
 
       <View style={styles.matchRow}>
         {/* Home */}
         <TouchableOpacity
-          style={[styles.teamBtn, prediction === match.home && styles.teamBtnPicked]}
-          onPress={() => onPredict(match.home)}
+          style={[
+            styles.teamBtn,
+            prediction === match.home && styles.teamBtnPicked,
+            homeWon && styles.teamBtnWinner,
+          ]}
+          onPress={() => !isFinished && onPredict(match.home)}
+          activeOpacity={isFinished ? 1 : 0.7}
         >
           <Text style={styles.teamFlag}>{homeFlag}</Text>
-          <Text style={styles.teamCode}>{match.home}</Text>
+          <Text style={[styles.teamCode, isFinished && styles.teamCodeFinished]}>{match.home}</Text>
         </TouchableOpacity>
 
+        {/* Score oder VS */}
         <View style={styles.vsBox}>
-          <Text style={styles.vsText}>VS</Text>
+          {isFinished ? (
+            <Text style={styles.scoreText}>{result.h} – {result.a}</Text>
+          ) : (
+            <Text style={styles.vsText}>VS</Text>
+          )}
         </View>
 
         {/* Away */}
         <TouchableOpacity
-          style={[styles.teamBtn, prediction === match.away && styles.teamBtnPicked]}
-          onPress={() => onPredict(match.away)}
+          style={[
+            styles.teamBtn,
+            prediction === match.away && styles.teamBtnPicked,
+            awayWon && styles.teamBtnWinner,
+          ]}
+          onPress={() => !isFinished && onPredict(match.away)}
+          activeOpacity={isFinished ? 1 : 0.7}
         >
           <Text style={styles.teamFlag}>{awayFlag}</Text>
-          <Text style={styles.teamCode}>{match.away}</Text>
+          <Text style={[styles.teamCode, isFinished && styles.teamCodeFinished]}>{match.away}</Text>
         </TouchableOpacity>
       </View>
 
       <Text style={styles.venue} numberOfLines={1}>{match.venue}</Text>
 
-      {prediction && (
+      {prediction && !isFinished && (
         <View style={styles.predRow}>
           <Text style={styles.predText}>
             {t('schedule.yourPrediction')}: {TEAM_FLAGS[prediction] ?? '🏳️'} {prediction}
+          </Text>
+        </View>
+      )}
+      {prediction && isFinished && (
+        <View style={[styles.predRow, prediction === match.home && homeWon || prediction === match.away && awayWon ? styles.predRowCorrect : styles.predRowWrong]}>
+          <Text style={[styles.predText, prediction === match.home && homeWon || prediction === match.away && awayWon ? styles.predTextCorrect : styles.predTextWrong]}>
+            {prediction === match.home && homeWon || prediction === match.away && awayWon ? '✅' : '❌'} {t('schedule.yourPrediction')}: {TEAM_FLAGS[prediction] ?? '🏳️'} {prediction}
           </Text>
         </View>
       )}
@@ -182,7 +222,18 @@ const styles = StyleSheet.create({
     padding: SPACING.md,
     paddingHorizontal: SPACING.lg,
   },
-  matchDate: { color: COLORS.textPrimary, fontSize: FONTS.sizes.md, marginBottom: SPACING.sm, fontWeight: FONTS.weights.semibold },
+  matchCardFinished: { opacity: 0.85 },
+  matchHeaderRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: SPACING.sm },
+  matchDate: { color: COLORS.textPrimary, fontSize: FONTS.sizes.md, fontWeight: FONTS.weights.semibold },
+  finishedBadge: {
+    backgroundColor: COLORS.surface,
+    borderRadius: RADIUS.sm,
+    paddingHorizontal: SPACING.sm,
+    paddingVertical: 2,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+  },
+  finishedBadgeText: { color: COLORS.textSecondary, fontSize: FONTS.sizes.xs, fontWeight: FONTS.weights.bold, letterSpacing: 0.5 },
   matchRow: { flexDirection: 'row', alignItems: 'center', marginBottom: SPACING.sm },
   teamBtn: {
     flex: 1,
@@ -193,11 +244,18 @@ const styles = StyleSheet.create({
     borderColor: 'transparent',
   },
   teamBtnPicked: { backgroundColor: COLORS.blueTint, borderColor: COLORS.borderBlue },
+  teamBtnWinner: { backgroundColor: 'rgba(66,215,131,0.12)', borderColor: 'rgba(66,215,131,0.4)' },
   teamFlag: { fontSize: 32, marginBottom: 4 },
   teamCode: { color: COLORS.textPrimary, fontSize: FONTS.sizes.lg, fontWeight: FONTS.weights.bold },
-  vsBox: { paddingHorizontal: SPACING.lg },
+  teamCodeFinished: { color: COLORS.textSecondary },
+  vsBox: { paddingHorizontal: SPACING.lg, alignItems: 'center' },
   vsText: { color: COLORS.gold, fontSize: FONTS.sizes.lg, fontWeight: FONTS.weights.black },
+  scoreText: { color: COLORS.textPrimary, fontSize: FONTS.sizes.xxl, fontWeight: FONTS.weights.black, letterSpacing: 1 },
   venue: { color: COLORS.textSecondary, fontSize: FONTS.sizes.sm, marginBottom: SPACING.xs },
   predRow: { backgroundColor: COLORS.blueTint, borderRadius: RADIUS.sm, padding: SPACING.xs, paddingHorizontal: SPACING.md },
   predText: { color: COLORS.blue, fontSize: FONTS.sizes.sm, fontWeight: FONTS.weights.semibold },
+  predRowCorrect: { backgroundColor: 'rgba(66,215,131,0.12)' },
+  predRowWrong: { backgroundColor: 'rgba(255,100,100,0.12)' },
+  predTextCorrect: { color: '#42D783' },
+  predTextWrong: { color: '#FF6464' },
 });

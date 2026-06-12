@@ -10,7 +10,9 @@
  * - Early Bird Countdown dynamisch
  * - Vector-Icons statt Emojis
  */
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
+import Purchases from 'react-native-purchases';
+// Purchases wird direkt für purchasePackage benötigt (Early Bird Flow)
 import {
   View, Text, TouchableOpacity, ScrollView, StyleSheet, Alert,
 } from 'react-native';
@@ -18,11 +20,21 @@ import { Ionicons, Feather } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 
-import { purchaseProductDirect, restorePurchases } from '../services/subscription';
+import { purchasePackageFromOffering, restorePurchases, getWMPassPackage } from '../services/subscription';
+import { logPurchaseEvent } from '../services/firebase';
 import {
-  getEarlyBirdDays, getWMPassPrice, getSavingsLabel, getPlanLabel, isEarlyBird,
+  getEarlyBirdDays, getWMPassPrice, getPlanLabel, isEarlyBird, getStandardPrice,
 } from '../services/pricing';
 import { IAP_PRODUCTS } from '../config/iap';
+import { OFFERINGS, PACKAGES } from '../config/revenueCat';
+
+// Mapping: Produkt-ID → Offering + Package
+const PRODUCT_OFFERING = {
+  [IAP_PRODUCTS.WM_PASS]:    { offering: OFFERINGS.DEFAULT,      pkg: PACKAGES.WM_PASS },
+  [IAP_PRODUCTS.SCAN_BOOST]: { offering: OFFERINGS.SCAN_UPSELL,  pkg: PACKAGES.SCAN_BOOST },
+  [IAP_PRODUCTS.TRADE_SLOTS]:{ offering: OFFERINGS.TRADE_UPSELL, pkg: PACKAGES.TRADE_SLOTS },
+  [IAP_PRODUCTS.REPORT_PDF]: { offering: OFFERINGS.REPORT,       pkg: PACKAGES.REPORT_PDF },
+};
 
 // Design-Tokens (aus theme, hier inline für Kompaktheit)
 const C = {
@@ -46,11 +58,36 @@ export default function PaywallScreen({ onClose, onUnlocked }) {
   const insets   = useSafeAreaInsets();
   const [loading, setLoading] = useState(false);
 
+  // RC-Paket State — wird async geladen
+  const [wmPackage, setWmPackage]         = useState(null); // RC Package-Objekt
+  const [rcEarlyBird, setRcEarlyBird]     = useState(null); // null = noch laden
+  const [rcPriceString, setRcPriceString] = useState(null);
+  const [rcSavings, setRcSavings]         = useState(null);
+  const [rcRegularPrice, setRcRegularPrice] = useState(null);
+  const isMounted = useRef(true);
+
+  useEffect(() => {
+    isMounted.current = true;
+    getWMPassPackage().then(result => {
+      if (!isMounted.current) return;
+      setWmPackage(result.pkg);
+      setRcEarlyBird(result.isEarlyBird);
+      setRcPriceString(result.priceString);
+      setRcSavings(result.savingsPercent);
+      setRcRegularPrice(result.regularPriceString);
+    });
+    return () => { isMounted.current = false; };
+  }, []);
+
   const days      = useMemo(() => getEarlyBirdDays(), []);
-  const price     = useMemo(() => getWMPassPrice(), []);
-  const savings   = useMemo(() => getSavingsLabel(), []);
   const planLabel = useMemo(() => getPlanLabel(), []);
-  const earlyBird = useMemo(() => isEarlyBird(), []);
+
+  // Preis: RC-Preis bevorzugen (zeigt AT-Preis automatisch), Fallback hardcoded
+  const earlyBird = rcEarlyBird ?? isEarlyBird();
+  const price     = rcPriceString ?? getWMPassPrice();
+  const priceOld  = rcRegularPrice ?? (earlyBird ? getStandardPrice() : null);
+  // Savings: RC-Berechnung bevorzugen
+  const savingsLabel = rcSavings ? t('paywall.savingsLabel', { pct: rcSavings }) : null;
 
   // Feature-Liste
   const features = [
@@ -67,26 +104,45 @@ export default function PaywallScreen({ onClose, onUnlocked }) {
     { icon: 'document-text-outline',label: t('paywall.micro3'), product: IAP_PRODUCTS.REPORT_PDF  },
   ];
 
-  // ── Kauf WM Pass — direkt per Produkt-ID ────────────────────────────────────
+  // ── Kauf WM Pass — direkt das geladene RC-Package verwenden ─────────────────
   const handlePurchase = async () => {
     setLoading(true);
     try {
-      const res = await purchaseProductDirect(IAP_PRODUCTS.WM_PASS);
-      if (res?.success) { onUnlocked?.(); onClose?.(); }
-      else if (!res?.cancelled) Alert.alert('Fehler', 'Kauf fehlgeschlagen.');
+      // Paket schon geladen → direkt kaufen (korrekte Offering/Produkt-Kombination)
+      if (wmPackage) {
+        const { customerInfo, transaction } = await Purchases.purchasePackage(wmPackage);
+        const isPro = Object.keys(customerInfo.entitlements.active).includes('Pro')
+                   || Object.keys(customerInfo.entitlements.active).includes('wm_pass');
+        if (isPro) {
+          logPurchaseEvent(wmPackage.product, transaction).catch(() => {});
+          onUnlocked?.(); onClose?.();
+        } else Alert.alert(t('common.error'), t('paywall.purchaseFailed'));
+      } else {
+        // Fallback: Package neu laden und kaufen
+        const result = await getWMPassPackage();
+        if (!result.pkg) throw new Error('WM Pass Package nicht verfügbar');
+        const { customerInfo, transaction } = await Purchases.purchasePackage(result.pkg);
+        const isPro = Object.keys(customerInfo.entitlements.active).length > 0;
+        if (isPro) {
+          logPurchaseEvent(result.pkg.product, transaction).catch(() => {});
+          onUnlocked?.(); onClose?.();
+        }
+      }
     } catch (e) {
-      if (!e?.userCancelled) Alert.alert('Fehler', e.message ?? 'Kauf fehlgeschlagen.');
+      if (!e?.userCancelled) Alert.alert(t('common.error'), t('paywall.purchaseFailed'));
     } finally { setLoading(false); }
   };
 
-  // ── Micro-IAP Kauf — direkt per Produkt-ID ──────────────────────────────────
-  const handleMicro = async (product) => {
+  // ── Micro-IAP Kauf — via Offering ────────────────────────────────────────────
+  const handleMicro = async (productId) => {
     setLoading(true);
     try {
-      const res = await purchaseProductDirect(product);
-      if (res?.success) Alert.alert('✅ Gekauft!', 'Dein Kauf wurde freigeschaltet.');
+      const map = PRODUCT_OFFERING[productId];
+      if (!map) throw new Error('Produkt nicht konfiguriert: ' + productId);
+      const res = await purchasePackageFromOffering(map.offering, map.pkg);
+      if (res?.success) Alert.alert(t('paywall.purchased'), t('paywall.purchasedMsg'));
     } catch (e) {
-      if (!e?.userCancelled) Alert.alert('Fehler', e.message ?? 'Kauf fehlgeschlagen.');
+      if (!e?.userCancelled) Alert.alert(t('common.error'), t('paywall.purchaseFailed'));
     } finally { setLoading(false); }
   };
 
@@ -96,8 +152,8 @@ export default function PaywallScreen({ onClose, onUnlocked }) {
     try {
       const res = await restorePurchases();
       if (res?.isPro) { onUnlocked?.(); onClose?.(); }
-      else Alert.alert('Wiederhergestellt', 'Keine aktiven Käufe gefunden.');
-    } catch { Alert.alert('Fehler', 'Wiederherstellung fehlgeschlagen.'); }
+      else Alert.alert(t('paywall.restored'), t('paywall.noPurchases'));
+    } catch { Alert.alert(t('common.error'), t('paywall.restoreFailed')); }
     finally { setLoading(false); }
   };
 
@@ -130,7 +186,7 @@ export default function PaywallScreen({ onClose, onUnlocked }) {
           <Feather name="clock" size={18} color={C.gold} />
           <View style={{ marginLeft: 10, flex: 1 }}>
             <Text style={s.ebTitle}>{t('paywall.earlyBird', { days })}</Text>
-            <Text style={s.ebSub}>{t('paywall.earlyBirdSub')}</Text>
+            <Text style={s.ebSub}>{t('paywall.earlyBirdSub', { price: priceOld ?? getStandardPrice() })}</Text>
           </View>
         </View>
       )}
@@ -141,16 +197,18 @@ export default function PaywallScreen({ onClose, onUnlocked }) {
           <View style={s.badgeGold}>
             <Text style={s.badgeGoldTxt}>{planLabel}</Text>
           </View>
-          {savings && (
+          {savingsLabel && (
             <View style={s.badgeBlue}>
-              <Text style={s.badgeBlueTxt}>{savings}</Text>
+              <Text style={s.badgeBlueTxt}>{savingsLabel}</Text>
             </View>
           )}
         </View>
 
         <View style={s.priceRow}>
           <Text style={s.price}>{price}</Text>
-          <Text style={s.priceOld}>€3,99</Text>
+          {priceOld && (
+            <Text style={s.priceOld}>{priceOld}</Text>
+          )}
           <Text style={s.priceSuffix}>{t('paywall.once')}</Text>
         </View>
 
@@ -172,7 +230,11 @@ export default function PaywallScreen({ onClose, onUnlocked }) {
       </TouchableOpacity>
 
       {/* ── 6. CTA-Subtext ───────────────────────────────────────────────────── */}
-      <Text style={s.ctaSub}>{t('paywall.ctaSub')}</Text>
+      <Text style={s.ctaSub}>
+        {t('paywall.ctaSubPart1')}{' '}
+        <Text style={{ color: C.gold, fontWeight: '700' }}>{t('paywall.ctaSubKeinAbo')}</Text>
+        {' '}{t('paywall.ctaSubPart2')}
+      </Text>
 
       {/* ── 7. Divider ───────────────────────────────────────────────────────── */}
       <View style={s.dividerRow}>
@@ -211,6 +273,9 @@ export default function PaywallScreen({ onClose, onUnlocked }) {
         <Text style={s.legalDot}> · </Text>
         <Text style={s.legalTxt}>{t('paywall.legal')}</Text>
       </View>
+
+      {/* Disclaimer */}
+      <Text style={s.disclaimer}>{t('legal.disclaimer')}</Text>
     </ScrollView>
   );
 }
@@ -251,8 +316,8 @@ const s = StyleSheet.create({
   badges:       { flexDirection: 'row', gap: 8, marginBottom: 12 },
   badgeGold:    { backgroundColor: C.gold, paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8 },
   badgeGoldTxt: { color: C.bg, fontSize: 11, fontWeight: '700' },
-  badgeBlue:    { backgroundColor: C.chipBlue, paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8 },
-  badgeBlueTxt: { color: C.blue, fontSize: 11, fontWeight: '600' },
+  badgeBlue:    { backgroundColor: C.chipBlue, paddingHorizontal: 12, paddingVertical: 5, borderRadius: 8 },
+  badgeBlueTxt: { color: C.blue, fontSize: 14, fontWeight: '700' },
 
   priceRow:    { flexDirection: 'row', alignItems: 'baseline', gap: 10, marginBottom: 14 },
   price:       { color: C.gold, fontSize: 42, fontWeight: '700', letterSpacing: -1 },
@@ -266,7 +331,7 @@ const s = StyleSheet.create({
   // CTA
   cta:    { marginTop: 14, backgroundColor: C.gold, borderRadius: 14, padding: 16, alignItems: 'center' },
   ctaTxt: { color: C.bg, fontSize: 17, fontWeight: '700' },
-  ctaSub: { textAlign: 'center', color: C.textDim, fontSize: 12, marginTop: 8, lineHeight: 17 },
+  ctaSub: { textAlign: 'center', color: C.textDim, fontSize: 14, marginTop: 8, lineHeight: 20 },
 
   // Divider
   dividerRow:  { flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 16 },
@@ -287,4 +352,5 @@ const s = StyleSheet.create({
   legalLink:    { color: C.textDim, fontSize: 11, textDecorationLine: 'underline' },
   legalDot:     { color: C.textDim, fontSize: 11 },
   legalTxt:     { color: C.textDim, fontSize: 11 },
+  disclaimer:   { color: C.textDim, fontSize: 10, textAlign: 'center', lineHeight: 14, marginTop: 10, paddingHorizontal: 8, opacity: 0.7 },
 });

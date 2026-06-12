@@ -1,5 +1,12 @@
 # Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
 
+# Signing keystores & Service Accounts — NIEMALS ins Repo!
+*.keystore
+*.jks
+firebase/*adminsdk*.json
+*service-account*.json
+*service_account*.json
+
 # dependencies
 node_modules/
 

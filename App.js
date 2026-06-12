@@ -5,9 +5,9 @@ import { Ionicons } from '@expo/vector-icons';
 import AppIcon from './src/components/AppIcon';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { StatusBar } from 'expo-status-bar';
+import { SystemBars } from 'react-native-edge-to-edge';
 import { useTranslation } from 'react-i18next';
 import * as Notifications from 'expo-notifications';
 
@@ -53,8 +53,9 @@ const TAB_LABEL_KEYS = {
 
 function TabBar({ state, descriptors, navigation }) {
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
   return (
-    <View style={tabStyles.bar}>
+    <View style={[tabStyles.bar, { paddingBottom: insets.bottom + SPACING.xs }]}>
       <View style={tabStyles.topLine} />
       {state.routes.map((route, index) => {
         const focused = state.index === index;
@@ -94,7 +95,12 @@ function TabItem({ customIcon, fallbackIcon, label, focused, onPress }) {
           <Ionicons name={fallbackIcon} size={26} color={focused ? COLORS.gold : '#888'} />
         )}
       </Animated.View>
-      <Text style={[tabStyles.label, focused && tabStyles.labelActive]}>
+      <Text
+        style={[tabStyles.label, focused && tabStyles.labelActive]}
+        numberOfLines={1}
+        adjustsFontSizeToFit
+        minimumFontScale={0.7}
+      >
         {label}
       </Text>
     </TouchableOpacity>
@@ -176,7 +182,7 @@ export default function App() {
   if (!onboarded) {
     return (
       <SafeAreaProvider>
-        <StatusBar style="light" />
+        <SystemBars style="light" />
         <OnboardingScreen onComplete={() => setOnboarded(true)} />
       </SafeAreaProvider>
     );
@@ -190,7 +196,7 @@ export default function App() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
-        <StatusBar style="light" />
+        <SystemBars style="light" />
         <NavigationContainer
           theme={NAV_THEME}
           ref={navigationRef}
@@ -260,7 +266,7 @@ export default function App() {
         </NavigationContainer>
 
         {/* Paywall modal */}
-        <Modal visible={showPaywall} animationType="slide" statusBarTranslucent>
+        <Modal visible={showPaywall} animationType="slide" statusBarTranslucent navigationBarTranslucent>
           <PaywallScreen
             onClose={() => setShowPaywall(false)}
             onUnlocked={() => { setIsPro(true); setShowPaywall(false); }}
@@ -295,7 +301,6 @@ const tabStyles = StyleSheet.create({
   bar: {
     flexDirection: 'row',
     backgroundColor: '#141414',
-    paddingBottom: SPACING.xxl,
     paddingTop: SPACING.sm,
     paddingHorizontal: SPACING.xs,
     borderTopWidth: 1,

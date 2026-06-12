@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo, useRef, useEffect } from 'react';
+import React, { useState, useCallback, useMemo, useRef, useEffect, memo } from 'react';
 import {
   View, Text, StyleSheet, FlatList, TouchableOpacity,
   TextInput, SectionList,
@@ -11,7 +11,7 @@ import * as Haptics from 'expo-haptics';
 
 import { COLORS, GRADIENTS, FONTS, SPACING, RADIUS, SHADOWS } from '../theme';
 import { TOTAL_STICKERS, TOTAL_ALL_STICKERS, GROUPS, TEAMS_MAP, getTeamStickers, STICKER_DB, CC_STICKERS, EXTRA_STICKERS } from '../data/stickerCatalog';
-import { ADRENALYN_DB, SPECIAL_CARDS_FLAT, TOTAL_ADRENALYN, CARD_TYPE_LABELS, CARD_TYPE_COLORS } from '../data/adrenalynCatalog';
+import { ADRENALYN_DB, SPECIAL_CARDS_FLAT, HERO_CARDS, LIMITED_EDITION_CARDS, DREAM_BOX_CARDS, STANDARD_LE_CARDS, STANDARD_LE_ESTIMATED_TOTAL, TOTAL_ADRENALYN, CARD_TYPE_LABELS, CARD_TYPE_COLORS } from '../data/adrenalynCatalog';
 import { TEAM_FLAGS } from '../data/stickerTypes';
 import { loadCollection, addToHave, addToNeed, addDuplicate, setStickerCount, getStickerCount, loadAdrenalynCollection, addAdrenalynCard, setAdrenalynCount, getAdrenalynCount } from '../services/storage';
 import StickerBadge from '../components/StickerBadge';
@@ -53,7 +53,6 @@ export default function AlbumScreen() {
   }, [route.params]);
 
   const totalOwned = collection.have.length;
-  const percent = Math.round((totalOwned / TOTAL_STICKERS) * 100);
 
   // Build sections by group
   const sections = useMemo(() => {
@@ -113,7 +112,7 @@ export default function AlbumScreen() {
           onPress={() => setAlbumTab(ALBUM_TAB.STICKER)}
         >
           <Text style={[styles.albumTabText, albumTab === ALBUM_TAB.STICKER && styles.albumTabTextActive]}>
-            📋 Sticker ({totalOwned}/{TOTAL_STICKERS})
+            {t('album.tabSticker', { owned: totalOwned, total: TOTAL_STICKERS })}
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -121,7 +120,7 @@ export default function AlbumScreen() {
           onPress={() => setAlbumTab(ALBUM_TAB.ADRENALYN)}
         >
           <Text style={[styles.albumTabText, albumTab === ALBUM_TAB.ADRENALYN && styles.albumTabTextActive]}>
-            ⚡ Adrenalyn ({adrenalynOwned}/{TOTAL_ADRENALYN})
+            {t('album.tabAdrenalyn', { owned: adrenalynOwned, total: TOTAL_ADRENALYN })}
           </Text>
         </TouchableOpacity>
       </View>
@@ -130,41 +129,17 @@ export default function AlbumScreen() {
         <AdrenalynTab collection={adrenalynColl} onUpdate={setAdrenalynColl} />
       ) : (<>
 
-      {/* Progress Header */}
-      <LinearGradient colors={GRADIENTS.greenHeader} style={styles.header}>
-        <Text style={styles.progressText}>
-          {t('album.progress', { owned: totalOwned, total: TOTAL_STICKERS, percent })}
-        </Text>
-        <View style={styles.progressBar}>
-          <View style={[styles.progressFill, { width: `${percent}%` }]} />
-        </View>
-      </LinearGradient>
-
-      {/* Search */}
-      <View style={styles.searchRow}>
-        <TextInput
-          style={styles.searchInput}
-          placeholder={t('album.search')}
-          placeholderTextColor={COLORS.textSecondary}
-          value={search}
-          onChangeText={setSearch}
-        />
-      </View>
-
-      {/* Filter tabs */}
-      <View style={styles.filterRow}>
-        {Object.values(FILTER).map(f => (
-          <TouchableOpacity
-            key={f}
-            onPress={() => setFilter(f)}
-            style={[styles.filterTab, filter === f && styles.filterTabActive]}
-          >
-            <Text style={[styles.filterLabel, filter === f && styles.filterLabelActive]}>
-              {t(`album.filter.${f}`)}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </View>
+      {/* Progress Header + Search + Filter — geteilt mit Adrenalyn-Tab */}
+      <AlbumProgressHeader
+        owned={totalOwned}
+        total={TOTAL_STICKERS}
+        gradientColors={GRADIENTS.greenHeader}
+        searchValue={search}
+        onSearch={setSearch}
+        searchPlaceholder={t('album.search')}
+        filter={filter}
+        onFilter={setFilter}
+      />
 
       {/* Group sections */}
       <SectionList
@@ -204,66 +179,201 @@ export default function AlbumScreen() {
 // ---------------------------------------------------------------------------
 // Adrenalyn XL Tab
 // ---------------------------------------------------------------------------
+// Alle 680 Album-Karten als Modul-Konstante (einmal berechnet, nicht bei jedem Render)
+const ALL_ALBUM_CARDS = [
+  ...(ADRENALYN_DB.golden_ballers ?? []).map(c => ({ ...c, section: 'Golden Baller' })),
+  ...(ADRENALYN_DB.team_cards     ?? []).map(c => ({ ...c, section: 'Team Cards' })),
+  ...SPECIAL_CARDS_FLAT,
+  ...HERO_CARDS,
+  ...LIMITED_EDITION_CARDS,
+];
+const CHASE_CARDS = [...DREAM_BOX_CARDS, ...STANDARD_LE_CARDS];
+
 function AdrenalynTab({ collection, onUpdate }) {
-  const allCards = [
-    ...(ADRENALYN_DB.golden_ballers ?? []).map(c => ({ ...c, section: 'Golden Baller' })),
-    ...(ADRENALYN_DB.team_cards     ?? []).map(c => ({ ...c, section: 'Team Cards' })),
-    ...SPECIAL_CARDS_FLAT,
-  ];
+  const { t } = useTranslation();
+  const [filter, setFilter] = useState(FILTER.ALL);
+  const [search, setSearch]  = useState('');
 
-  const handleToggle = async (cardNumber) => {
-    const col = await addAdrenalynCard(cardNumber);
+  // Normalisierter Owned-Check: Album speichert cardNumber als Zahl oder String je nach Einstiegspunkt
+  const isOwned = useCallback((cardKey, cardNumber) => {
+    return collection.have?.includes(cardKey) ||
+           (cardNumber !== undefined && collection.have?.includes(cardNumber));
+  }, [collection.have]);
+
+  // Gefilterte + gesuchte Karten (nur Album-680)
+  const filteredCards = useMemo(() => {
+    const q = search.toLowerCase();
+    return ALL_ALBUM_CARDS.filter(item => {
+      const cardKey = String(item.number ?? item.id ?? '');
+      const owned = isOwned(cardKey, item.number);
+      const count = getAdrenalynCount(collection, cardKey) || getAdrenalynCount(collection, item.number);
+
+      const matchesSearch = !q ||
+        item.name?.toLowerCase().includes(q) ||
+        item.team?.toLowerCase().includes(q) ||
+        cardKey.toLowerCase().includes(q) ||
+        (item.id ?? '').toLowerCase().includes(q) ||
+        item.position?.toLowerCase().includes(q);
+
+      const matchesFilter =
+        filter === FILTER.ALL       ? true :
+        filter === FILTER.OWNED     ? owned :
+        filter === FILTER.MISSING   ? !owned :
+        filter === FILTER.DUPLICATES ? count > 1 :
+        true;
+
+      return matchesSearch && matchesFilter;
+    });
+  }, [collection, filter, search, isOwned]);
+
+  const adrenalynOwned = collection.have?.length ?? 0;
+
+  const handleToggle = async (cardKey) => {
+    const col = await addAdrenalynCard(cardKey);
     onUpdate(col);
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
   };
 
-  const handleCount = async (cardNumber, n) => {
-    const col = await setAdrenalynCount(cardNumber, n);
+  const handleCount = async (cardKey, n) => {
+    const col = await setAdrenalynCount(cardKey, n);
     onUpdate(col);
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
   };
 
-  return (
-    <FlatList
-      data={allCards}
-      keyExtractor={c => String(c.number)}
-      contentContainerStyle={styles.list}
-      renderItem={({ item }) => {
-        const owned = collection.have?.includes(item.number);
-        const count = getAdrenalynCount(collection, item.number);
+  // Chase-Sektion nur im ALL-Filter und wenn kein Such-String aktiv
+  const chaseFooter = (filter === FILTER.ALL && !search && CHASE_CARDS.length > 0) ? (
+    <View>
+      <View style={styles.chaseSectionHeader}>
+        <Text style={styles.chaseSectionTitle}>✨ Chase Cards</Text>
+        <Text style={styles.chaseSectionSub}>
+          Dream Box (24) · Limited Editions (~{STANDARD_LE_ESTIMATED_TOTAL}) · {t('album.chaseNote')}
+        </Text>
+      </View>
+      {CHASE_CARDS.map(item => {
         const typeColor = CARD_TYPE_COLORS[item.type] ?? COLORS.textMuted;
         return (
-          <View style={styles.stickerRow}>
-            <TouchableOpacity
-              onPress={() => handleToggle(item.number)}
-              activeOpacity={0.7}
-              style={styles.stickerRowLeft}
-            >
-              <View style={[styles.statusDot, { backgroundColor: owned ? COLORS.green : COLORS.unknown }]} />
-              <Text style={[styles.stickerNum, { color: typeColor }]}>#{item.number}</Text>
+          <View key={item.id} style={[styles.stickerRow, { opacity: 0.85 }]}>
+            <View style={styles.stickerRowLeft}>
+              <View style={[styles.statusDot, { backgroundColor: COLORS.textMuted }]} />
+              <Text style={[styles.stickerNum, { color: typeColor }]}>{item.id}</Text>
               <View style={styles.stickerMeta}>
                 <Text style={styles.stickerPlayer} numberOfLines={1}>{item.name}</Text>
                 <Text style={styles.stickerTeam}>
                   <Text style={{ color: typeColor }}>{CARD_TYPE_LABELS[item.type] ?? item.type}</Text>
-                  {item.position ? `  ·  ${item.position}` : ''}
+                  {item.series ? `  ·  ${item.series}` : ''}
                 </Text>
               </View>
-            </TouchableOpacity>
-            {owned && (
-              <View style={styles.countRow}>
-                <TouchableOpacity onPress={() => handleCount(item.number, Math.max(0, count - 1))} style={styles.countBtn} hitSlop={{ top: 8, bottom: 8, left: 4, right: 4 }}>
-                  <Text style={styles.countMinus}>−</Text>
-                </TouchableOpacity>
-                <Text style={styles.countVal}>{count}×</Text>
-                <TouchableOpacity onPress={() => handleCount(item.number, count + 1)} style={[styles.countBtn, styles.countBtnPlus]} hitSlop={{ top: 8, bottom: 8, left: 4, right: 4 }}>
-                  <Text style={styles.countPlus}>+</Text>
-                </TouchableOpacity>
-              </View>
-            )}
+            </View>
           </View>
         );
-      }}
-    />
+      })}
+    </View>
+  ) : null;
+
+  return (
+    <View style={{ flex: 1 }}>
+      {/* Fortschritt + Suche + Filter-Chips — gleiche Komponente wie Sticker-Tab */}
+      <AlbumProgressHeader
+        owned={adrenalynOwned}
+        total={TOTAL_ADRENALYN}
+        gradientColors={GRADIENTS.greenHeader}
+        searchValue={search}
+        onSearch={setSearch}
+        searchPlaceholder={t('album.searchAdrenalyn')}
+        filter={filter}
+        onFilter={setFilter}
+        accentColor={COLORS.gold}
+      />
+
+      <FlatList
+        data={filteredCards}
+        keyExtractor={c => String(c.id ?? c.number)}
+        contentContainerStyle={styles.list}
+        ListFooterComponent={chaseFooter}
+        renderItem={({ item }) => {
+          const cardKey = String(item.number ?? item.id ?? '');
+          const owned = isOwned(cardKey, item.number);
+          const count = getAdrenalynCount(collection, cardKey) || getAdrenalynCount(collection, item.number);
+          const typeColor = CARD_TYPE_COLORS[item.type] ?? COLORS.textMuted;
+          const displayId = item.id ? item.id : `#${item.number}`;
+          return (
+            <View style={styles.stickerRow}>
+              <TouchableOpacity
+                onPress={() => handleToggle(cardKey)}
+                activeOpacity={0.7}
+                style={styles.stickerRowLeft}
+              >
+                <View style={[styles.statusDot, { backgroundColor: owned ? COLORS.green : COLORS.unknown }]} />
+                <Text style={[styles.stickerNum, { color: typeColor }]}>{displayId}</Text>
+                <View style={styles.stickerMeta}>
+                  <Text style={styles.stickerPlayer} numberOfLines={1}>{item.name}</Text>
+                  <Text style={styles.stickerTeam}>
+                    <Text style={{ color: typeColor }}>{CARD_TYPE_LABELS[item.type] ?? item.type}</Text>
+                    {item.position ? `  ·  ${item.position}` : ''}
+                    {item.team ? `  ·  ${item.team}` : ''}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+              {owned && (
+                <View style={styles.countRow}>
+                  <TouchableOpacity onPress={() => handleCount(cardKey, Math.max(0, count - 1))} style={styles.countBtn} hitSlop={{ top: 8, bottom: 8, left: 4, right: 4 }}>
+                    <Text style={styles.countMinus}>−</Text>
+                  </TouchableOpacity>
+                  <Text style={styles.countVal}>{count}×</Text>
+                  <TouchableOpacity onPress={() => handleCount(cardKey, count + 1)} style={[styles.countBtn, styles.countBtnPlus]} hitSlop={{ top: 8, bottom: 8, left: 4, right: 4 }}>
+                    <Text style={styles.countPlus}>+</Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+            </View>
+          );
+        }}
+      />
+    </View>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Gemeinsamer Album-Fortschritts-Header (Sticker + Adrenalyn)
+// ---------------------------------------------------------------------------
+function AlbumProgressHeader({ owned, total, gradientColors, searchValue, onSearch, searchPlaceholder, filter, onFilter }) {
+  const { t } = useTranslation();
+  const pct = total > 0 ? Math.round((owned / total) * 100) : 0;
+  return (
+    <>
+      <LinearGradient colors={gradientColors} style={styles.header}>
+        <Text style={styles.progressText}>
+          {t('album.progress', { owned, total, percent: pct })}
+        </Text>
+        <View style={styles.progressBar}>
+          <View style={[styles.progressFill, { width: `${pct}%` }]} />
+        </View>
+      </LinearGradient>
+      <View style={styles.searchRow}>
+        <TextInput
+          style={styles.searchInput}
+          placeholder={searchPlaceholder}
+          placeholderTextColor={COLORS.textSecondary}
+          value={searchValue}
+          onChangeText={onSearch}
+          returnKeyType="search"
+          clearButtonMode="while-editing"
+        />
+      </View>
+      <View style={styles.filterRow}>
+        {Object.values(FILTER).map(f => (
+          <TouchableOpacity
+            key={f}
+            onPress={() => onFilter(f)}
+            style={[styles.filterTab, filter === f && styles.filterTabActive]}
+          >
+            <Text style={[styles.filterLabel, filter === f && styles.filterLabelActive]}>
+              {t(`album.filter.${f}`)}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+    </>
   );
 }
 
@@ -286,6 +396,7 @@ function GroupHeader({ section, expanded, onPress }) {
 }
 
 function StickerRow({ sticker, status, count, onPress, onCountChange, highlighted }) {
+  const { t } = useTranslation();
   const statusColor = status === 'owned' ? COLORS.owned : status === 'missing' ? COLORS.missing : COLORS.unknown;
   const flag = sticker.team ? (TEAM_FLAGS[sticker.team] ?? '') : '🌍';
   const owned = status === 'owned';
@@ -302,10 +413,12 @@ function StickerRow({ sticker, status, count, onPress, onCountChange, highlighte
         <Text style={styles.stickerNum}>{sticker.id}</Text>
         <View style={styles.stickerMeta}>
           <View style={styles.stickerNameRow}>
-            <Text style={styles.stickerPlayer} numberOfLines={1}>{sticker.name}</Text>
+            <Text style={styles.stickerPlayer} numberOfLines={1}>
+              {sticker.type === 'logo' ? t('sticker.teamLogo') : sticker.type === 'team_photo' ? t('sticker.teamPhoto') : sticker.name}
+            </Text>
             {sticker.foil && <Text style={styles.foilBadge}>✨</Text>}
           </View>
-          <Text style={styles.stickerTeam}>{flag} {sticker.teamName ?? ''}</Text>
+          <Text style={styles.stickerTeam}>{flag} {sticker.team ? t('teams.' + sticker.team) : (sticker.teamName ?? '')}</Text>
         </View>
       </TouchableOpacity>
 
@@ -383,6 +496,9 @@ const styles = StyleSheet.create({
   groupHeaderLeft: { flex: 1 },
   groupTitle: { color: COLORS.gold, fontSize: FONTS.sizes.lg, fontWeight: FONTS.weights.bold },
   groupSub: { color: COLORS.textSecondary, fontSize: FONTS.sizes.sm, marginTop: 2 },
+  chaseSectionHeader: { padding: SPACING.md, marginTop: SPACING.lg, borderTopWidth: 1, borderTopColor: 'rgba(255,255,255,0.1)' },
+  chaseSectionTitle: { color: '#C084FC', fontSize: FONTS.sizes.lg, fontWeight: FONTS.weights.bold },
+  chaseSectionSub: { color: COLORS.textSecondary, fontSize: FONTS.sizes.sm, marginTop: 2 },
   groupChevron: { color: COLORS.textMuted, fontSize: FONTS.sizes.md },
   stickerRowHighlighted: {
     backgroundColor: COLORS.blueTint,

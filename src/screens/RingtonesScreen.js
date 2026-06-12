@@ -21,6 +21,9 @@ import { useFocusEffect } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import { useAudioPlayer } from 'expo-audio';
 import * as Sharing from 'expo-sharing';
+import * as MediaLibrary from 'expo-media-library';
+import * as FileSystem from 'expo-file-system';
+import { Asset } from 'expo-asset';
 import Purchases from 'react-native-purchases';
 
 import { COLORS, FONTS, SPACING, RADIUS } from '../theme';
@@ -28,6 +31,7 @@ import { RINGTONE_IDS, FULLTRACK_IDS } from '../services/subscription';
 import { IAP_PRODUCTS } from '../config/iap';
 import { OFFERINGS, PACKAGES } from '../config/revenueCat';
 import { purchasePackageFromOffering, purchaseProductDirect } from '../services/subscription';
+import { resetScanCount } from '../services/storage';
 
 // ──────────────────────────────────────────────────────────────────────────────
 // Song-Definitionen
@@ -48,14 +52,16 @@ const SONGS = [
     borderColor: 'rgba(245,192,51,0.38)',
     glowColor: 'rgba(245,192,51,0.14)',
     faceOffset: -30,        // Gesichter in oberer Mitte → leicht nach oben
+    hookOffsetSec: 50,      // Preview startet ab Sekunde 50 (Hook)
     ringtoneId: IAP_PRODUCTS.RINGTONE_SONG1,
     fulltrackId: IAP_PRODUCTS.FULLTRACK_SONG1,
     ringtonePackage: PACKAGES.RINGTONE_SONG1,
     fulltrackPackage: PACKAGES.FULLTRACK_SONG1,
-    cover:    require('../../assets/ringtones/covers/song1_cover.png'),
-    preview:  require('../../assets/ringtones/song1_preview.mp3'),
-    ringtone: require('../../assets/ringtones/song1_ringtone.mp3'),
-    fulltrack: require('../../assets/ringtones/song1_full.mp3'),
+    cover:       require('../../assets/ringtones/covers/song1_cover.png'),
+    preview:     require('../../assets/ringtones/song1_preview.mp3'),
+    ringtone:    require('../../assets/ringtones/song1_ringtone.mp3'),
+    ringtoneM4R: require('../../assets/ringtones/ios/song1_ringtone.m4r'),
+    fulltrack:   require('../../assets/ringtones/song1_full.mp3'),
   },
   {
     id: 2,
@@ -70,14 +76,16 @@ const SONGS = [
     borderColor: 'rgba(79,195,247,0.30)',
     glowColor: 'rgba(79,195,247,0.10)',
     faceOffset: -60,        // Ganzkörper-Bild → stärker nach oben für Gesicht
+    hookOffsetSec: 30,      // Preview startet ab Sekunde 30 (Hook)
     ringtoneId: IAP_PRODUCTS.RINGTONE_SONG2,
     fulltrackId: IAP_PRODUCTS.FULLTRACK_SONG2,
     ringtonePackage: PACKAGES.RINGTONE_SONG2,
     fulltrackPackage: PACKAGES.FULLTRACK_SONG2,
-    cover:    require('../../assets/ringtones/covers/song2_cover.png'),
-    preview:  require('../../assets/ringtones/song2_preview.mp3'),
-    ringtone: require('../../assets/ringtones/song2_ringtone.mp3'),
-    fulltrack: require('../../assets/ringtones/song2_full.mp3'),
+    cover:       require('../../assets/ringtones/covers/song2_cover.png'),
+    preview:     require('../../assets/ringtones/song2_preview.mp3'),
+    ringtone:    require('../../assets/ringtones/song2_ringtone.mp3'),
+    ringtoneM4R: require('../../assets/ringtones/ios/song2_ringtone.m4r'),
+    fulltrack:   require('../../assets/ringtones/song2_full.mp3'),
   },
   {
     id: 3,
@@ -92,16 +100,48 @@ const SONGS = [
     borderColor: 'rgba(255,107,107,0.35)',
     glowColor: 'rgba(255,107,107,0.12)',
     faceOffset: -40,        // Arm hochgestreckt → etwas nach oben
+    hookOffsetSec: 40,      // Preview startet ab Sekunde 40 (Hook)
     ringtoneId: IAP_PRODUCTS.RINGTONE_SONG3,
     fulltrackId: IAP_PRODUCTS.FULLTRACK_SONG3,
     ringtonePackage: PACKAGES.RINGTONE_SONG3,
     fulltrackPackage: PACKAGES.FULLTRACK_SONG3,
-    cover:    require('../../assets/ringtones/covers/song3_cover.png'),
-    preview:  require('../../assets/ringtones/song3_preview.mp3'),
-    ringtone: require('../../assets/ringtones/song3_ringtone.mp3'),
-    fulltrack: require('../../assets/ringtones/song3_full.mp3'),
+    cover:       require('../../assets/ringtones/covers/song3_cover.png'),
+    preview:     require('../../assets/ringtones/song3_preview.mp3'),
+    ringtone:    require('../../assets/ringtones/song3_ringtone.mp3'),
+    ringtoneM4R: require('../../assets/ringtones/ios/song3_ringtone.m4r'),
+    fulltrack:   require('../../assets/ringtones/song3_full.mp3'),
   },
 ];
+
+// Klingelton auf Gerät speichern (Android)
+// assetModule = require(...) Referenz, filename = z.B. "Leo Falk - Wir stehen zusammen.mp3"
+async function saveRingtoneToDevice(assetModule, filename) {
+  // 1. Berechtigung
+  const { status } = await MediaLibrary.requestPermissionsAsync();
+  if (status !== 'granted') return null;
+
+  // 2. Gebündeltes Asset → lokale URI entpacken
+  const asset = await Asset.fromModule(assetModule).downloadAsync();
+  const sourceUri = asset.localUri;
+  if (!sourceUri) throw new Error('Asset konnte nicht geladen werden');
+
+  // 3. In persistenten Ordner kopieren (file:// URI nötig für MediaLibrary)
+  const destDir = FileSystem.documentDirectory + 'ringtones/';
+  await FileSystem.makeDirectoryAsync(destDir, { intermediates: true });
+  const safeFilename = filename.replace(/[/\\:*?"<>|]/g, '_');
+  const destUri = destDir + safeFilename;
+  await FileSystem.copyAsync({ from: sourceUri, to: destUri });
+
+  // 4. In MediaLibrary speichern → Album "Ringtones/StickerScout"
+  const mediaAsset = await MediaLibrary.createAssetAsync(destUri);
+  let album = await MediaLibrary.getAlbumAsync('StickerScout');
+  if (!album) {
+    await MediaLibrary.createAlbumAsync('StickerScout', mediaAsset, false);
+  } else {
+    await MediaLibrary.addAssetsToAlbumAsync([mediaAsset], album, false);
+  }
+  return destUri;
+}
 
 // Waveform-Höhen (zufällig aber schön)
 const WAVE1 = [10,18,28,14,24,33,20,27,13,30,18,26,15,21,32,12,25,16,28,19];
@@ -113,16 +153,35 @@ const WAVES = [WAVE1, WAVE2, WAVE3];
 // Song Card (eigene Komponente für stabile useAudioPlayer Hooks)
 // ──────────────────────────────────────────────────────────────────────────────
 function SongCard({ song, isPlaying, onPlay, ownedRingtone, ownedFulltrack,
-                    onBuyRingtone, onBuyFulltrack, onSetRingtone, isBuying }) {
+                    onBuyRingtone, onBuyFulltrack, onSetRingtone, onSaveFulltrack, isBuying }) {
+  const { t } = useTranslation();
 
-  const player = useAudioPlayer(song.preview);
+  // Full Track für Seek-fähige Hook-Preview
+  const player = useAudioPlayer(song.fulltrack);
   const isFeatured = song.theme === 'gold';
+  const timerRef = React.useRef(null);
+  const [showBuyPrompt, setShowBuyPrompt] = React.useState(false);
+  const ownedRef = React.useRef(ownedFulltrack);
+  React.useEffect(() => { ownedRef.current = ownedFulltrack; }, [ownedFulltrack]);
 
   useEffect(() => {
     try {
-      if (isPlaying) player.play();
-      else player.pause();
+      if (isPlaying) {
+        setShowBuyPrompt(false);
+        // Seek zum Hook, dann 30 Sekunden spielen
+        player.seekTo(song.hookOffsetSec ?? 0);
+        player.play();
+        timerRef.current = setTimeout(() => {
+          try { player.pause(); } catch {}
+          if (!ownedRef.current) setShowBuyPrompt(true);
+          onPlay(); // isPlaying → false im Parent
+        }, 30000);
+      } else {
+        player.pause();
+        if (timerRef.current) { clearTimeout(timerRef.current); timerRef.current = null; }
+      }
     } catch {}
+    return () => { if (timerRef.current) clearTimeout(timerRef.current); };
   }, [isPlaying]);
 
   useEffect(() => () => { try { player.pause(); } catch {} }, []);
@@ -157,9 +216,13 @@ function SongCard({ song, isPlaying, onPlay, ownedRingtone, ownedFulltrack,
         ]}>
           {song.theme === 'gold'
             ? <LinearGradient colors={['#FFE17A','#C8941F']} style={s.countryPillGrad}>
-                <Text style={[s.countryText, { color: '#0D1F2D' }]}>{song.market} {song.marketLabel}</Text>
+                <Text style={[s.countryText, { color: '#0D1F2D' }]}>
+                {song.market} {song.id === 2 ? t('ringtones.song2Market') : song.id === 3 ? t('ringtones.song3Market') : song.marketLabel}
+              </Text>
               </LinearGradient>
-            : <Text style={[s.countryText, { color: '#fff' }]}>{song.market} {song.marketLabel}</Text>
+            : <Text style={[s.countryText, { color: '#fff' }]}>
+                {song.market} {song.id === 2 ? t('ringtones.song2Market') : song.id === 3 ? t('ringtones.song3Market') : song.marketLabel}
+              </Text>
           }
         </View>
 
@@ -176,7 +239,7 @@ function SongCard({ song, isPlaying, onPlay, ownedRingtone, ownedFulltrack,
         {/* Preview Chip unten links */}
         <View style={s.previewChip}>
           <View style={s.previewDot} />
-          <Text style={s.previewChipText}>Vorschau kostenlos</Text>
+          <Text style={s.previewChipText}>{t('ringtones.previewFree')}</Text>
         </View>
       </View>
 
@@ -184,7 +247,9 @@ function SongCard({ song, isPlaying, onPlay, ownedRingtone, ownedFulltrack,
       <View style={s.songContent}>
         <Text style={[s.songArtist, { color: song.accentColor }]}>{song.artist.toUpperCase()}</Text>
         <Text style={s.songTitle}>{song.title}</Text>
-        <Text style={s.songSub}>{song.subtitle}</Text>
+        <Text style={s.songSub}>
+          {song.id === 2 ? t('ringtones.song2Sub') : song.id === 3 ? t('ringtones.song3Sub') : song.subtitle}
+        </Text>
 
         {/* Waveform */}
         <View style={s.waveRow}>
@@ -209,6 +274,34 @@ function SongCard({ song, isPlaying, onPlay, ownedRingtone, ownedFulltrack,
           <Text style={s.waveTime}>0:30</Text>
         </View>
 
+        {/* Kauf-Prompt nach Preview-Ende */}
+        {showBuyPrompt && !ownedFulltrack && (
+          <TouchableOpacity
+            style={[s.buyPrompt, {
+              borderColor: song.accentColor,
+              backgroundColor: 'rgba(13,31,45,0.97)',
+              shadowColor: song.accentColor,
+            }]}
+            onPress={() => { setShowBuyPrompt(false); onBuyFulltrack(); }}
+            activeOpacity={0.75}
+          >
+            <View style={[s.buyPromptIconWrap, { backgroundColor: song.accentColor }]}>
+              <Ionicons name="musical-notes" size={22} color="#000" />
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={[s.buyPromptTitle, { color: '#fff' }]}>
+                {t('ringtones.buyFullPrompt')}
+              </Text>
+              <Text style={s.buyPromptSub}>
+                {t('ringtones.buyFullSub', { price: '€1,99' })}
+              </Text>
+            </View>
+            <View style={[s.buyPromptCta, { backgroundColor: song.accentColor }]}>
+              <Text style={s.buyPromptCtaTxt}>{t('ringtones.buyCta')}</Text>
+            </View>
+          </TouchableOpacity>
+        )}
+
         {/* Purchase Grid — 2 Spalten */}
         <View style={s.purchaseGrid}>
           {/* Klingelton */}
@@ -218,8 +311,8 @@ function SongCard({ song, isPlaying, onPlay, ownedRingtone, ownedFulltrack,
               <View style={s.purchaseIcon}>
                 <Ionicons name="notifications" size={20} color="#0D1F2D" />
               </View>
-              <Text style={s.purchaseCardRtLabel}>✓ Als Klingelton setzen</Text>
-              <Text style={s.purchaseCardRtSub}>Bereits gekauft</Text>
+              <Text style={s.purchaseCardRtLabel}>{t('ringtones.setRingtoneOwned')}</Text>
+              <Text style={s.purchaseCardRtSub}>{t('ringtones.alreadyOwned')}</Text>
             </TouchableOpacity>
           ) : (
             <TouchableOpacity
@@ -233,7 +326,7 @@ function SongCard({ song, isPlaying, onPlay, ownedRingtone, ownedFulltrack,
                     <View style={s.purchaseIcon}>
                       <Ionicons name="notifications-outline" size={20} color="#0D1F2D" />
                     </View>
-                    <Text style={s.purchaseCardRtLabel}>Klingelton kaufen</Text>
+                    <Text style={s.purchaseCardRtLabel}>{t('ringtones.buyRingtone')}</Text>
                     <Text style={s.purchasePrice}>€0,99</Text>
                   </>
               }
@@ -242,13 +335,13 @@ function SongCard({ song, isPlaying, onPlay, ownedRingtone, ownedFulltrack,
 
           {/* Ganzer Song */}
           {ownedFulltrack ? (
-            <View style={s.purchaseCardSong}>
+            <TouchableOpacity style={s.purchaseCardSong} onPress={onSaveFulltrack}>
               <View style={[s.purchaseIconDark, { borderColor: song.accentColor + '40' }]}>
-                <Ionicons name="checkmark" size={20} color={song.accentColor} />
+                <Ionicons name="download-outline" size={20} color={song.accentColor} />
               </View>
-              <Text style={s.purchaseCardSongLabel}>In deiner Bibliothek</Text>
-              <Text style={[s.purchaseCardSongSub, { color: COLORS.green }]}>Ganzer Song</Text>
-            </View>
+              <Text style={s.purchaseCardSongLabel}>{t('ringtones.saveToMusic')}</Text>
+              <Text style={[s.purchaseCardSongSub, { color: COLORS.green }]}>{t('ringtones.owned')}</Text>
+            </TouchableOpacity>
           ) : (
             <TouchableOpacity
               style={s.purchaseCardSong}
@@ -261,7 +354,7 @@ function SongCard({ song, isPlaying, onPlay, ownedRingtone, ownedFulltrack,
                     <View style={[s.purchaseIconDark, { borderColor: song.accentColor + '40' }]}>
                       <Ionicons name="musical-note" size={20} color={song.accentColor} />
                     </View>
-                    <Text style={s.purchaseCardSongLabel}>Ganzen Song kaufen</Text>
+                    <Text style={s.purchaseCardSongLabel}>{t('ringtones.buyFulltrack')}</Text>
                     <Text style={[s.purchasePriceDark, { color: song.accentColor }]}>€1,99</Text>
                   </>
               }
@@ -310,10 +403,10 @@ export default function RingtonesScreen() {
         .catch(() => purchaseProductDirect(song.ringtoneId));
       if (res?.success) {
         setOwnedRingtones(prev => new Set([...prev, song.ringtoneId]));
-        Alert.alert('✅ Klingelton freigeschaltet!', `"${song.title}" ist jetzt verfügbar.`);
+        Alert.alert(t('ringtones.ringtoneUnlocked'), t('ringtones.ringtoneUnlockedMsg', { title: song.title }));
       }
     } catch (e) {
-      if (!e?.userCancelled) Alert.alert('Fehler', 'Kauf fehlgeschlagen.');
+      if (!e?.userCancelled) Alert.alert(t('common.error'), t('ringtones.purchaseError'));
     } finally { setIsBuying(null); }
   };
 
@@ -324,27 +417,56 @@ export default function RingtonesScreen() {
         .catch(() => purchaseProductDirect(song.fulltrackId));
       if (res?.success) {
         setOwnedFulltracks(prev => new Set([...prev, song.fulltrackId]));
-        Alert.alert('✅ Song gekauft!', `"${song.title}" — für immer deins!`);
+        Alert.alert(t('ringtones.songPurchased'), t('ringtones.songPurchasedMsg', { title: song.title }));
       }
     } catch (e) {
-      if (!e?.userCancelled) Alert.alert('Fehler', 'Kauf fehlgeschlagen.');
+      if (!e?.userCancelled) Alert.alert(t('common.error'), t('ringtones.purchaseError'));
     } finally { setIsBuying(null); }
   };
 
   const handleSetRingtone = async (song) => {
     if (Platform.OS === 'ios') {
       try {
+        // Resolve bundled .m4r asset to a local file:// URI first
+        const asset = await Asset.fromModule(song.ringtoneM4R).downloadAsync();
+        const uri = asset.localUri;
+        if (!uri) { Alert.alert('Info', t('ringtones.iosHint')); return; }
         const canShare = await Sharing.isAvailableAsync();
         if (canShare) {
-          await Sharing.shareAsync(song.ringtone, {
+          await Sharing.shareAsync(uri, {
             mimeType: 'audio/x-m4r',
             UTI: 'com.apple.m4r-audio',
-            dialogTitle: 'Als Klingelton setzen',
+            dialogTitle: t('ringtones.setRingtone'),
           });
         } else Alert.alert('Info', t('ringtones.iosHint'));
       } catch { Alert.alert('Info', t('ringtones.iosHint')); }
     } else {
-      Alert.alert('📱 Klingelton setzen', t('ringtones.androidHint'), [{ text: 'OK' }]);
+      try {
+        const filename = `${song.artist} - ${song.title}.mp3`;
+        await saveRingtoneToDevice(song.ringtone, filename);
+        Alert.alert(
+          t('ringtones.savedTitle'),
+          t('ringtones.savedAndroid', { title: song.title }),
+          [{ text: t('common.ok') }]
+        );
+      } catch (e) {
+        console.error('[Ringtone]', e.message);
+        Alert.alert(t('common.error'), t('ringtones.saveErrorRingtone'));
+      }
+    }
+  };
+
+  const handleSaveFulltrack = async (song) => {
+    try {
+      const filename = `${song.artist} - ${song.title} (Full).mp3`;
+      await saveRingtoneToDevice(song.fulltrack, filename);
+      Alert.alert(
+        t('ringtones.savedTitle'),
+        t('ringtones.savedMusic', { title: song.title }),
+        [{ text: t('common.ok') }]
+      );
+    } catch (e) {
+      Alert.alert(t('common.error'), t('ringtones.saveErrorTrack'));
     }
   };
 
@@ -352,8 +474,8 @@ export default function RingtonesScreen() {
     try {
       await Purchases.restorePurchases();
       await loadOwned();
-      Alert.alert('✅', 'Käufe wiederhergestellt.');
-    } catch { Alert.alert('Fehler', 'Wiederherstellung fehlgeschlagen.'); }
+      Alert.alert('✅', t('ringtones.restoreSuccess'));
+    } catch { Alert.alert(t('common.error'), t('ringtones.restoreError')); }
   };
 
   return (
@@ -364,17 +486,25 @@ export default function RingtonesScreen() {
       >
         {/* ── Header ── */}
         <View style={s.header}>
-          <View style={s.globeIcon}>
+          <TouchableOpacity
+            style={s.globeIcon}
+            delayLongPress={5000}
+            onLongPress={async () => {
+              await resetScanCount();
+              Alert.alert('🔧 Dev', 'Scan-Counter zurückgesetzt ✓');
+            }}
+            activeOpacity={1}
+          >
             <Ionicons name="globe-outline" size={24} color="#0D1F2D" />
-          </View>
+          </TouchableOpacity>
           <View style={s.headerCenter}>
-            <Text style={s.h1}>WM 2026 Superhits</Text>
+            <Text style={s.h1}>{t('ringtones.h1')}</Text>
           </View>
           <TouchableOpacity style={s.infoBtn} onPress={() => setShowInfo(true)}>
             <Ionicons name="information-circle-outline" size={22} color="#F5C033" />
           </TouchableOpacity>
         </View>
-        <Text style={s.subtitle}>Exklusive WM 2026 Songs – nur in StickerScout</Text>
+        <Text style={s.subtitle}>{t('ringtones.subtitle')}</Text>
 
         {/* ── Song Cards ── */}
         {SONGS.map(song => (
@@ -388,6 +518,7 @@ export default function RingtonesScreen() {
             onBuyRingtone={() => handleBuyRingtone(song)}
             onBuyFulltrack={() => handleBuyFulltrack(song)}
             onSetRingtone={() => handleSetRingtone(song)}
+            onSaveFulltrack={() => handleSaveFulltrack(song)}
             isBuying={isBuying}
           />
         ))}
@@ -395,10 +526,10 @@ export default function RingtonesScreen() {
         {/* ── Trust Badges ── */}
         <View style={s.benefits}>
           {[
-            { icon: 'shield-checkmark-outline', label: 'Sicherer Kauf',  sub: 'SSL-verschlüsselt' },
-            { icon: 'infinite-outline',         label: 'Für immer',      sub: 'einmal kaufen' },
-            { icon: 'phone-portrait-outline',   label: 'Alle Geräte',    sub: 'überall nutzbar' },
-            { icon: 'headset-outline',          label: 'Support',        sub: 'wir helfen' },
+            { icon: 'shield-checkmark-outline', label: t('ringtones.benefitSecure'),  sub: t('ringtones.benefitSecureSub') },
+            { icon: 'infinite-outline',         label: t('ringtones.benefitForever'), sub: t('ringtones.benefitForeverSub') },
+            { icon: 'phone-portrait-outline',   label: t('ringtones.benefitDevices'), sub: t('ringtones.benefitDevicesSub') },
+            { icon: 'headset-outline',          label: t('ringtones.benefitSupport'), sub: t('ringtones.benefitSupportSub') },
           ].map((b, i) => (
             <View key={i} style={[s.benefit, i < 3 && s.benefitBorder]}>
               <Ionicons name={b.icon} size={22} color="#F5C033" />
@@ -424,14 +555,14 @@ export default function RingtonesScreen() {
           <TouchableOpacity activeOpacity={1} style={s.sheet} onPress={() => {}}>
             {/* Handle */}
             <View style={s.sheetHandle} />
-            <Text style={s.sheetTitle}>Über die WM 2026 Superhits</Text>
-            <Text style={s.sheetDesc}>Drei exklusive Songs zur Weltmeisterschaft – nur in StickerScout.</Text>
+            <Text style={s.sheetTitle}>{t('ringtones.infoTitle')}</Text>
+            <Text style={s.sheetDesc}>{t('ringtones.infoDesc')}</Text>
 
             {[
-              { icon: 'headset-outline',            title: 'Vorschau',         text: '30 Sekunden kostenlos anhören.' },
-              { icon: 'notifications-outline',      title: 'Klingelton',       text: 'Als Smartphone-Klingelton für €0,99.' },
-              { icon: 'musical-notes-outline',      title: 'Ganzer Song',      text: 'Vollständiger Download für €1,99 – für immer.' },
-              { icon: 'refresh-circle-outline',     title: 'Wiederherstellen', text: 'Käufe jederzeit im Profil wiederherstellen.' },
+              { icon: 'headset-outline',        title: t('ringtones.infoPreviewTitle'), text: t('ringtones.infoPreviewText') },
+              { icon: 'notifications-outline',  title: t('ringtones.infoRingtoneTitle'), text: t('ringtones.infoRingtoneText') },
+              { icon: 'musical-notes-outline',  title: t('ringtones.infoFullTitle'),    text: t('ringtones.infoFullText') },
+              { icon: 'refresh-circle-outline', title: t('ringtones.infoRestoreTitle'), text: t('ringtones.infoRestoreText') },
             ].map((row, i) => (
               <View key={i} style={s.sheetRow}>
                 <Ionicons name={row.icon} size={22} color="#F5C033" style={{ marginTop: 1 }} />
@@ -443,7 +574,7 @@ export default function RingtonesScreen() {
             ))}
 
             <TouchableOpacity style={s.sheetClose} onPress={() => setShowInfo(false)}>
-              <Text style={s.sheetCloseTxt}>Verstanden</Text>
+              <Text style={s.sheetCloseTxt}>{t('ringtones.understood')}</Text>
             </TouchableOpacity>
           </TouchableOpacity>
         </TouchableOpacity>
@@ -590,6 +721,24 @@ const s = StyleSheet.create({
   benefitBorder: { borderRightWidth: 1, borderRightColor: 'rgba(255,255,255,0.07)' },
   benefitLabel: { color: '#fff', fontSize: 10, fontWeight: '700', textAlign: 'center' },
   benefitSub:   { color: 'rgba(255,255,255,0.48)', fontSize: 9, textAlign: 'center', lineHeight: 13 },
+
+  buyPrompt: {
+    flexDirection: 'row', alignItems: 'center', gap: 12,
+    borderWidth: 2, borderRadius: 16,
+    padding: 16, marginBottom: 14,
+    shadowOpacity: 0.45, shadowRadius: 16, elevation: 10,
+  },
+  buyPromptIconWrap: {
+    width: 44, height: 44, borderRadius: 22,
+    alignItems: 'center', justifyContent: 'center',
+  },
+  buyPromptTitle: { fontSize: 13, fontWeight: '800', marginBottom: 3 },
+  buyPromptSub: { fontSize: 13, color: 'rgba(255,255,255,0.80)', fontWeight: '500' },
+  buyPromptCta: {
+    paddingHorizontal: 14, paddingVertical: 8,
+    borderRadius: 20,
+  },
+  buyPromptCtaTxt: { color: '#000', fontSize: 13, fontWeight: '800' },
 
   restoreBtn: { alignItems: 'center', paddingVertical: 12 },
   restoreText: { color: 'rgba(255,255,255,0.4)', fontSize: 12 },
