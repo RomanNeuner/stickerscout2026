@@ -1,37 +1,44 @@
 /**
  * WM 2026 Ergebnisse automatisch in Firebase Remote Config schreiben.
- * Datenquelle: football-data.org API (kostenloser Tier)
+ * Datenquelle: api-football.com via RapidAPI (kostenlos, 100 Req/Tag)
  *
  * Umgebungsvariablen (GitHub Secrets):
- *   FOOTBALL_API_KEY       — API-Key von football-data.org
+ *   RAPIDAPI_KEY           — API-Key von rapidapi.com (api-football plan)
  *   FIREBASE_SERVICE_ACCOUNT — Firebase Service Account JSON (als String)
  *   FIREBASE_PROJECT_ID    — z.B. "stickerscout2026"
+ *
+ * FIFA WM 2026: league=1, season=2026 auf api-football.com
  */
 
 const https = require('https');
 const admin = require('firebase-admin');
 
-// ── Team-Code Mapping: football-data.org → App-Codes ────────────────────────
-// Abweichungen zwischen football-data.org TLA und FIFA-Codes abfangen
+// ── Team-Code Mapping: api-football.com shortName → App-Codes ───────────────
+// Nur Abweichungen von den FIFA 3-Letter-Codes
 const TEAM_MAP = {
-  PRY: 'PAR', // Paraguay
-  DRC: 'COD', // DR Kongo
-  CRC: 'CRC',
-  NIG: 'NGA',
-  CUR: 'CUW', // Curaçao
-  RSA: 'RSA',
-  CZE: 'CZE',
-  BIH: 'BIH',
-  SCO: 'SCO',
-  CPV: 'CPV',
-  KSA: 'KSA',
-  UZB: 'UZB',
-  JOR: 'JOR',
-  ALG: 'ALG',
-  HAI: 'HAI',
-  IRQ: 'IRQ',
-  NZL: 'NZL',
-  IRN: 'IRN',
+  // api-football kann andere Codes liefern als FIFA
+  'DRC':  'COD', // DR Kongo
+  'CRC':  'CRC',
+  'RSA':  'RSA',
+  'PAR':  'PAR',
+  'CUW':  'CUW',
+  'NGA':  'NGA',
+  'CPV':  'CPV',
+  'KSA':  'KSA',
+  'UZB':  'UZB',
+  'JOR':  'JOR',
+  'ALG':  'ALG',
+  'HAI':  'HAI',
+  'IRQ':  'IRQ',
+  'NZL':  'NZL',
+  'IRN':  'IRN',
+  'GER':  'GER',
+  'AUT':  'AUT',
+  'ARG':  'ARG',
+  // Häufige 3-Letter-Abweichungen
+  'PRY':  'PAR',
+  'COD':  'COD',
+  'NIG':  'NGA',
 };
 
 // ── Alle Gruppenspiele (Heimteam, Auswärtsteam → App-ID) ─────────────────────
@@ -81,21 +88,28 @@ function httpsGet(url, headers) {
       let data = '';
       res.on('data', chunk => data += chunk);
       res.on('end', () => {
-        try { resolve(JSON.parse(data)); }
+        try { resolve({ status: res.statusCode, body: JSON.parse(data) }); }
         catch (e) { reject(new Error(`JSON parse error: ${data.slice(0, 200)}`)); }
       });
     }).on('error', reject);
   });
 }
 
+// ── Normalisiert Team-Code (3-Letter) ────────────────────────────────────────
+function normalizeCode(code) {
+  if (!code) return null;
+  const upper = code.toUpperCase();
+  return TEAM_MAP[upper] ?? upper;
+}
+
 // ── Hauptfunktion ────────────────────────────────────────────────────────────
 async function main() {
-  const FOOTBALL_API_KEY = process.env.FOOTBALL_API_KEY;
+  const RAPIDAPI_KEY = process.env.RAPIDAPI_KEY;
   const FIREBASE_PROJECT_ID = process.env.FIREBASE_PROJECT_ID;
   const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
 
-  if (!FOOTBALL_API_KEY || !FIREBASE_PROJECT_ID || !serviceAccount) {
-    console.error('❌ Fehlende Umgebungsvariablen');
+  if (!RAPIDAPI_KEY || !FIREBASE_PROJECT_ID || !serviceAccount) {
+    console.error('❌ Fehlende Umgebungsvariablen (RAPIDAPI_KEY, FIREBASE_PROJECT_ID, FIREBASE_SERVICE_ACCOUNT)');
     process.exit(1);
   }
 
@@ -105,44 +119,63 @@ async function main() {
     projectId: FIREBASE_PROJECT_ID,
   });
 
-  // 2. Abgeschlossene WM 2026 Spiele von football-data.org holen
-  console.log('📡 Lade Ergebnisse von football-data.org...');
-  let apiMatches;
+  // 2. Abgeschlossene WM 2026 Spiele von api-football.com holen
+  // Endpoint: /fixtures?league=1&season=2026&status=FT
+  // Doku: https://www.api-football.com/documentation-v3#tag/Fixtures/operation/get-fixtures
+  console.log('📡 Lade Ergebnisse von api-football.com (league=1, season=2026)...');
+  let apiFixtures;
   try {
-    const data = await httpsGet(
-      'https://api.football-data.org/v4/competitions/WC/matches?status=FINISHED',
-      { 'X-Auth-Token': FOOTBALL_API_KEY }
+    const { status, body } = await httpsGet(
+      'https://v3.football.api-sports.io/fixtures?league=1&season=2026&status=FT',
+      {
+        'x-rapidapi-host': 'v3.football.api-sports.io',
+        'x-rapidapi-key': RAPIDAPI_KEY,
+      }
     );
-    apiMatches = data.matches ?? [];
-    console.log(`✅ ${apiMatches.length} abgeschlossene Spiele gefunden`);
+    if (status !== 200 || body.errors?.length) {
+      console.error('❌ API-Fehler:', status, JSON.stringify(body.errors ?? body).slice(0, 200));
+      process.exit(1);
+    }
+    apiFixtures = body.response ?? [];
+    console.log(`✅ ${apiFixtures.length} abgeschlossene Spiele gefunden`);
   } catch (err) {
     console.error('❌ API-Fehler:', err.message);
     process.exit(1);
+  }
+
+  if (apiFixtures.length === 0) {
+    console.log('ℹ️  Keine abgeschlossenen Spiele — Remote Config wird nicht aktualisiert');
+    return;
   }
 
   // 3. API-Ergebnisse auf App-IDs mappen
   const results = {};
   let matched = 0;
 
-  for (const apiMatch of apiMatches) {
-    const homeCode = TEAM_MAP[apiMatch.homeTeam?.tla] ?? apiMatch.homeTeam?.tla;
-    const awayCode = TEAM_MAP[apiMatch.awayTeam?.tla] ?? apiMatch.awayTeam?.tla;
-    const score = apiMatch.score?.fullTime;
+  for (const fixture of apiFixtures) {
+    const homeCode = normalizeCode(fixture.teams?.home?.code ?? fixture.teams?.home?.name?.slice(0, 3));
+    const awayCode = normalizeCode(fixture.teams?.away?.code ?? fixture.teams?.away?.name?.slice(0, 3));
+    const goals = fixture.goals;
 
-    if (!homeCode || !awayCode || score?.home == null || score?.away == null) continue;
+    if (!homeCode || !awayCode || goals?.home == null || goals?.away == null) {
+      console.log(`  ⚠️ Kein Code/Score für: ${fixture.teams?.home?.name} vs ${fixture.teams?.away?.name}`);
+      continue;
+    }
 
     const ourMatch = MATCHES.find(m => m.home === homeCode && m.away === awayCode);
     if (ourMatch) {
-      results[ourMatch.id] = { h: score.home, a: score.away };
-      console.log(`  ${ourMatch.id}: ${homeCode} ${score.home}–${score.away} ${awayCode}`);
+      results[ourMatch.id] = { h: goals.home, a: goals.away };
+      console.log(`  ✅ ${ourMatch.id}: ${homeCode} ${goals.home}–${goals.away} ${awayCode}`);
       matched++;
+    } else {
+      console.log(`  ❓ Kein Match für: ${homeCode} vs ${awayCode}`);
     }
   }
 
-  console.log(`\n📊 ${matched} Spiele gematcht`);
+  console.log(`\n📊 ${matched} von ${apiFixtures.length} Spielen gematcht`);
 
   if (matched === 0) {
-    console.log('ℹ️  Keine Ergebnisse — Remote Config wird nicht aktualisiert');
+    console.log('ℹ️  Keine Spiele gematcht — Remote Config wird nicht aktualisiert');
     return;
   }
 
