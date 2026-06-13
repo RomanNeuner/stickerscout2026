@@ -2,7 +2,7 @@ name: Update WM 2026 Results
 
 on:
   schedule:
-    - cron: '0 */2 * * *'   # alle 2 Stunden
+    - cron: '0 * * * *'   # jede Stunde
   workflow_dispatch:          # manuell auslösbar (Button in GitHub)
 
 env:
