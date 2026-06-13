@@ -1,29 +1,22 @@
 /**
  * WM 2026 Ergebnisse automatisch in Firebase Remote Config schreiben.
- * Datenquelle: TheSportsDB.com (kostenlos, kein API-Key erforderlich)
+ * Datenquelle: football-data.org (FOOTBALL_API_KEY Secret)
  *
  * Umgebungsvariablen (GitHub Secrets):
+ *   FOOTBALL_API_KEY       — API-Key von football-data.org
  *   FIREBASE_SERVICE_ACCOUNT — Firebase Service Account JSON (als String)
- *   FIREBASE_PROJECT_ID      — z.B. "stickerscout2026"
+ *   FIREBASE_PROJECT_ID    — z.B. "stickerscout2026"
  */
 
 const https = require('https');
 const admin = require('firebase-admin');
 
-// ── Team-Name Mapping: TheSportsDB Name → App-Code ──────────────────────────
-const NAME_TO_CODE = {
-  'Mexico': 'MEX', 'South Africa': 'RSA', 'South Korea': 'KOR', 'Czech Republic': 'CZE',
-  'Czechia': 'CZE', 'Canada': 'CAN', 'Bosnia and Herzegovina': 'BIH', 'Qatar': 'QAT',
-  'Switzerland': 'SUI', 'Brazil': 'BRA', 'Morocco': 'MAR', 'Haiti': 'HAI', 'Scotland': 'SCO',
-  'United States': 'USA', 'USA': 'USA', 'Paraguay': 'PAR', 'Australia': 'AUS', 'Turkey': 'TUR',
-  'Türkiye': 'TUR', 'Germany': 'GER', 'Ecuador': 'ECU', "Ivory Coast": 'CIV',
-  "Côte d'Ivoire": 'CIV', 'Curaçao': 'CUW', 'Netherlands': 'NED', 'Japan': 'JPN',
-  'Sweden': 'SWE', 'Tunisia': 'TUN', 'Belgium': 'BEL', 'Egypt': 'EGY', 'Iran': 'IRN',
-  'New Zealand': 'NZL', 'Spain': 'ESP', 'Uruguay': 'URU', 'Cape Verde': 'CPV',
-  'Saudi Arabia': 'KSA', 'France': 'FRA', 'Senegal': 'SEN', 'Norway': 'NOR', 'Iraq': 'IRQ',
-  'Argentina': 'ARG', 'Algeria': 'ALG', 'Austria': 'AUT', 'Jordan': 'JOR',
-  'Portugal': 'POR', 'Colombia': 'COL', 'Congo': 'COD', 'DR Congo': 'COD',
-  'Uzbekistan': 'UZB', 'England': 'ENG', 'Panama': 'PAN', 'Croatia': 'CRO', 'Ghana': 'GHA',
+// ── Team-Code Mapping: football-data.org TLA → App-Codes ────────────────────
+const TEAM_MAP = {
+  PRY: 'PAR', DRC: 'COD', NIG: 'NGA', CUR: 'CUW',
+  RSA: 'RSA', CZE: 'CZE', BIH: 'BIH', SCO: 'SCO',
+  CPV: 'CPV', KSA: 'KSA', UZB: 'UZB', JOR: 'JOR',
+  ALG: 'ALG', HAI: 'HAI', IRQ: 'IRQ', NZL: 'NZL', IRN: 'IRN',
 };
 
 // ── Alle Gruppenspiele (Heimteam, Auswärtsteam → App-ID) ─────────────────────
@@ -66,30 +59,32 @@ const MATCHES = [
   { id: 'L5', home: 'ENG', away: 'CRO' }, { id: 'L6', home: 'GHA', away: 'PAN' },
 ];
 
-function httpsGet(url) {
+function httpsGet(url, headers) {
   return new Promise((resolve, reject) => {
-    https.get(url, { headers: { 'User-Agent': 'StickerScout2026/1.0' } }, (res) => {
+    https.get(url, { headers }, (res) => {
       let data = '';
       res.on('data', chunk => data += chunk);
       res.on('end', () => {
         try { resolve({ status: res.statusCode, body: JSON.parse(data) }); }
-        catch (e) { reject(new Error(`JSON parse error: ${data.slice(0, 200)}`)); }
+        catch (e) { reject(new Error(`JSON parse error: ${data.slice(0, 300)}`)); }
       });
     }).on('error', reject);
   });
 }
 
-function teamToCode(name) {
-  if (!name) return null;
-  return NAME_TO_CODE[name] ?? null;
+function normalizeCode(tla) {
+  if (!tla) return null;
+  const upper = tla.toUpperCase();
+  return TEAM_MAP[upper] ?? upper;
 }
 
 async function main() {
+  const FOOTBALL_API_KEY = process.env.FOOTBALL_API_KEY;
   const FIREBASE_PROJECT_ID = process.env.FIREBASE_PROJECT_ID;
   const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
 
-  if (!FIREBASE_PROJECT_ID || !serviceAccount) {
-    console.error('❌ Fehlende Umgebungsvariablen (FIREBASE_PROJECT_ID, FIREBASE_SERVICE_ACCOUNT)');
+  if (!FOOTBALL_API_KEY || !FIREBASE_PROJECT_ID || !serviceAccount) {
+    console.error('❌ Fehlende Umgebungsvariablen');
     process.exit(1);
   }
 
@@ -98,116 +93,69 @@ async function main() {
     projectId: FIREBASE_PROJECT_ID,
   });
 
-  // 1. WM 2026 League-ID auf TheSportsDB suchen
-  console.log('📡 Suche FIFA WM 2026 auf TheSportsDB...');
-  let leagueId = null;
-  try {
-    const { status, body } = await httpsGet(
-      'https://www.thesportsdb.com/api/v1/json/3/search_all_leagues.php?s=Soccer&c=World'
-    );
-    if (status === 200 && body.countrys) {
-      const wc = body.countrys.find(l =>
-        l.strLeague?.toLowerCase().includes('world cup') ||
-        l.strLeague?.toLowerCase().includes('fifa')
-      );
-      if (wc) {
-        leagueId = wc.idLeague;
-        console.log(`✅ Gefunden: "${wc.strLeague}" (ID: ${leagueId})`);
-      }
-    }
-  } catch (err) {
-    console.error('⚠️ League-Suche Fehler:', err.message);
+  console.log('📡 Lade WM 2026 Ergebnisse von football-data.org...');
+  const { status, body } = await httpsGet(
+    'https://api.football-data.org/v4/competitions/WC/matches?status=FINISHED',
+    { 'X-Auth-Token': FOOTBALL_API_KEY }
+  ).catch(err => { console.error('❌ HTTP-Fehler:', err.message); process.exit(1); });
+
+  if (status !== 200) {
+    console.error(`❌ API-Fehler HTTP ${status}:`, JSON.stringify(body).slice(0, 300));
+    process.exit(1);
+  }
+  if (body.errorCode || body.error) {
+    console.error('❌ API-Fehler:', body.message ?? JSON.stringify(body).slice(0, 300));
+    process.exit(1);
   }
 
-  // Bekannte TheSportsDB League-IDs für FIFA World Cup als Fallback
-  const leagueIdCandidates = leagueId ? [leagueId] : ['679925', '4480', '136'];
+  const apiMatches = body.matches ?? [];
+  console.log(`✅ ${apiMatches.length} abgeschlossene Spiele gefunden`);
 
-  let apiEvents = [];
-  for (const lid of leagueIdCandidates) {
-    console.log(`\n📡 Lade Spiele: TheSportsDB league=${lid}, season=2026...`);
-    try {
-      const { status, body } = await httpsGet(
-        `https://www.thesportsdb.com/api/v1/json/3/eventsseason.php?id=${lid}&s=2026`
-      );
-      if (status === 200 && body.events && body.events.length > 0) {
-        apiEvents = body.events;
-        console.log(`✅ ${apiEvents.length} Spiele gefunden (league=${lid})`);
-        break;
-      } else {
-        console.log(`   Keine Daten für league=${lid}`);
-      }
-    } catch (err) {
-      console.error(`   Fehler für league=${lid}:`, err.message);
-    }
-  }
-
-  if (apiEvents.length === 0) {
-    console.log('ℹ️  Keine Spieldaten gefunden — Remote Config wird nicht aktualisiert');
+  if (apiMatches.length === 0) {
+    console.log('ℹ️  Noch keine Spiele beendet');
     return;
   }
 
-  // Status-Übersicht (zur Diagnose)
-  const statusCounts = {};
-  apiEvents.forEach(e => {
-    const s = e.strStatus ?? e.strProgress ?? '?';
-    statusCounts[s] = (statusCounts[s] ?? 0) + 1;
-  });
-  console.log('   Status-Verteilung:', JSON.stringify(statusCounts));
-
-  // 2. Abgeschlossene Spiele filtern und mappen
-  // TheSportsDB Status: "Match Finished", "FT", "Finished"
-  const finished = apiEvents.filter(e => {
-    const s = (e.strStatus ?? e.strProgress ?? '').toLowerCase();
-    return s.includes('finish') || s === 'ft' || s === 'complete';
-  });
-  console.log(`\n📊 ${finished.length} abgeschlossene Spiele`);
-
-  // Erste 3 Beispiele ausgeben
-  finished.slice(0, 3).forEach(e => {
-    console.log(`   Bsp: ${e.strHomeTeam} ${e.intHomeScore}-${e.intAwayScore} ${e.strAwayTeam} [${e.strStatus}]`);
+  // Erste 3 Spiele zur Diagnose ausgeben
+  apiMatches.slice(0, 3).forEach(m => {
+    console.log(`   Bsp: ${m.homeTeam?.tla} ${m.score?.fullTime?.home}-${m.score?.fullTime?.away} ${m.awayTeam?.tla} [${m.status}]`);
   });
 
   const results = {};
   let matched = 0;
 
-  for (const event of finished) {
-    const homeCode = teamToCode(event.strHomeTeam);
-    const awayCode = teamToCode(event.strAwayTeam);
-    const homeScore = event.intHomeScore;
-    const awayScore = event.intAwayScore;
+  for (const apiMatch of apiMatches) {
+    const homeCode = normalizeCode(apiMatch.homeTeam?.tla);
+    const awayCode = normalizeCode(apiMatch.awayTeam?.tla);
+    const score = apiMatch.score?.fullTime;
 
-    if (!homeCode || !awayCode || homeScore == null || awayScore == null) {
-      if (!homeCode) console.log(`  ⚠️ Kein Code für Team: "${event.strHomeTeam}"`);
-      if (!awayCode) console.log(`  ⚠️ Kein Code für Team: "${event.strAwayTeam}"`);
-      continue;
-    }
+    if (!homeCode || !awayCode || score?.home == null || score?.away == null) continue;
 
     const ourMatch = MATCHES.find(m => m.home === homeCode && m.away === awayCode);
     if (ourMatch) {
-      results[ourMatch.id] = { h: parseInt(homeScore, 10), a: parseInt(awayScore, 10) };
-      console.log(`  ✅ ${ourMatch.id}: ${homeCode} ${homeScore}–${awayScore} ${awayCode}`);
+      results[ourMatch.id] = { h: score.home, a: score.away };
+      console.log(`  ✅ ${ourMatch.id}: ${homeCode} ${score.home}–${score.away} ${awayCode}`);
       matched++;
+    } else {
+      console.log(`  ❓ Kein Match für: ${homeCode} vs ${awayCode}`);
     }
   }
 
-  console.log(`\n📊 ${matched} Spiele erfolgreich gematcht`);
+  console.log(`\n📊 ${matched} von ${apiMatches.length} Spielen gematcht`);
 
   if (matched === 0) {
     console.log('ℹ️  Keine Spiele gematcht — Remote Config wird nicht aktualisiert');
     return;
   }
 
-  // 3. Firebase Remote Config aktualisieren
   console.log('\n🔥 Aktualisiere Firebase Remote Config...');
   try {
     const rc = admin.remoteConfig();
     const template = await rc.getTemplate();
-
     template.parameters['match_results'] = {
       defaultValue: { value: JSON.stringify(results) },
       description: `WM 2026 Ergebnisse — zuletzt aktualisiert: ${new Date().toISOString()}`,
     };
-
     await rc.publishTemplate(template);
     console.log('✅ Remote Config aktualisiert!');
     console.log('   Wert:', JSON.stringify(results));
