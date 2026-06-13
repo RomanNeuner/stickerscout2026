@@ -1,33 +1,40 @@
-import remoteConfigModule from '@react-native-firebase/remote-config';
+// Lazy require — @react-native-firebase v24 crasht bei statischem Import
+// (getApp() wird vor der nativen Bridge aufgerufen)
+let _remoteConfig = null;
 
-const remoteConfig = remoteConfigModule();
+function getRC() {
+  if (!_remoteConfig) {
+    try {
+      const mod = require('@react-native-firebase/remote-config').default;
+      _remoteConfig = mod();
+    } catch {}
+  }
+  return _remoteConfig;
+}
 
-// Default: leeres Ergebnis-Objekt
 const DEFAULTS = {
   match_results: '{}',
 };
 
-// Minimales Fetch-Intervall (Sekunden): Im Dev 0, in Prod 300 (5 Min)
-const FETCH_INTERVAL = __DEV__ ? 0 : 300;
+const FETCH_INTERVAL = typeof __DEV__ !== 'undefined' && __DEV__ ? 0 : 300;
 
 export async function initRemoteConfig() {
   try {
-    await remoteConfig.setConfigSettings({ minimumFetchIntervalMillis: FETCH_INTERVAL * 1000 });
-    await remoteConfig.setDefaults(DEFAULTS);
-    await remoteConfig.fetchAndActivate();
+    const rc = getRC();
+    if (!rc) return;
+    await rc.setConfigSettings({ minimumFetchIntervalMillis: FETCH_INTERVAL * 1000 });
+    await rc.setDefaults(DEFAULTS);
+    await rc.fetchAndActivate();
   } catch {
     // Remote Config nicht kritisch — App läuft ohne Ergebnisse weiter
   }
 }
 
-/**
- * Gibt Spielergebnisse zurück.
- * Format: { [matchId]: { h: number, a: number } }
- * Beispiel: { "D1": { h: 2, a: 0 }, "A1": { h: 1, a: 1 } }
- */
 export function getMatchResults() {
   try {
-    const raw = remoteConfig.getValue('match_results').asString();
+    const rc = getRC();
+    if (!rc) return {};
+    const raw = rc.getValue('match_results').asString();
     return JSON.parse(raw) ?? {};
   } catch {
     return {};
