@@ -119,25 +119,70 @@ async function main() {
     projectId: FIREBASE_PROJECT_ID,
   });
 
-  // 2. Abgeschlossene WM 2026 Spiele von api-football.com holen
-  // Endpoint: /fixtures?league=1&season=2026&status=FT
-  // Doku: https://www.api-football.com/documentation-v3#tag/Fixtures/operation/get-fixtures
-  console.log('📡 Lade Ergebnisse von api-football.com (league=1, season=2026)...');
+  // 2. Alle WM 2026 Spiele laden (kein Status-Filter) und selbst filtern
+  // Zuerst: Welche League-IDs gibt es für "World Cup 2026"?
+  console.log('📡 Suche FIFA WM 2026 League-ID auf api-football.com...');
+  const HEADERS = {
+    'x-rapidapi-host': 'v3.football.api-sports.io',
+    'x-rapidapi-key': RAPIDAPI_KEY,
+  };
+
+  let leagueId = null;
+  try {
+    const { status, body } = await httpsGet(
+      'https://v3.football.api-sports.io/leagues?type=cup&search=world+cup',
+      HEADERS
+    );
+    if (status !== 200) {
+      console.error('❌ League-Suche fehlgeschlagen:', status, JSON.stringify(body).slice(0, 300));
+    } else {
+      const wc = (body.response ?? []).filter(l =>
+        l.league?.name?.toLowerCase().includes('world cup') &&
+        l.seasons?.some(s => s.year === 2026)
+      );
+      console.log('🔍 Gefundene WC-Leagues:', wc.map(l => `ID=${l.league.id} "${l.league.name}"`).join(', ') || '(keine)');
+      if (wc.length > 0) leagueId = wc[0].league.id;
+    }
+  } catch (err) {
+    console.error('⚠️ League-Suche Fehler:', err.message);
+  }
+
+  // Fallback auf bekannte IDs wenn Suche scheitert
+  if (!leagueId) {
+    leagueId = 1; // Standard World Cup ID auf api-football
+    console.log(`⚠️ Verwende Fallback League-ID: ${leagueId}`);
+  }
+
+  console.log(`\n📡 Lade Spiele: league=${leagueId}, season=2026...`);
   let apiFixtures;
   try {
     const { status, body } = await httpsGet(
-      'https://v3.football.api-sports.io/fixtures?league=1&season=2026&status=FT',
-      {
-        'x-rapidapi-host': 'v3.football.api-sports.io',
-        'x-rapidapi-key': RAPIDAPI_KEY,
-      }
+      `https://v3.football.api-sports.io/fixtures?league=${leagueId}&season=2026`,
+      HEADERS
     );
-    if (status !== 200 || body.errors?.length) {
-      console.error('❌ API-Fehler:', status, JSON.stringify(body.errors ?? body).slice(0, 200));
+    if (status !== 200 || (body.errors && Object.keys(body.errors).length > 0)) {
+      console.error('❌ API-Fehler:', status, JSON.stringify(body.errors ?? body).slice(0, 300));
       process.exit(1);
     }
-    apiFixtures = body.response ?? [];
-    console.log(`✅ ${apiFixtures.length} abgeschlossene Spiele gefunden`);
+    const all = body.response ?? [];
+    console.log(`📋 Gesamt ${all.length} Spiele für league=${leagueId}/2026`);
+
+    // Alle vorhandenen Status ausgeben (zur Diagnose)
+    const statusCounts = {};
+    all.forEach(f => {
+      const s = f.fixture?.status?.short ?? '?';
+      statusCounts[s] = (statusCounts[s] ?? 0) + 1;
+    });
+    console.log('   Status-Verteilung:', JSON.stringify(statusCounts));
+
+    // Nur abgeschlossene Spiele (FT = Full Time, AET = After Extra Time, PEN = Penalties)
+    apiFixtures = all.filter(f => ['FT', 'AET', 'PEN'].includes(f.fixture?.status?.short));
+    console.log(`✅ ${apiFixtures.length} abgeschlossene Spiele (FT/AET/PEN)`);
+
+    // Erste 3 Spiele zur Diagnose ausgeben
+    apiFixtures.slice(0, 3).forEach(f => {
+      console.log(`   Bsp: ${f.teams?.home?.code}(${f.teams?.home?.name}) ${f.goals?.home}-${f.goals?.away} ${f.teams?.away?.code}(${f.teams?.away?.name}) [${f.fixture?.status?.short}]`);
+    });
   } catch (err) {
     console.error('❌ API-Fehler:', err.message);
     process.exit(1);
