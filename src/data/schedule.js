@@ -50,12 +50,12 @@ export const GROUP_MATCHES = [
   { id: 'D6', stage: STAGE.GROUP, group: 'D', home: 'PAR', away: 'AUS', date: '2026-06-25', time: '01:00 MESZ', venue: 'Allegiant Stadium, Las Vegas' },
 
   // ── Gruppe E: GER · CUW · CIV · ECU ─────────────────────────────────────
-  { id: 'E1', stage: STAGE.GROUP, group: 'E', home: 'GER', away: 'ECU', date: '2026-06-14', time: '22:00 MESZ', venue: 'AT&T Stadium, Dallas' },
-  { id: 'E2', stage: STAGE.GROUP, group: 'E', home: 'CIV', away: 'CUW', date: '2026-06-15', time: '01:00 MESZ', venue: 'Hard Rock Stadium, Miami' },
+  { id: 'E1', stage: STAGE.GROUP, group: 'E', home: 'GER', away: 'CUW', date: '2026-06-14', time: '22:00 MESZ', venue: 'AT&T Stadium, Dallas' },
+  { id: 'E2', stage: STAGE.GROUP, group: 'E', home: 'CIV', away: 'ECU', date: '2026-06-15', time: '01:00 MESZ', venue: 'Hard Rock Stadium, Miami' },
   { id: 'E3', stage: STAGE.GROUP, group: 'E', home: 'GER', away: 'CIV', date: '2026-06-20', time: '22:00 MESZ', venue: 'MetLife Stadium, New York' },
   { id: 'E4', stage: STAGE.GROUP, group: 'E', home: 'ECU', away: 'CUW', date: '2026-06-21', time: '01:00 MESZ', venue: 'Levi\'s Stadium, Santa Clara' },
-  { id: 'E5', stage: STAGE.GROUP, group: 'E', home: 'GER', away: 'CUW', date: '2026-06-25', time: '22:00 MESZ', venue: 'Mercedes-Benz Stadium, Atlanta' },
-  { id: 'E6', stage: STAGE.GROUP, group: 'E', home: 'ECU', away: 'CIV', date: '2026-06-25', time: '22:00 MESZ', venue: 'NRG Stadium, Houston' },
+  { id: 'E5', stage: STAGE.GROUP, group: 'E', home: 'GER', away: 'ECU', date: '2026-06-25', time: '22:00 MESZ', venue: 'Mercedes-Benz Stadium, Atlanta' },
+  { id: 'E6', stage: STAGE.GROUP, group: 'E', home: 'CUW', away: 'CIV', date: '2026-06-25', time: '22:00 MESZ', venue: 'NRG Stadium, Houston' },
 
   // ── Gruppe F: NED · JPN · SWE · TUN ─────────────────────────────────────
   { id: 'F1', stage: STAGE.GROUP, group: 'F', home: 'NED', away: 'JPN', date: '2026-06-14', time: '19:00 MESZ', venue: 'BC Place, Vancouver' },
