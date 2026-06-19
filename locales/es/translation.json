@@ -294,8 +294,14 @@
     "notificationsDenied": "Las notificaciones están desactivadas en los ajustes del sistema. Por favor actívalas allí.",
     "notificationsOpenSettings": "Abrir ajustes",
     "premiumActive": "✅ Premium activo",
-    "premiumUnlock": "⭐ Desbloquear ventajas Premium ahora",
+    "premiumUnlock": "Desbloquear Premium",
+    "premiumSubline": "Usa todas las funciones sin restricciones",
     "supportTitle": "Soporte y comentarios",
+    "rateTitle": "Valorar la app",
+    "rateSubtitle": "¿Qué te parece StickerScout 2026?",
+    "rateThanksLow": "¡Gracias! Cuéntanos qué podemos mejorar.",
+    "rateThanksHigh": "¡Genial! Nos encantaría una valoración en la tienda.",
+    "rateStoreBtn": "Valorar en la tienda",
     "shareApp": "Compartir app",
     "sendFeedback": "Enviar comentarios",
     "reportBug": "Reportar un error",
@@ -377,7 +383,7 @@
   },
   "legal": {
     "aboutApp": "Acerca de la app",
-    "disclaimer": "StickerScout 2026 es una aplicación independiente y no está afiliada, respaldada, patrocinada ni licenciada por la FIFA, Panini ni ningún organizador oficial. Todas las marcas, nombres de productos y clubes son propiedad de sus respectivos titulares y se utilizan únicamente con fines de identificación."
+    "disclaimer": "StickerScout 2026 es una aplicación independiente y no está afiliada, respaldada, patrocinada ni licenciada por Panini ni ningún organizador oficial. Todas las marcas, nombres de productos y clubes son propiedad de sus respectivos titulares y se utilizan únicamente con fines de identificación."
   },
   "common": {
     "cancel": "Cancelar",

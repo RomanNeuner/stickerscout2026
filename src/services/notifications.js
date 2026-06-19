@@ -53,7 +53,7 @@ export async function setupAndroidChannels() {
   });
   await Notifications.setNotificationChannelAsync('games', {
     name: 'Spielerinnerungen',
-    description: 'Erinnerungen für Österreich-Spiele bei der WM 2026',
+    description: 'Erinnerungen für Österreich-Spiele 2026',
     importance: Notifications.AndroidImportance.HIGH,
     vibrationPattern: [0, 400, 200, 400],
     lightColor: '#42D783',
@@ -255,7 +255,7 @@ export async function scheduleEarlyBirdReminder() {
   await Notifications.scheduleNotificationAsync({
     identifier: 'early_bird_countdown',
     content: {
-      title: '⏰ Nur noch 1 Tag: WM Pass €1,99!',
+      title: '⏰ Nur noch 1 Tag: Football Pass €1,99!',
       body: 'Der Early Bird Preis läuft morgen um Mitternacht ab. Jetzt sichern!',
       data: { type: 'early_bird' },
       ...(Platform.OS === 'android' && { channelId: 'general' }),

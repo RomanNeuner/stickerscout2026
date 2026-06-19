@@ -9,7 +9,7 @@
     "profile": "Profil"
   },
   "ringtones": {
-    "title": "WM Klingeltöne",
+    "title": "Football Klingeltöne",
     "h1": "Superhits 2026",
     "subtitle": "Exklusive Fußball-Songs — nur in StickerScout",
     "previewNote": "30 Sek. Vorschau kostenlos",
@@ -28,7 +28,7 @@
     "preview": "Vorschau",
     "stop": "Stop",
     "restore": "Käufe wiederherstellen",
-    "song1": "WM Anthem 2026",
+    "song1": "Football Anthem 2026",
     "song2": "Victory March",
     "song2Sub": "Deutschland Fan-Song",
     "song2Market": "Deutschland",
@@ -256,7 +256,7 @@
     }
   },
   "schedule": {
-    "title": "WM Spielplan",
+    "title": "Spielplan 2026",
     "groupStage": "Gruppenphase",
     "knockout": "K.O.-Runde",
     "roundOf16": "Achtelfinale",
@@ -276,7 +276,7 @@
     "completion": "{{percent}}% fertig",
     "teamsComplete": "{{count}} Teams vollständig",
     "share": "Fortschritt teilen",
-    "shareText": "Ich bin {{percent}}% fertig mit dem WM 2026 Album! 🏆 Noch {{missing}} Sticker fehlen.\n\nVerfolge deinen Fortschritt mit StickerScout 2026:\n📱 iOS: https://apps.apple.com/at/app/stickerscout-2026/id6775562727\n🤖 Android: https://play.google.com/store/apps/details?id=at.ncn.stickerscout2026",
+    "shareText": "Ich bin {{percent}}% fertig mit dem Football 2026 Album! 🏆 Noch {{missing}} Sticker fehlen.\n\nVerfolge deinen Fortschritt mit StickerScout 2026:\n📱 iOS: https://apps.apple.com/at/app/stickerscout-2026/id6775562727\n🤖 Android: https://play.google.com/store/apps/details?id=at.ncn.stickerscout2026",
     "shareAppText": "Sammle das Fußball 2026 Album mit StickerScout 2026. Scanne Sticker und Karten, verwalte deine Sammlungen und tausche mit anderen.\n📱 iOS: https://apps.apple.com/at/app/stickerscout-2026/id6775562727\n🤖 Android: https://play.google.com/store/apps/details?id=at.ncn.stickerscout2026",
     "settings": {
       "title": "Einstellungen",
@@ -294,8 +294,14 @@
     "notificationsDenied": "Benachrichtigungen sind in den System-Einstellungen deaktiviert. Bitte dort aktivieren.",
     "notificationsOpenSettings": "Einstellungen öffnen",
     "premiumActive": "✅ Premium aktiv",
-    "premiumUnlock": "⭐ Premiumvorteile jetzt freischalten",
+    "premiumUnlock": "Premium freischalten",
+    "premiumSubline": "Alle Features ohne Einschränkungen nutzen",
     "supportTitle": "Support & Feedback",
+    "rateTitle": "App bewerten",
+    "rateSubtitle": "Wie gefällt dir StickerScout 2026?",
+    "rateThanksLow": "Danke! Schreib uns, was wir verbessern können.",
+    "rateThanksHigh": "Super! Wir freuen uns über eine Bewertung im Store.",
+    "rateStoreBtn": "Im Store bewerten",
     "shareApp": "App teilen",
     "sendFeedback": "Feedback senden",
     "reportBug": "Bug melden",
@@ -329,7 +335,7 @@
   },
   "paywall": {
     "title": "StickerScout Premium",
-    "subtitle": "Der komplette WM 2026 Begleiter",
+    "subtitle": "Der komplette Football 2026 Begleiter",
     "monthly": "Monatlich",
     "season": "Saison-Pass",
     "monthlyPrice": "€1,99 / Monat",
@@ -356,7 +362,7 @@
     "feature2": "Alle Tauschplätze freischalten",
     "feature3": "Dream Team Builder unbegrenzt",
     "feature4": "Sammelalbum-Auswertung als PDF",
-    "cta": "WM Pass für {{price}} holen",
+    "cta": "Football Pass für {{price}} holen",
     "ctaSub": "Einmal zahlen · Kein Abo · Gültig bis 19. Juli 2026",
     "ctaSubPart1": "Einmal zahlen ·",
     "ctaSubKeinAbo": "Kein Abo",
@@ -377,7 +383,7 @@
   },
   "legal": {
     "aboutApp": "Über die App",
-    "disclaimer": "StickerScout 2026 ist eine unabhängige App und steht in keiner Verbindung zu FIFA, Panini oder einem offiziellen Veranstalter und wird von diesen weder unterstützt, gesponsert noch lizenziert. Alle Marken-, Produkt- und Vereinsnamen sind Eigentum ihrer jeweiligen Inhaber und werden ausschließlich zu Identifikationszwecken verwendet."
+    "disclaimer": "StickerScout 2026 ist eine unabhängige App und steht in keiner Verbindung zu Panini oder einem offiziellen Veranstalter und wird von diesen weder unterstützt, gesponsert noch lizenziert. Alle Marken-, Produkt- und Vereinsnamen sind Eigentum ihrer jeweiligen Inhaber und werden ausschließlich zu Identifikationszwecken verwendet."
   },
   "common": {
     "cancel": "Abbrechen",

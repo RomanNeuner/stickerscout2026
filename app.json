@@ -2,7 +2,7 @@
   "expo": {
     "name": "StickerScout 2026",
     "slug": "stickerswap2026",
-    "version": "1.1.26",
+    "version": "1.1.30",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
@@ -11,9 +11,10 @@
       "bundleIdentifier": "at.ncn.stickerscout2026",
       "buildNumber": "1",
       "minimumOsVersion": "16.0",
+      "googleServicesFile": "./GoogleService-Info.plist",
       "infoPlist": {
-        "NSCameraUsageDescription": "Der Sticker-Scanner benötigt Zugriff auf die Kamera.",
-        "NSLocationWhenInUseUsageDescription": "Für lokale Tauschpartner-Suche wird dein Standort benötigt.",
+        "NSCameraUsageDescription": "The sticker scanner needs access to the camera to scan sticker numbers.",
+        "NSLocationWhenInUseUsageDescription": "Your location is used to find nearby trading partners.",
         "ITSAppUsesNonExemptEncryption": false
       }
     },
@@ -42,12 +43,20 @@
     "plugins": [
       "@react-native-firebase/app",
       "@react-native-firebase/crashlytics",
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "static"
+          }
+        }
+      ],
       "expo-localization",
       "expo-camera",
       [
         "expo-location",
         {
-          "locationWhenInUsePermission": "Für lokale Tauschpartner-Suche wird dein Standort benötigt."
+          "locationWhenInUsePermission": "Your location is used to find nearby trading partners."
         }
       ],
       "expo-mail-composer",

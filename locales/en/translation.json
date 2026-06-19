@@ -9,7 +9,7 @@
     "profile": "Profile"
   },
   "ringtones": {
-    "title": "WC Ringtones",
+    "title": "Football Ringtones",
     "h1": "Superhits 2026",
     "subtitle": "Exclusive Football 2026 Songs — app only",
     "previewNote": "30 sec preview for free",
@@ -28,7 +28,7 @@
     "preview": "Preview",
     "stop": "Stop",
     "restore": "Restore Purchases",
-    "song1": "WC Anthem 2026",
+    "song1": "Football Anthem 2026",
     "song2": "Victory March",
     "song2Sub": "Germany Fan Song",
     "song2Market": "Germany",
@@ -256,7 +256,7 @@
     }
   },
   "schedule": {
-    "title": "WC Schedule",
+    "title": "Schedule 2026",
     "groupStage": "Group Stage",
     "knockout": "Knockout",
     "roundOf16": "Round of 16",
@@ -294,8 +294,14 @@
     "notificationsDenied": "Notifications are disabled in system settings. Please enable them there.",
     "notificationsOpenSettings": "Open Settings",
     "premiumActive": "✅ Premium active",
-    "premiumUnlock": "⭐ Unlock Premium benefits now",
+    "premiumUnlock": "Unlock Premium",
+    "premiumSubline": "Use all features without restrictions",
     "supportTitle": "Support & Feedback",
+    "rateTitle": "Rate the app",
+    "rateSubtitle": "How do you like StickerScout 2026?",
+    "rateThanksLow": "Thanks! Let us know what we can improve.",
+    "rateThanksHigh": "Awesome! We'd love a review in the store.",
+    "rateStoreBtn": "Rate in store",
     "shareApp": "Share app",
     "sendFeedback": "Send feedback",
     "reportBug": "Report a bug",
@@ -377,7 +383,7 @@
   },
   "legal": {
     "aboutApp": "About the app",
-    "disclaimer": "StickerScout 2026 is an independent app and is not affiliated with, endorsed, sponsored, or licensed by FIFA, Panini, or any official organizer. All trademarks, product names, and club names are the property of their respective owners and are used for identification purposes only."
+    "disclaimer": "StickerScout 2026 is an independent app and is not affiliated with, endorsed, sponsored, or licensed by Panini or any official organizer. All trademarks, product names, and club names are the property of their respective owners and are used for identification purposes only."
   },
   "common": {
     "cancel": "Cancel",
