@@ -2,7 +2,7 @@
   "expo": {
     "name": "StickerScout 2026",
     "slug": "stickerswap2026",
-    "version": "1.1.30",
+    "version": "1.1.33",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",

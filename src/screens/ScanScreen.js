@@ -215,35 +215,42 @@ export default function ScanScreen({ onShowPaywall, isPro }) {
   };
 
   const handleManualConfirm = () => {
-    const raw = manualInput.trim();
-    if (scanType === 'adrenalyn') {
-      // Suche zuerst nach Nummer (1–630), dann nach ID (U01, LE1, DB01, LE-MIX1-01, …)
-      const card = lookupAdrenalyn(raw) ?? lookupAdrenalynById(raw);
-      if (!card) {
-        setManualError(true);
-        setTimeout(() => setManualError(false), 2500);
-        return;
-      }
-      setManualError(false);
-      if (FLIP_TYPES.includes(card.type)) {
-        setPendingCard(card);
-        setScreen('golden_baller_back');
+    try {
+      const raw = (manualInput ?? '').trim();
+      if (!raw) return;
+      if (scanType === 'adrenalyn') {
+        const card = (typeof lookupAdrenalyn === 'function' ? lookupAdrenalyn(raw) : null)
+                  ?? (typeof lookupAdrenalynById === 'function' ? lookupAdrenalynById(raw) : null);
+        if (!card) {
+          setManualError(true);
+          setTimeout(() => setManualError(false), 2500);
+          return;
+        }
+        setManualError(false);
+        if (FLIP_TYPES.includes(card.type)) {
+          setPendingCard(card);
+          setScreen('golden_baller_back');
+        } else {
+          setResult({ card });
+          setScreen('result');
+        }
       } else {
-        setResult({ card });
+        const sticker = typeof lookupSticker === 'function' ? lookupSticker(raw.toUpperCase()) : null;
+        if (!sticker) {
+          setManualError(true);
+          setTimeout(() => setManualError(false), 2500);
+          return;
+        }
+        setManualError(false);
+        setResult({ sticker });
         setScreen('result');
       }
-    } else {
-      const sticker = lookupSticker(raw.toUpperCase());
-      if (!sticker) {
-        setManualError(true);
-        setTimeout(() => setManualError(false), 2500);
-        return;
-      }
-      setManualError(false);
-      setResult({ sticker });
-      setScreen('result');
+      setManualInput('');
+    } catch (e) {
+      console.error('[handleManualConfirm]', e?.message ?? e);
+      setManualError(true);
+      setTimeout(() => setManualError(false), 2500);
     }
-    setManualInput('');
   };
 
   const handleAddToHave = async () => {
@@ -416,7 +423,7 @@ export default function ScanScreen({ onShowPaywall, isPro }) {
 
   if (screen === 'card_type_select') {
     const SELECT_OPTIONS = [
-      { type: 'GOLDEN_BALLER',   emoji: '⭐', label: 'Golden Baller' },
+      { type: 'GOLDEN_BALLER',   emoji: '⭐', label: t('scanner.goldenBaller') },
       { type: 'LIMITED_EDITION', emoji: '💎', label: 'Limited Edition / VOLLGAS' },
       { type: 'DREAM_BOX',       emoji: '🏆', label: 'Dream Box Master' },
       { type: 'STANDARD_LE',     emoji: '✨', label: 'XXL Limited Edition' },
@@ -894,7 +901,7 @@ function ResultCard({ sticker, card, activationCode, codeExpired, collection, in
           </TouchableOpacity>
           <View style={styles.gbHeaderCenter}>
             <Ionicons name="star" size={19} color={COLORS.gold} />
-            <Text style={styles.gbHeaderText}>Golden Baller</Text>
+            <Text style={styles.gbHeaderText}>{t('scanner.goldenBaller')}</Text>
           </View>
           <Image source={require('../../assets/icon.png')} style={styles.appLogo} />
         </View>
@@ -906,7 +913,7 @@ function ResultCard({ sticker, card, activationCode, codeExpired, collection, in
 
             <LinearGradient colors={['#FFE17A', '#C8941F']} style={styles.gbBadge}>
               <Ionicons name="star" size={13} color="#0D1F2D" />
-              <Text style={styles.gbBadgeText}>GOLDEN BALLER</Text>
+              <Text style={styles.gbBadgeText}>{t('scanner.goldenBallerBadge')}</Text>
             </LinearGradient>
 
             <Text style={styles.gbNumber}>#{card.number}</Text>
@@ -916,10 +923,10 @@ function ResultCard({ sticker, card, activationCode, codeExpired, collection, in
             {/* Ratings — ATT / DEF / SKL / Gesamt aus DB */}
             <View style={styles.gbRatings}>
               {[
-                { lbl: 'ATT',    val: card.ratings?.ATT,  total: false },
-                { lbl: 'DEF',    val: card.ratings?.DEF,  total: false },
-                { lbl: 'SKL',    val: card.ratings?.SKL,  total: false },
-                { lbl: 'Gesamt', val: card.total_rating,  total: true  },
+                { lbl: 'ATT',                  val: card.ratings?.ATT, total: false },
+                { lbl: 'DEF',                  val: card.ratings?.DEF, total: false },
+                { lbl: 'SKL',                  val: card.ratings?.SKL, total: false },
+                { lbl: t('scanner.ratingTotal'), val: card.total_rating, total: true },
               ].map(r => (
                 <View key={r.lbl} style={[styles.gbRating, r.total && styles.gbRatingTotal]}>
                   <Text style={styles.gbRatingLbl}>{r.lbl}</Text>
@@ -1056,7 +1063,7 @@ function ResultCard({ sticker, card, activationCode, codeExpired, collection, in
                 )}
                 {card.total_rating != null && (
                   <View style={[styles.gbRating, styles.gbRatingTotal]}>
-                    <Text style={styles.gbRatingLbl}>Gesamt</Text>
+                    <Text style={styles.gbRatingLbl}>{t('scanner.ratingTotal')}</Text>
                     <Text style={[styles.gbRatingVal, styles.gbRatingValTotal]}>{card.total_rating}</Text>
                   </View>
                 )}
