@@ -1,9 +1,10 @@
 name: Update WM 2026 Results
 
+# WM 2026 ist beendet (Finale 19.07.) — Cron deaktiviert, damit der Job
+# die manuell gepflegten KO-Ergebnisse nicht mehr überschreibt.
+# (KO-Matching via Kickoff-Zeit schlug fehl → Job publizierte nur Gruppenphase.)
 on:
-  schedule:
-    - cron: '0 * * * *'   # jede Stunde
-  workflow_dispatch:          # manuell auslösbar (Button in GitHub)
+  workflow_dispatch:          # nur noch manuell auslösbar
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
